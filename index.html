@@ -319,7 +319,7 @@ details.more .txt p{margin:0}
           <tr><td>Cocktails at Swift and Waltz</td><td><a href="#thu" data-goto="thu">Thu</a></td><td class="num">£14–18 each</td></tr>
           <tr><td>Barry's Central, one class (Kirill)</td><td><a href="#fri" data-goto="fri">Fri</a></td><td class="num">~£30</td></tr>
           <tr><td>Postal Museum + Mail Rail (Kirill)</td><td><a href="#fri" data-goto="fri">Fri</a></td><td class="num">~£18–20</td></tr>
-          <tr><td>Chaos Karts, Arcade Arena</td><td><a href="#fri" data-goto="fri">Fri</a></td><td class="num">from ~£30</td></tr>
+          <tr><td>Interactive experience (karts, Crystal Maze, Escape Arcade, Prison Island)</td><td><a href="#fri" data-goto="fri">Fri</a></td><td class="num">~£25–79</td></tr>
                     <tr><td>LNER King's Cross → Edinburgh, Advance</td><td><a href="#fri" data-goto="fri">Fri</a></td><td class="num">£50–120</td></tr>
           <tr><td>Glasgow Cathedral, Necropolis, Kelvingrove</td><td><a href="#sat" data-goto="sat">Sat</a></td><td class="num">Free</td></tr>
           <tr><td>Tennent's Wellpark Brewery tour, pint included</td><td><a href="#sat" data-goto="sat">Sat</a></td><td class="num">£17–21</td></tr>
@@ -336,7 +336,7 @@ details.more .txt p{margin:0}
         <table>
           <tr><th>Category</th><th>GBP</th></tr>
           <tr><td>Transport (Gatwick, Tube, LNER, Glasgow, trams)</td><td class="num">110–195</td></tr>
-          <tr><td>Activities (karts, Tennent's, Johnnie Walker, castle; Barry's and Mail Rail for Kirill)</td><td class="num">100–155</td></tr>
+          <tr><td>Activities (Friday game, Tennent's, Johnnie Walker, castle; Barry's and Mail Rail for Kirill)</td><td class="num">100–155</td></tr>
           <tr><td>Food &amp; drink (Tatar Bunar, Hawksmoor, lunches, pints, cocktails at £11–18)</td><td class="num">300–360</td></tr>
           <tr><td>Edinburgh hotel, 2 nights, room split two ways</td><td class="num">150–250</td></tr>
           <tr class="total"><td>Total</td><td class="num">660–960</td></tr>
@@ -367,7 +367,7 @@ details.more .txt p{margin:0}
           <li><b>St Dunstan in the East</b> and the <b>London Mithraeum</b>, the City: a bombed church garden and a Roman temple, both free.</li>
           <li><b>Sir John Soane's Museum</b>, Lincoln's Inn Fields: free, crammed and strange.</li>
           <li><b>Wellcome Collection</b>, Euston: free, medicine and the human body.</li>
-          <li><b>Leake Street Tunnel</b>, Waterloo: legal graffiti tunnel, near Arcade Arena.</li>
+          <li><b>Leake Street Tunnel</b>, Waterloo: legal graffiti tunnel by Waterloo station.</li>
           <li><b>Somerset House ice rink</b>, Strand: timed skating sessions.</li>
           <li>Other workouts: <b>Kobox</b> (boxing HIIT), <b>1Rebel</b> (Reshape, Ride), <b>Psycle</b> or <b>SoulCycle</b> (cycling).</li>
         </ul>
@@ -452,16 +452,22 @@ var DAYS = [
       more:"<p>Bar seats are walk-in; a few tables can be booked at waltzbar.uk.</p><p>Plan B, also 5 minutes away: <b>Happiness Forgets</b> (8–9 Hoxton Square), a candlelit basement that's a favourite of London bartenders, open till late.</p>"}
    ]},
  { id:"fri", tab:"Fri 20", place:"London → Edinburgh", date:"Friday 20 November", city:"london",
-   title:"Barry's, Mail Rail, karts, train north",
-   intro:"Kirill does Barry's and the old Post Office railway while you finish your short day. Then lunch, real-life Mario Kart and the train to Edinburgh.",
+   title:"Barry's, Mail Rail, games, train north",
+   intro:"Kirill does Barry's and the old Post Office railway while you finish your short day. Then lunch, an interactive game experience and the train to Edinburgh.",
    off:"<b>~17:00</b> LNER King's Cross → Edinburgh Waverley, arrive <b>~21:20</b>.",
    stops:[
     {t:"08:00", n:"Barry's Central, 163 Euston Rd", p:"The original London studio: treadmill and floor HIIT in the red room. Showers and towels on site.", who:"Kirill", fee:["~£30","paid"], book:true, ll:[51.5266,-0.1338], q:"Barry's London Central 163 Euston Road",
       more:"<p>Booking opens about a week ahead (around Fri 13 Nov). Pick any morning class that ends by 09:30.</p>"},
     {t:"10:15", n:"Postal Museum + Mail Rail, Clerkenwell", p:"20-min walk from Barry's. A 15-minute ride through the tunnels of the Post Office's driverless underground railway (1927–2003), then the museum.", who:"Kirill", fee:["~£18–20","paid"], book:true, ll:[51.5246,-0.1134], q:"The Postal Museum, Phoenix Place, London"},
-    {t:"12:30", n:"Lunch together: place TBD", p:"Pick on the day. Easy options on the way to the karts: Dishoom in Covent Garden or Carnaby, or Arcade Arena's own bar and dining area.", off:true},
-    {t:"14:00", n:"Chaos Karts at Arcade Arena, 26 Lambeth High St (TBD)", p:"Electric karts racing on a projected track: basically Mario Kart in real life. Opened September 2026.", fee:["from ~£30","paid"], book:true, ll:[51.4930,-0.1209], q:"Arcade Arena, 26 Lambeth High Street, London",
-      more:"<p>Lambeth North (Bakerloo line) is a short walk away. If karts don't appeal on the day, the same venue runs Pac-Man Live and Alien Invasion.</p>"},
+    {t:"12:30", n:"Lunch together: place TBD", p:"Pick on the day, near whichever experience you choose: Dishoom in Covent Garden or Carnaby works for most of them.", off:true},
+    {t:"14:00", n:"Interactive experience: pick one", p:"Four game-style options, all about an hour. Choose together over lunch, then book a slot for two.", book:true, off:true,
+      subs:[
+        ["1. Chaos Karts","Arcade Arena, 26 Lambeth High St (Lambeth North). Electric karts on a projected track: Mario Kart in real life. From ~£30.","Arcade Arena, 26 Lambeth High Street, London"],
+        ["2. The Crystal Maze LIVE","22–32 Shaftesbury Ave, Piccadilly Circus. The 90s game show: four zones of challenges, then the Crystal Dome. About 75 min, from £79 (check for deals).","The Crystal Maze LIVE Experience, 22-32 Shaftesbury Avenue, London"],
+        ["3. Escape Room Arcade","Enigma Quests, 86 Fetter Lane, Holborn. 30 mini-game rooms in an underground lab; replay as many as you can in an hour for leaderboard scores. Teams of 2–4.","Enigma Quests, 86 Fetter Lane, London"],
+        ["4. Prison Island","5-7 Hornsey St, by Holloway Road (Piccadilly line). 31 challenge cells, 60 min of play; arrive 20 min early. Fridays from 2pm. From ~£27.","Prison Island London, 5-7 Hornsey Street"]
+      ],
+      more:"<p>Closest to King's Cross for the train: Prison Island (Piccadilly line, 3 stops) or the Escape Room Arcade. Crystal Maze is the priciest but the most 'event'.</p>"},
     {t:"15:45", n:"Collect bags, head to King's Cross", p:"Grab food and drinks for the train in the station.", ll:[51.5309,-0.1233], q:"London King's Cross station"},
     {t:"17:00", n:"LNER to Edinburgh Waverley", p:"About 4h20. Book Advance tickets now; Friday trains fill up.", fee:["£50–120","paid"], book:true, off:true},
     {t:"21:20", n:"Edinburgh: check in, optional nightcap", p:"Hotel in the New Town near Queen Street. If there's energy: Bramble (16A Queen St), a walk-in-only basement cocktail bar.", off:true}
@@ -507,7 +513,7 @@ var CHECK = [
   ["lner","LNER Advance tickets, Fri ~17:00","King's Cross → Edinburgh Waverley","Now"],
   ["haw","Hawksmoor Edinburgh, Sat 19:45 for 2","","Now"],
   ["tatar","Tatar Bunar, Thu 20:15 for 2","Phone 07771 013190","Now"],
-  ["karts","Chaos Karts, Fri ~14:00 for 2","arcadearena.co.uk, once lunch is decided","This week"],
+  ["karts","Interactive experience, Fri ~14:00 for 2","Pick one of the four, then book","This week"],
   ["tennents","Tennent's brewery tour, Sat 12:00 for 2","tennents.com","Now"],
   ["jw","Johnnie Walker Journey of Flavour, Sun 14:00 for 2","johnniewalker.com","Now"],
   ["panda","Panda & Sons, Sat ~22:00 for 2","","This week"],
