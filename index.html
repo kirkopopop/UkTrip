@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>London, Glasgow &amp; Edinburgh Weekend</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Young+Serif&family=Instrument+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap">
+<style>
+/* Layout: day tabs; a pannable stop map beside the day timeline; a second "Before you go" view. One column on phones. */
+:root{
+  --bg:#eef0f2; --surface:#ffffff; --ink:#18212b; --muted:#5b6672; --line:#d5dbe0; --soft:#f4f6f8;
+  --land:#f3f1ec; --grid:#e6e3dc; --water:#b9d2de; --water-label:#4f7d90; --label:#6f7670; --halo:#f3f1ec;
+  --accent:#1d5a4c; --on-accent:#ffffff; --free:#2f7a3d; --paid:#8a5a12; --solo:#7a4fa3;
+  --d1:#1d5a4c; --d2:#b0402f; --d3:#1f4f9a; --d4:#9a6a0c;
+  --display:"Young Serif", Georgia, "Times New Roman", serif;
+  --body:"Instrument Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --mono:"IBM Plex Mono", ui-monospace, Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --bg:#0f151b; --surface:#17202a; --ink:#e5eaee; --muted:#95a2ad; --line:#2a3642; --soft:#131b23;
+  --land:#1b242d; --grid:#222d37; --water:#123142; --water-label:#6aa3b8; --label:#8b969f; --halo:#1b242d;
+  --accent:#6fcfb2; --on-accent:#0e1a17; --free:#7fcf8c; --paid:#e8b86a; --solo:#c3a2ec;
+  --d1:#6fcfb2; --d2:#ff8e7c; --d3:#88aaff; --d4:#e8b24d;
+  color-scheme:dark;
+}}
+:root[data-theme="dark"]{
+  --bg:#0f151b; --surface:#17202a; --ink:#e5eaee; --muted:#95a2ad; --line:#2a3642; --soft:#131b23;
+  --land:#1b242d; --grid:#222d37; --water:#123142; --water-label:#6aa3b8; --label:#8b969f; --halo:#1b242d;
+  --accent:#6fcfb2; --on-accent:#0e1a17; --free:#7fcf8c; --paid:#e8b86a; --solo:#c3a2ec;
+  --d1:#6fcfb2; --d2:#ff8e7c; --d3:#88aaff; --d4:#e8b24d;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.5;
+  padding-left:max(16px, env(safe-area-inset-left,0px));padding-right:max(16px, env(safe-area-inset-right,0px));
+  padding-top:calc(20px + env(safe-area-inset-top,0px));padding-bottom:calc(40px + env(safe-area-inset-bottom,0px))}
+a{color:var(--accent)}
+.wrap{max-width:1240px;margin:0 auto;display:flex;flex-direction:column;gap:16px}
+header{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:12px 24px}
+h1{font-family:var(--display);font-weight:400;font-size:clamp(26px,4vw,36px);line-height:1.1;margin:0;text-wrap:balance}
+.sub{color:var(--muted);margin:6px 0 0;max-width:68ch}
+.views{display:flex;background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:3px;gap:2px}
+.views button{font:inherit;font-size:14px;font-weight:600;border:0;background:transparent;color:var(--muted);padding:7px 16px;border-radius:999px;cursor:pointer}
+.views button[aria-pressed="true"]{background:var(--ink);color:var(--bg)}
+.tabs{display:flex;gap:6px;overflow-x:auto;padding-bottom:4px;scrollbar-width:thin}
+.tab{flex:0 0 auto;border:1px solid var(--line);background:var(--surface);color:var(--ink);font:inherit;font-size:14px;
+  padding:7px 14px;border-radius:999px;cursor:pointer;display:flex;flex-direction:column;align-items:center;line-height:1.15;min-width:84px}
+.tab small{font-size:11px;color:var(--muted);letter-spacing:.04em;text-transform:uppercase}
+.tab[aria-selected="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.tab[aria-selected="true"] small{color:var(--bg);opacity:.75}
+button:focus-visible,a:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.grid{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:20px;align-items:start}
+.mapcol{position:sticky;top:calc(12px + env(safe-area-inset-top,0px));display:flex;flex-direction:column;gap:8px;min-width:0}
+.map{position:relative;height:min(78vh,760px);border-radius:14px;overflow:hidden;border:1px solid var(--line);background:var(--land)}
+.map svg{display:block;width:100%;height:100%;touch-action:none;cursor:grab;user-select:none;-webkit-user-select:none}
+.map svg.dragging{cursor:grabbing}
+.ctrls{position:absolute;top:10px;right:10px;display:flex;flex-direction:column;gap:6px;align-items:flex-end}
+.zoom{display:flex;flex-direction:column;background:var(--surface);border:1px solid var(--line);border-radius:10px;overflow:hidden}
+.zoom button{font:600 18px/1 var(--body);width:36px;height:36px;border:0;background:transparent;color:var(--ink);cursor:pointer}
+.zoom button+button{border-top:1px solid var(--line)}
+.fit{font:inherit;font-size:13px;background:var(--surface);color:var(--ink);border:1px solid var(--line);border-radius:999px;padding:6px 11px;cursor:pointer}
+.offmap{position:absolute;left:10px;top:10px;max-width:min(64%,320px);background:var(--surface);border:1px solid var(--line);
+  border-radius:10px;padding:7px 10px;font-size:12.5px;line-height:1.45;color:var(--ink)}
+.offmap b{font-weight:600}
+.scale{position:absolute;left:10px;bottom:8px;font:500 11px/1 var(--mono);color:var(--ink)}
+.scale i{display:block;height:6px;border:1.5px solid var(--ink);border-top:0;margin-top:3px}
+.note{position:absolute;right:8px;bottom:6px;font-size:10.5px;color:var(--muted);background:color-mix(in srgb,var(--surface) 80%,transparent);padding:1px 6px;border-radius:4px}
+.maplinks{display:flex;flex-wrap:wrap;gap:8px 14px;font-size:13.5px;align-items:center}
+.maplinks a{font-weight:600;text-decoration:none}
+.maplinks a:hover{text-decoration:underline}
+.maplinks span{color:var(--muted)}
+.list{display:flex;flex-direction:column;gap:14px;min-width:0}
+.dayhead h2{font-family:var(--display);font-weight:400;font-size:24px;line-height:1.2;margin:0;text-wrap:balance}
+.dayhead .date{font-family:var(--mono);font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.dayhead p{margin:6px 0 0;color:var(--muted)}
+ol.stops{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;border-top:1px solid var(--line)}
+.stop{display:grid;grid-template-columns:52px 30px minmax(0,1fr);gap:10px;padding:10px 0;border-bottom:1px solid var(--line);align-items:start}
+.stop .t{font-family:var(--mono);font-size:13px;color:var(--muted);font-variant-numeric:tabular-nums;padding-top:3px}
+.stop>.pin{width:26px;height:26px;border-radius:50%;border:0;cursor:pointer;font:600 12px/1 var(--body);
+  background:var(--dc);color:var(--on-accent);display:grid;place-items:center}
+.stop>.pin.off{background:transparent;border:1.5px dashed var(--line);cursor:default;color:var(--muted)}
+.stop .what{min-width:0;display:flex;flex-direction:column;gap:4px}
+.stop .what strong{font-weight:600}
+.stop .what p{margin:0;color:var(--muted);font-size:14px}
+.meta{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.stop a.mapl{font-size:13px;text-decoration:none;white-space:nowrap}
+.stop a.mapl:hover{text-decoration:underline}
+.stop.focus{background:color-mix(in srgb,var(--dc) 10%,transparent)}
+.fee{font-size:12px;font-weight:600;padding:1px 7px;border-radius:6px;border:1px solid currentColor;line-height:1.4}
+.fee.free{color:var(--free)} .fee.paid{color:var(--paid)}
+.who{font-size:11px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;padding:1px 6px;border-radius:4px;color:var(--solo);border:1px solid var(--solo)}
+.book{font-size:11px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;padding:1px 6px;border-radius:4px;color:var(--paid);border:1px solid var(--paid)}
+.subs{list-style:none;margin:2px 0 2px;padding:8px 10px;display:flex;flex-direction:column;gap:6px;background:var(--soft);border:1px solid var(--line);border-left:3px solid var(--dc);border-radius:8px;font-size:14px}
+.subs b{font-weight:600}
+.subs span{color:var(--muted)}
+details.info{border:1px solid var(--line);border-radius:10px;background:var(--soft);overflow:hidden}
+details.info summary{cursor:pointer;list-style:none;padding:6px 10px;font-size:13.5px;font-weight:600;color:var(--accent);display:flex;align-items:center;gap:6px}
+details.info summary::-webkit-details-marker{display:none}
+details.info summary::before{content:"";width:7px;height:7px;border-right:1.6px solid currentColor;border-bottom:1.6px solid currentColor;transform:rotate(-45deg);transition:transform .15s}
+details.info[open] summary::before{transform:rotate(45deg)}
+details.info .txt{padding:2px 10px 10px;font-size:13.5px;line-height:1.5;display:flex;flex-direction:column;gap:6px}
+details.info .txt p{margin:0}
+.daysum{display:flex;flex-direction:column;gap:8px}
+.daycard{display:grid;grid-template-columns:30px minmax(0,1fr);gap:10px;text-align:left;font:inherit;color:inherit;background:var(--surface);
+  border:1px solid var(--line);border-radius:10px;padding:10px 12px;cursor:pointer}
+.daycard .n{width:26px;height:26px;border-radius:50%;display:grid;place-items:center;font-weight:600;font-size:12px;color:var(--on-accent)}
+.daycard b{font-weight:600}
+.daycard span{display:block;color:var(--muted);font-size:14px}
+/* tips */
+.tips{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,340px),1fr));gap:16px;align-items:start}
+.tips section{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px 18px;display:flex;flex-direction:column;gap:10px;min-width:0}
+.tips h2{font-family:var(--display);font-weight:400;font-size:22px;margin:0;line-height:1.2}
+.tips h3{font-size:14px;margin:4px 0 0;font-weight:600}
+.tips p{margin:0}
+.tips ul{margin:0;padding-left:18px;display:flex;flex-direction:column;gap:6px}
+.tips .wide{grid-column:1/-1}
+.tips .app{display:grid;gap:2px;padding:8px 0;border-top:1px solid var(--line)}
+.tips .app:first-of-type{border-top:0}
+.tips .app b{font-weight:600}
+.tips .app span{color:var(--muted);font-size:14px}
+.tips table{width:100%;border-collapse:collapse;font-size:14px}
+.tips td,.tips th{text-align:left;padding:6px 8px 6px 0;border-top:1px solid var(--line);vertical-align:top}
+.tips th{font-size:12px;color:var(--muted);font-weight:600;letter-spacing:.04em;text-transform:uppercase;border-top:0}
+.tips td.num{font-variant-numeric:tabular-nums;white-space:nowrap}
+.tips tr.total td{font-weight:600}
+.tips .src{font-size:12.5px;color:var(--muted)}
+.tips .warn{background:color-mix(in srgb,var(--paid) 12%,var(--surface));border:1px solid color-mix(in srgb,var(--paid) 45%,transparent);border-radius:10px;padding:10px 12px;font-size:14px}
+.chk{display:grid;grid-template-columns:22px minmax(0,1fr) auto;gap:8px;align-items:start;padding:7px 0;border-top:1px solid var(--line);font-size:14px}
+.chk:first-of-type{border-top:0}
+.chk input{width:16px;height:16px;margin:2px 0 0;accent-color:var(--accent)}
+.chk small{color:var(--muted);font-size:12.5px;display:block}
+.chk .when{font-family:var(--mono);font-size:12px;color:var(--muted);white-space:nowrap;padding-top:2px}
+.chk input:checked + label{text-decoration:line-through;color:var(--muted)}
+svg .landbg{fill:var(--land)}
+svg .gridl{stroke:var(--grid);stroke-width:1;vector-effect:non-scaling-stroke}
+svg .river{fill:none;stroke:var(--water);stroke-linecap:round;stroke-linejoin:round}
+svg text{paint-order:stroke;stroke:var(--halo);stroke-linejoin:round}
+svg .lbl-a{fill:var(--label);font-family:var(--display)}
+svg .lbl-w{fill:var(--water-label);font-family:var(--display);font-style:italic;stroke:none}
+svg .route{fill:none;stroke-dasharray:6 5;stroke-linecap:round;vector-effect:non-scaling-stroke;opacity:.85}
+svg .num{fill:var(--on-accent);font-family:var(--body);font-weight:600;stroke:none}
+svg .mk{cursor:pointer}
+svg .ring{fill:none;stroke:var(--ink);vector-effect:non-scaling-stroke}
+@media (max-width:860px){
+  .grid{grid-template-columns:minmax(0,1fr)}
+  .mapcol{position:static}
+  .map{height:max(340px,58vh)}
+}
+@media (prefers-reduced-motion: reduce){ *{transition:none!important} }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div>
+      <h1>London, Glasgow &amp; Edinburgh</h1>
+      <p class="sub">Thu 19 – Sun 22 November 2026 · two in London, a day trip to Glasgow, a day in Edinburgh. Kirill lands at Gatwick 08:00 Thursday; we both fly home from Edinburgh 19:00 Sunday.</p>
+    </div>
+    <div class="views" role="group" aria-label="View">
+      <button type="button" id="vPlan" aria-pressed="true">Day plan</button>
+      <button type="button" id="vTips" aria-pressed="false">Before you go</button>
+    </div>
+  </header>
+
+  <div id="planView" style="display:flex;flex-direction:column;gap:16px">
+    <nav class="tabs" id="tabs" role="tablist" aria-label="Days"></nav>
+    <div class="grid">
+      <div class="mapcol">
+        <div class="map" id="map">
+          <svg id="svg" role="img" aria-label="Map of the day's stops"></svg>
+          <div class="offmap" id="offmap" hidden></div>
+          <div class="ctrls">
+            <div class="zoom"><button type="button" id="zin" aria-label="Zoom in">+</button><button type="button" id="zout" aria-label="Zoom out">−</button></div>
+            <button class="fit" id="fit" type="button">Show all stops</button>
+          </div>
+          <div class="scale" id="scale"></div>
+          <div class="note">Stop map · river and stops to scale</div>
+        </div>
+        <div class="maplinks" id="maplinks"></div>
+      </div>
+      <div class="list" id="list"></div>
+    </div>
+  </div>
+
+  <div id="tipsView" hidden>
+    <div class="tips">
+      <section class="wide">
+        <h2>Bookings</h2>
+        <p>Tick them off as they're done (the ticks stay on your own device). Book the Edinburgh hotel and Saturday dinner first: it's a busy weekend.</p>
+        <div id="checklist"></div>
+      </section>
+
+      <section>
+        <h2>Getting around</h2>
+        <h3>London</h3>
+        <ul>
+          <li>Tap in and out with a contactless card or phone on trains, Tube and buses. Daily fares cap automatically.</li>
+          <li><b>Gatwick → London Bridge:</b> Thameslink, about 30–40 min, same contactless tap.</li>
+          <li><b>King's Cross → Edinburgh:</b> LNER, about 4h20 on Friday evening. Advance tickets are far cheaper than on the day.</li>
+        </ul>
+        <h3>Glasgow day trip</h3>
+        <ul>
+          <li>ScotRail Edinburgh Waverley → Glasgow Queen Street via Falkirk High is the fast route (~42–45 min), every 15 min on Saturdays. Sort the app by journey time: three other routes are much slower.</li>
+          <li>Buy an off-peak return on the day; no booking needed.</li>
+          <li>Glasgow's subway is one small loop: Buchanan Street ⇄ Kelvinhall / Hillhead for the West End.</li>
+        </ul>
+        <h3>Edinburgh</h3>
+        <ul>
+          <li>The centre is walkable: Waverley, the Old Town and the New Town are 10–15 min apart.</li>
+          <li><b>Airport:</b> tram from Princes Street, ~35 min, airport single ~£8. Princes Street works have disrupted services this year; check on the day. Backup: Airlink 100 bus or a taxi (£25–40).</li>
+        </ul>
+      </section>
+
+      <section>
+        <h2>Apps to have</h2>
+        <div class="app"><b>Citymapper</b><span>Best for London: Tube, buses and walking in one plan.</span></div>
+        <div class="app"><b>LNER</b><span>Friday's train: e-tickets, seat numbers, platform alerts.</span></div>
+        <div class="app"><b>ScotRail</b><span>Glasgow trains; filter by journey time.</span></div>
+        <div class="app"><b>Uber</b><span>Works in all three cities; handy for Duke Street → Finnieston in Glasgow.</span></div>
+        <div class="app"><b>Barry's</b><span>Book Thursday's class here as soon as the slot opens.</span></div>
+        <div class="app"><b>Lothian / Edinburgh Trams</b><span>Buy the airport tram ticket on your phone, or just tap a contactless card on the platform.</span></div>
+      </section>
+
+      <section class="wide">
+        <h2>Prices</h2>
+        <p>Per person, approximate, checked 9 Nov 2026.</p>
+        <div style="overflow-x:auto">
+        <table>
+          <tr><th>What</th><th>Day</th><th>Price</th></tr>
+          <tr><td>Barry's East, one class</td><td><a href="#thu" data-goto="thu">Thu</a></td><td class="num">~£30</td></tr>
+          <tr><td>St Dunstan in the East, London Mithraeum, Borough Market, Spitalfields</td><td><a href="#thu" data-goto="thu">Thu</a></td><td class="num">Free</td></tr>
+          <tr><td>Postal Museum + Mail Rail (Kirill)</td><td><a href="#fri" data-goto="fri">Fri</a></td><td class="num">~£18–20</td></tr>
+          <tr><td>Chaos Karts, Arcade Arena</td><td><a href="#fri" data-goto="fri">Fri</a></td><td class="num">from ~£30</td></tr>
+          <tr><td>Guinness at Simmons, happy hour 15:00–20:00</td><td><a href="#fri" data-goto="fri">Fri</a></td><td class="num">£4 a pint</td></tr>
+          <tr><td>LNER King's Cross → Edinburgh, Advance</td><td><a href="#fri" data-goto="fri">Fri</a></td><td class="num">£50–120</td></tr>
+          <tr><td>Glasgow Cathedral, Necropolis, Kelvingrove</td><td><a href="#sat" data-goto="sat">Sat</a></td><td class="num">Free</td></tr>
+          <tr><td>Tennent's Wellpark Brewery tour, pint included</td><td><a href="#sat" data-goto="sat">Sat</a></td><td class="num">£17–21</td></tr>
+          <tr><td>Edinburgh Castle, online</td><td><a href="#sun" data-goto="sun">Sun</a></td><td class="num">~£23.50</td></tr>
+          <tr><td>Johnnie Walker Journey of Flavour, 3 cocktails</td><td><a href="#sun" data-goto="sun">Sun</a></td><td class="num">£30</td></tr>
+          <tr><td>Airport tram</td><td><a href="#sun" data-goto="sun">Sun</a></td><td class="num">~£8</td></tr>
+        </table>
+        </div>
+      </section>
+
+      <section>
+        <h2>Rough budget</h2>
+        <p>Per person, flights excluded.</p>
+        <table>
+          <tr><th>Category</th><th>GBP</th></tr>
+          <tr><td>Transport (Gatwick, Tube, LNER, Glasgow, trams)</td><td class="num">110–195</td></tr>
+          <tr><td>Activities (Barry's, karts, Tennent's, Johnnie Walker, castle)</td><td class="num">130–150</td></tr>
+          <tr><td>Food &amp; drink (Tatar Bunar, Hawksmoor, lunches, pints, cocktails at £11–16)</td><td class="num">300–360</td></tr>
+          <tr><td>Edinburgh hotel, 2 nights, room split two ways</td><td class="num">150–250</td></tr>
+          <tr class="total"><td>Total</td><td class="num">690–955</td></tr>
+        </table>
+      </section>
+
+      <section>
+        <h2>Good to know</h2>
+        <ul>
+          <li><b>Dark early:</b> sunset is around 16:00 in London and 15:45 in Scotland. Daylight things go first.</li>
+          <li><b>Weather:</b> late November is cold and often wet. Bring a proper jacket and shoes for Arthur's Seat.</li>
+          <li><b>Pubs:</b> order and pay at the bar; no table service, no tipping for drinks.</li>
+          <li><b>Restaurants:</b> a 12.5% service charge is often already on the bill in London.</li>
+          <li><b>Plugs:</b> UK type G (three flat pins).</li>
+          <li><b>Emergency:</b> 999 or 112.</li>
+          <li><b>Time:</b> UK is 1 h behind Copenhagen.</li>
+        </ul>
+      </section>
+
+      <section class="wide">
+        <h2>If there's spare time</h2>
+        <h3>London</h3>
+        <ul>
+          <li><b>Constantinople to Istanbul</b>, V&amp;A South Kensington, from 7 Nov, £25–27.</li>
+          <li><b>The Bayeux Tapestry</b>, British Museum, this autumn's big one-off loan.</li>
+          <li><b>Beyond the Streets</b>, Saatchi Gallery, from 11 Nov: graffiti and street art, £25.</li>
+          <li><b>Horizon 22</b>, Bishopsgate: free 58th-floor viewing deck, timed booking.</li>
+          <li><b>Sir John Soane's Museum</b>, Lincoln's Inn Fields: free, crammed and strange.</li>
+          <li><b>Wellcome Collection</b>, Euston: free, medicine and the human body.</li>
+          <li><b>Leake Street Tunnel</b>, Waterloo: legal graffiti tunnel, near Arcade Arena.</li>
+          <li><b>Somerset House ice rink</b>, Strand: timed skating sessions.</li>
+          <li>Other workouts: <b>Kobox</b> (boxing HIIT), <b>1Rebel</b> (Reshape, Ride), <b>Psycle</b> or <b>SoulCycle</b> (cycling).</li>
+        </ul>
+        <h3>Glasgow &amp; Edinburgh</h3>
+        <ul>
+          <li><b>Clydeside Distillery</b>, Glasgow: on the river near Finnieston, tour ends with three drams.</li>
+          <li><b>Holyrood Distillery</b>, Edinburgh: at the foot of Arthur's Seat, ~90 min, £20–25.</li>
+          <li><b>Port of Leith Distillery</b>: nine-storey vertical distillery with a bar on top.</li>
+          <li><b>Barnton nuclear bunker tours</b>, Edinburgh: Saturdays and Sundays.</li>
+          <li><b>Bramble</b>, 16A Queen St: walk-in-only basement cocktail bar.</li>
+          <li><b>Kyloe</b>, West End: dry-aged Scottish beef; the backup if Hawksmoor is full.</li>
+        </ul>
+      </section>
+
+      <section class="wide">
+        <h2>Sources</h2>
+        <p class="src">Checked 9 Nov 2026; times and prices can change.
+          <a href="https://www.timeout.com/london/restaurants/tatar-bunar" target="_blank" rel="noopener">Tatar Bunar</a> ·
+          <a href="https://www.barrys.com/studio/london-east/" target="_blank" rel="noopener">Barry's East</a> ·
+          <a href="https://www.timeout.com/london/museums/british-postal-museum-and-archive" target="_blank" rel="noopener">Postal Museum</a> ·
+          <a href="https://www.timeout.com/london/news/arcade-arena-london-southbank-games-080926" target="_blank" rel="noopener">Arcade Arena</a> ·
+          <a href="https://www.simmonsbar.co.uk/?p=264" target="_blank" rel="noopener">Simmons Greek Street</a> ·
+          <a href="https://seat61.com/london-to-edinburgh-by-train.htm" target="_blank" rel="noopener">London–Edinburgh trains</a> ·
+          <a href="https://www.edinburghtourism.org/edinburgh-to-glasgow/" target="_blank" rel="noopener">Edinburgh–Glasgow trains</a> ·
+          <a href="https://tennents.com/uk/experience/tours" target="_blank" rel="noopener">Tennent's tours</a> ·
+          <a href="https://www.johnniewalker.com/en-gb/visit-us-princes-street/book-whisky-tasting/johnnie-walker-s-journey-of-flavour" target="_blank" rel="noopener">Johnnie Walker Journey of Flavour</a> ·
+          <a href="https://www.edinburghtourism.org/airport-to-city-centre/" target="_blank" rel="noopener">Edinburgh airport transport</a> ·
+          <a href="https://www.edinburghtourism.org/cocktail-bars-speakeasies/" target="_blank" rel="noopener">Edinburgh cocktail bars</a> ·
+          <a href="https://londonist.com/london/art-and-photography/the-top-exhibitions-to-see-in-london-november-and-december-2026" target="_blank" rel="noopener">London exhibitions</a></p>
+      </section>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+"use strict";
+var KM_LAT = 110.574;
+
+var RIVERS = {
+  london: { name:"River Thames", width:0.24, label:[51.5045,-0.1115],
+    pts:[[51.4836,-0.1380],[51.4875,-0.1270],[51.4946,-0.1236],[51.5008,-0.1219],[51.5063,-0.1205],[51.5087,-0.1166],[51.5097,-0.1043],[51.5095,-0.0985],[51.5085,-0.0943],[51.5079,-0.0877],[51.5055,-0.0754],[51.5047,-0.0640]] },
+  glasgow: { name:"River Clyde", width:0.15, label:[51.0,0], labelAt:[55.8566,-4.2640],
+    pts:[[55.8500,-4.2330],[55.8536,-4.2465],[55.8562,-4.2580],[55.8572,-4.2700],[55.8597,-4.2856],[55.8625,-4.2960],[55.8655,-4.3060]] }
+};
+var AREAS = {
+  london: [["Soho",51.5150,-0.1355],["Shoreditch",51.5262,-0.0745],["The City",51.5145,-0.0960],["Clerkenwell",51.5225,-0.1060],["South Bank",51.5055,-0.1130],["Lambeth",51.4955,-0.1140],["King's Cross",51.5335,-0.1245],["Borough",51.5025,-0.0935],["Covent Garden",51.5118,-0.1235],["Westminster",51.4990,-0.1335]],
+  glasgow: [["City centre",51.0,0,55.8610,-4.2580],["Merchant City",0,0,55.8588,-4.2440],["Finnieston",0,0,55.8630,-4.2870],["West End",0,0,55.8775,-4.2960],["Kelvingrove Park",0,0,55.8695,-4.2845],["Dennistoun",0,0,55.8605,-4.2200]],
+  edinburgh: [["Old Town",55.9497,-3.1880],["New Town",55.9560,-3.1985],["Holyrood Park",55.9465,-3.1690],["West End",55.9488,-3.2125],["Princes St Gardens",55.9509,-3.1975],["Calton Hill",55.9555,-3.1820]]
+};
+AREAS.glasgow = AREAS.glasgow.map(function(a){ return [a[0],a[3],a[4]]; });
+
+function gq(s){ return "https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent(s); }
+
+var DAYS = [
+ { id:"thu", tab:"Thu 19", place:"London", date:"Thursday 19 November", city:"london",
+   title:"Shoreditch night: Barry's and a Ukrainian feast",
+   intro:"Kirill explores the City on his own while you work, then we meet for Barry's at 18:30 and dinner five minutes away.",
+   off:"<b>08:00</b> Kirill lands at Gatwick → Thameslink to London Bridge, ~35 min.",
+   stops:[
+    {t:"08:00", n:"Land at Gatwick, Thameslink to London Bridge", p:"Tap in with contactless; ~30–40 min.", who:"Kirill", off:true},
+    {t:"09:15", n:"London Bridge: drop the bag", p:"At your place, or a luggage-storage app near the station.", who:"Kirill", ll:[51.5052,-0.0864], q:"London Bridge station"},
+    {t:"09:45", n:"St Dunstan in the East", p:"Church bombed in the Blitz, now an overgrown garden inside the ruins.", who:"Kirill", fee:["Free","free"], ll:[51.5098,-0.0829], q:"St Dunstan in the East, London"},
+    {t:"10:30", n:"London Mithraeum", p:"A Roman temple to Mithras rebuilt under the Bloomberg building, with sound and light.", who:"Kirill", fee:["Free","free"], ll:[51.5122,-0.0911], q:"London Mithraeum Bloomberg SPACE"},
+    {t:"12:00", n:"Lunch at Borough Market", p:"Thursday is a full market day (10:00–17:00). Graze these four, all within a couple of minutes of each other:", who:"Kirill", ll:[51.5055,-0.0910], q:"Borough Market, London",
+      subs:[
+        ["Ginger Pig","The butcher's cult hot sausage roll; Scotch eggs too. Three Crown Square.","Ginger Pig Borough Market"],
+        ["The Black Pig","Honey, truffle and parmesan pork ciabatta, finished over coals.","The Black Pig Borough Market"],
+        ["Turnips","The viral cup of strawberries under warm chocolate, ~£8.50.","Turnips Borough Market"],
+        ["Bread Ahead","Filled doughnuts from the original bakery stall on Cathedral Street.","Bread Ahead Borough Market Cathedral Street"]
+      ]},
+    {t:"13:30", n:"Rest", p:"Up since ~04:30; nap or a slow coffee before the evening.", who:"Kirill", off:true},
+    {t:"16:30", n:"Spitalfields Market and Brick Lane", p:"Old covered market, then the curry-house and vintage street next door.", who:"Kirill", fee:["Free","free"], ll:[51.5196,-0.0754], q:"Old Spitalfields Market"},
+    {t:"18:30", n:"Barry's East, 2 Worship St", p:"Treadmill and floor HIIT in the red room. Showers and towels on site.", fee:["~£30","paid"], book:true, ll:[51.5215,-0.0855], q:"Barry's London East 2 Worship Street",
+      more:"<p>Booking opens about a week ahead (around Thu 12 Nov): grab two spots straight away, evening classes fill first.</p><p>Bring trainers and a change of clothes; lockers have four-digit codes.</p>"},
+    {t:"20:00", n:"Dinner at Tatar Bunar, 152 Curtain Rd", p:"Southern Ukrainian (Bessarabian) cooking from an Odesa team; in the Michelin Guide since March 2026. Order a grill centrepiece and the onion bread with lardo.", fee:["~£60–80","paid"], book:true, ll:[51.5262,-0.0808], q:"Tatar Bunar, 152 Curtain Road, London",
+      more:"<p>Book by phone: 07771 013190. Mon–Fri from 17:00.</p><p>Mriya in Earl's Court, long London's best-known Ukrainian place, closed in June 2026, so this is the pick.</p>"},
+    {t:"22:30", n:"One drink in Shoreditch, then bed", p:"Keep it short: Friday is a big day.", off:true}
+   ]},
+ { id:"fri", tab:"Fri 20", place:"London → Edinburgh", date:"Friday 20 November", city:"london",
+   title:"Mario Kart, £4 Guinness, train north",
+   intro:"Kirill rides the old Post Office railway and stops at Uniqlo while you finish your short day. Then lunch, real-life Mario Kart and Soho at happy hour before the 18:30 train.",
+   off:"<b>~18:30</b> LNER King's Cross → Edinburgh Waverley, arrive <b>~22:50</b>.",
+   stops:[
+    {t:"10:00", n:"Postal Museum + Mail Rail, Clerkenwell", p:"15-minute ride through the tunnels of the Post Office's driverless underground railway (1927–2003), then the museum.", who:"Kirill", fee:["~£18–20","paid"], book:true, ll:[51.5246,-0.1134], q:"The Postal Museum, Phoenix Place, London"},
+    {t:"12:15", n:"Uniqlo Regent Street, 101–113 Regent St", p:"The big three-floor flagship near Piccadilly Circus, five minutes from lunch.", who:"Kirill", ll:[51.5108,-0.1372], q:"Uniqlo Regent Street, 101-113 Regent Street, London"},
+    {t:"13:00", n:"Lunch at Dishoom Carnaby, 22 Kingly St", p:"Bombay café: the main meal of the day before the train.", fee:["~£30","paid"], ll:[51.5129,-0.1395], q:"Dishoom Carnaby, Kingly Street, London"},
+    {t:"14:30", n:"Chaos Karts at Arcade Arena, 26 Lambeth High St", p:"Electric karts racing on a projected track: basically Mario Kart in real life. Opened September 2026.", fee:["from ~£30","paid"], book:true, ll:[51.4930,-0.1209], q:"Arcade Arena, 26 Lambeth High Street, London",
+      more:"<p>Bakerloo line Piccadilly Circus → Lambeth North, ~10 min, then a short walk. The venue also has Pac-Man Live and Alien Invasion if we want a second game.</p>"},
+    {t:"16:15", n:"£4 Guinness at Simmons Greek Street", p:"Retro Soho bar with hidden karaoke rooms. Happy hour 15:00–20:00, Sunday to Friday.", fee:["£4 a pint","paid"], ll:[51.5140,-0.1314], q:"Simmons Greek Street, Soho, London"},
+    {t:"17:15", n:"The Toucan, 19 Carlisle St", p:"Soho's original Guinness pub, tiny and covered in Guinness memorabilia. One more if there's time.", ll:[51.5155,-0.1334], q:"The Toucan, 19 Carlisle Street, London"},
+    {t:"18:00", n:"King's Cross", p:"Piccadilly line from Leicester Square, ~10 min. Grab food and drinks for the train.", ll:[51.5309,-0.1233], q:"London King's Cross station"},
+    {t:"18:30", n:"LNER to Edinburgh Waverley", p:"About 4h20. Advance tickets now; Friday evening fills up.", fee:["£50–120","paid"], book:true, off:true},
+    {t:"22:50", n:"Edinburgh: check in", p:"Hotel in the New Town near Queen Street. Straight to bed: Glasgow tomorrow.", off:true}
+   ]},
+ { id:"sat", tab:"Sat 21", place:"Glasgow day trip", date:"Saturday 21 November", city:"glasgow",
+   title:"Glasgow: necropolis, brewery, West End",
+   intro:"A day in Glasgow, 45 minutes from Edinburgh by train, then back for steak and Edinburgh's best cocktail bar.",
+   off:"<b>09:15</b> ScotRail Edinburgh → Glasgow Queen Street, ~45 min.<br><b>~18:15</b> back to Edinburgh for dinner and drinks (listed below, not on this map).",
+   stops:[
+    {t:"09:15", n:"Train: Waverley → Glasgow Queen Street", p:"Fast route via Falkirk High; off-peak return on the day.", fee:["~£17–20 return","paid"], ll:[55.8623,-4.2515], q:"Glasgow Queen Street station"},
+    {t:"10:15", n:"Glasgow Cathedral", p:"Medieval cathedral that survived the Reformation almost intact.", fee:["Free","free"], ll:[55.8630,-4.2346], q:"Glasgow Cathedral"},
+    {t:"11:00", n:"The Necropolis", p:"Victorian hilltop cemetery behind the cathedral; best view over the city.", fee:["Free","free"], ll:[55.8622,-4.2312], q:"Glasgow Necropolis"},
+    {t:"12:00", n:"Tennent's Wellpark Brewery tour, 161 Duke St", p:"Behind the scenes at Scotland's oldest brewery, ~1.5 h, ending with a pint of unpasteurised tank lager straight from the copper tanks.", fee:["£17–21","paid"], book:true, ll:[55.8598,-4.2298], q:"Tennent's Wellpark Brewery, 161 Duke Street, Glasgow",
+      more:"<p>Tours start hourly from 11:00 to 16:00; book the 12:00 slot online. Ages 18+. Enter at the Tennent's Visitor Centre.</p>"},
+    {t:"13:45", n:"Lunch in Finnieston", p:"Uber or taxi from Duke Street, ~10 min. Glasgow's restaurant strip on Argyle Street.", ll:[55.8648,-4.2850], q:"Argyle Street Finnieston, Glasgow"},
+    {t:"15:00", n:"Kelvingrove Art Gallery and Museum", p:"Free; closes 17:00. Dalí's Christ of St John of the Cross and a Spitfire hanging in the hall.", fee:["Free","free"], ll:[55.8686,-4.2906], q:"Kelvingrove Art Gallery and Museum"},
+    {t:"16:15", n:"University of Glasgow cloisters", p:"Gothic quad on the hill, ten minutes' walk through Kelvingrove Park.", fee:["Free","free"], ll:[55.8721,-4.2884], q:"University of Glasgow cloisters"},
+    {t:"16:45", n:"Pint on Ashton Lane", p:"Cobbled West End lane of pubs; Hillhead subway is at the end of it.", ll:[55.8750,-4.2932], q:"Ashton Lane, Glasgow"},
+    {t:"17:45", n:"Subway Hillhead → Buchanan St, train back", p:"~18:15 from Queen Street, in Edinburgh ~19:00.", off:true},
+    {t:"19:45", n:"Dinner at Hawksmoor Edinburgh", p:"Steakhouse in a former banking hall by St Andrew Square. One of the city's most-booked tables: reserve now.", fee:["~£80–110","paid"], book:true, off:true, q:"Hawksmoor Edinburgh"},
+    {t:"22:00", n:"Panda & Sons, 79 Queen St", p:"Speakeasy behind a fake barbershop and a bookshelf door; named among the world's best bars in 2025–26.", fee:["£11–16 a cocktail","paid"], book:true, off:true, q:"Panda & Sons, 79 Queen Street, Edinburgh"}
+   ]},
+ { id:"sun", tab:"Sun 22", place:"Edinburgh", date:"Sunday 22 November", city:"edinburgh",
+   title:"Edinburgh: hill, castle, whisky, home",
+   intro:"Sunrise on Arthur's Seat, the castle and the Old Town, then a whisky experience on Princes Street before the airport tram.",
+   off:"<b>16:15</b> Tram to the airport, ~35 min. Flight <b>19:00</b>.",
+   stops:[
+    {t:"07:45", n:"Arthur's Seat at sunrise", p:"Up and back from Holyrood, ~1–1.5 h. Sunrise ~08:10. Proper shoes: it's muddy in November.", fee:["Free","free"], ll:[55.9441,-3.1618], q:"Arthur's Seat, Edinburgh"},
+    {t:"09:15", n:"Check out, big breakfast", p:"Leave the bags at the hotel.", off:true},
+    {t:"10:30", n:"Edinburgh Castle", p:"Crown Jewels, the One O'Clock Gun battery, views over the New Town. Allow 1.5 h.", fee:["~£23.50","paid"], book:true, ll:[55.9486,-3.1999], q:"Edinburgh Castle"},
+    {t:"12:00", n:"Royal Mile → Victoria Street", p:"Downhill along the curved, colourful street to the Grassmarket.", fee:["Free","free"], ll:[55.9488,-3.1935], q:"Victoria Street, Edinburgh"},
+    {t:"12:45", n:"Pub lunch in the Grassmarket", p:"Old market square under the castle rock, lined with pubs.", ll:[55.9474,-3.1962], q:"Grassmarket, Edinburgh"},
+    {t:"14:00", n:"Johnnie Walker Princes Street: Journey of Flavour", p:"90 minutes, three cocktails made to match a flavour quiz. Rooftop bar with castle views afterwards if time allows.", fee:["£30","paid"], book:true, ll:[55.9502,-3.2068], q:"Johnnie Walker Princes Street, 145 Princes Street, Edinburgh",
+      more:"<p>Use the entrance on Hope Street and show the ticket in the lobby.</p>"},
+    {t:"15:30", n:"Christmas market, East Princes Street Gardens", p:"Walk back along the gardens; open 10:00–22:00.", fee:["Free","free"], ll:[55.9519,-3.1925], q:"Edinburgh Christmas Market, East Princes Street Gardens"},
+    {t:"15:50", n:"Collect bags, tram to the airport at 16:15", p:"Airport single ~£8. Check the tram on the day; backup Airlink 100 or taxi (£25–40).", off:true},
+    {t:"17:00", n:"At the airport", p:"Two hours before the 19:00 flight.", off:true}
+   ]}
+];
+
+var CHECK = [
+  ["hotel","Edinburgh hotel, Fri–Sun (2 nights)","New Town near Queen Street; rooms go fast this weekend","Now"],
+  ["lner","LNER Advance tickets, Fri ~18:30","King's Cross → Edinburgh Waverley","Now"],
+  ["haw","Hawksmoor Edinburgh, Sat 19:45 for 2","","Now"],
+  ["tatar","Tatar Bunar, Thu 20:00 for 2","Phone 07771 013190","Now"],
+  ["karts","Chaos Karts, Fri ~14:30 for 2","arcadearena.co.uk","Now"],
+  ["tennents","Tennent's brewery tour, Sat 12:00 for 2","tennents.com","Now"],
+  ["jw","Johnnie Walker Journey of Flavour, Sun 14:00 for 2","johnniewalker.com","Now"],
+  ["panda","Panda & Sons, Sat ~22:00 for 2","","This week"],
+  ["castle","Edinburgh Castle, Sun 10:30","Timed entry, online","This week"],
+  ["mail","Postal Museum + Mail Rail, Fri 10:00","Kirill only","This week"],
+  ["barrys","Barry's East, Thu 18:30, two spots","Opens about a week ahead","~Thu 12 Nov"]
+];
+
+/* ---------- state ---------- */
+var cur = 0, view = "plan";
+var svg = document.getElementById("svg");
+var mapEl = document.getElementById("map");
+var vb = {x:0,y:0,w:4,h:3};
+var proj = null;
+
+function store(k,v){ try{ if(v===undefined) return localStorage.getItem(k); localStorage.setItem(k,v);}catch(e){ return null; } }
+
+function makeProj(lat0, lon0){
+  var kx = 111.320*Math.cos(lat0*Math.PI/180);
+  return function(ll){ return [ (ll[1]-lon0)*kx, -(ll[0]-lat0)*KM_LAT ]; };
+}
+
+/* ---------- tabs ---------- */
+var tabs = document.getElementById("tabs");
+DAYS.forEach(function(d,i){
+  var b = document.createElement("button");
+  b.type="button"; b.className="tab"; b.setAttribute("role","tab"); b.id="tab-"+d.id;
+  b.innerHTML = d.tab + "<small>"+d.place+"</small>";
+  b.addEventListener("click", function(){ go(d.id); });
+  tabs.appendChild(b);
+});
+
+function esc(s){ return String(s).replace(/[&<>"]/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;"}[c];}); }
+
+/* ---------- list ---------- */
+function renderList(){
+  var d = DAYS[cur], dc = "var(--d"+(cur+1)+")";
+  var list = document.getElementById("list");
+  var h = '<div class="dayhead"><div class="date">'+d.date+' · '+d.place+'</div><h2>'+d.title+'</h2><p>'+d.intro+'</p></div><ol class="stops">';
+  var k = 0;
+  d.stops.forEach(function(s,i){
+    var pin = s.off || !s.ll ? '<span class="pin off" aria-hidden="true">·</span>' : '<button type="button" class="pin" data-i="'+i+'" aria-label="Show stop '+(k+1)+' on the map">'+(++k)+'</button>';
+    s._n = (s.off||!s.ll) ? null : k;
+    var meta = "";
+    if(s.who) meta += '<span class="who">'+s.who+' solo</span>';
+    if(s.fee) meta += '<span class="fee '+s.fee[1]+'">'+esc(s.fee[0])+'</span>';
+    if(s.book) meta += '<span class="book">Book ahead</span>';
+    if(s.q) meta += '<a class="mapl" href="'+gq(s.q)+'" target="_blank" rel="noopener">Google Maps ↗</a>';
+    h += '<li class="stop" id="s-'+i+'" style="--dc:'+dc+'"><span class="t">'+s.t+'</span>'+pin+
+      '<div class="what"><strong>'+esc(s.n)+'</strong><p>'+esc(s.p)+'</p>'+
+      (s.subs?'<ul class="subs">'+s.subs.map(function(x){ return '<li><b>'+esc(x[0])+'</b> <span>'+esc(x[1])+'</span> <a class="mapl" href="'+gq(x[2])+'" target="_blank" rel="noopener">Map ↗</a></li>'; }).join("")+'</ul>':'')+
+      (meta?'<div class="meta">'+meta+'</div>':'')+
+      (s.more?'<details class="info"><summary>More</summary><div class="txt">'+s.more+'</div></details>':'')+'</div></li>';
+  });
+  h += '</ol>';
+  list.innerHTML = h;
+  list.querySelectorAll(".pin[data-i]").forEach(function(b){
+    b.addEventListener("click", function(){ focusStop(+b.dataset.i, true); });
+  });
+  // map links
+  var pts = d.stops.filter(function(s){ return s.ll && !s.off; });
+  var ml = document.getElementById("maplinks");
+  if(pts.length>1){
+    var o = pts[0], de = pts[pts.length-1], w = pts.slice(1,-1).slice(0,8);
+    var url = "https://www.google.com/maps/dir/?api=1&travelmode=walking&origin="+o.ll.join(",")+"&destination="+de.ll.join(",")+(w.length?"&waypoints="+w.map(function(s){return s.ll.join(",");}).join("%7C"):"");
+    ml.innerHTML = '<a href="'+url+'" target="_blank" rel="noopener">Open the day\'s route in Google Maps ↗</a><span>Numbered stops in order; tap a number to find it.</span>';
+  } else ml.innerHTML = "";
+}
+
+/* ---------- map ---------- */
+var NS = "http://www.w3.org/2000/svg";
+function el(tag, attrs, parent){ var e=document.createElementNS(NS,tag); for(var a in attrs) e.setAttribute(a,attrs[a]); if(parent) parent.appendChild(e); return e; }
+var focusIdx = -1;
+
+function dayBounds(){
+  var d = DAYS[cur], xs=[], ys=[];
+  d.stops.forEach(function(s){ if(s.ll && !s.off){ var p=proj(s.ll); xs.push(p[0]); ys.push(p[1]); } });
+  return {x0:Math.min.apply(0,xs), x1:Math.max.apply(0,xs), y0:Math.min.apply(0,ys), y1:Math.max.apply(0,ys)};
+}
+function fit(){
+  var b = dayBounds(), W = mapEl.clientWidth||600, H = mapEl.clientHeight||500;
+  var om = document.getElementById("offmap");
+  var top = (om.hidden?0:om.offsetHeight+10)+34, bot = 40, side = 44;
+  var aw = Math.max(W-2*side, 80), ah = Math.max(H-top-bot, 80);
+  var w = Math.max(b.x1-b.x0, 0.3), h = Math.max(b.y1-b.y0, 0.3);
+  var k = Math.max(w/aw, h/ah);
+  vb.w = W*k; vb.h = H*k;
+  vb.x = (b.x0+b.x1)/2 - vb.w/2;
+  vb.y = b.y0 - top*k - (ah*k - (b.y1-b.y0))/2;
+  draw();
+}
+function setVB(){ svg.setAttribute("viewBox", vb.x+" "+vb.y+" "+vb.w+" "+vb.h); }
+function pxKm(){ return vb.w/(mapEl.clientWidth||600); }
+
+function draw(){
+  var d = DAYS[cur], dc = getComputedStyle(document.documentElement).getPropertyValue("--d"+(cur+1)).trim();
+  setVB();
+  while(svg.firstChild) svg.removeChild(svg.firstChild);
+  var px = pxKm();
+  el("rect",{x:vb.x-50,y:vb.y-50,width:vb.w+100,height:vb.h+100,class:"landbg"},svg);
+  // grid every 0.5 km
+  var g = el("g",{},svg), step = vb.w>12?2:(vb.w>5?1:0.5);
+  for(var x=Math.floor(vb.x/step)*step; x<vb.x+vb.w; x+=step) el("line",{x1:x,y1:vb.y,x2:x,y2:vb.y+vb.h,class:"gridl"},g);
+  for(var y=Math.floor(vb.y/step)*step; y<vb.y+vb.h; y+=step) el("line",{x1:vb.x,y1:y,x2:vb.x+vb.w,y2:y,class:"gridl"},g);
+  // river
+  var r = RIVERS[d.city];
+  if(r){
+    var pts = r.pts.map(proj);
+    var dd = "M"+pts.map(function(p){return p[0].toFixed(4)+" "+p[1].toFixed(4);}).join(" L");
+    el("path",{d:dd,class:"river","stroke-width":Math.max(r.width, 7*px)},svg);
+    var la = proj(r.labelAt||r.label), t = el("text",{x:la[0],y:la[1],"font-size":12*px,"text-anchor":"middle",class:"lbl-w"},svg);
+    t.textContent = r.name;
+  }
+  // areas
+  (AREAS[d.city]||[]).forEach(function(a){
+    var p = proj([a[1],a[2]]);
+    var t = el("text",{x:p[0],y:p[1],"font-size":13*px,"text-anchor":"middle",class:"lbl-a","stroke-width":3*px},svg);
+    t.textContent = a[0];
+  });
+  // route
+  var mp = d.stops.filter(function(s){ return s.ll && !s.off; }).map(function(s){ return proj(s.ll); });
+  if(mp.length>1){
+    el("path",{d:"M"+mp.map(function(p){return p[0]+" "+p[1];}).join(" L"),class:"route",stroke:dc,"stroke-width":2.2},svg);
+  }
+  // markers
+  var R = 11*px;
+  d.stops.forEach(function(s,i){
+    if(!s.ll || s.off) return;
+    var p = proj(s.ll), gm = el("g",{class:"mk",tabindex:"0",role:"button","aria-label":s._n+". "+s.n},svg);
+    if(i===focusIdx) el("circle",{cx:p[0],cy:p[1],r:R*1.55,class:"ring","stroke-width":2},gm);
+    el("circle",{cx:p[0],cy:p[1],r:R,fill:dc,stroke:"var(--surface)","stroke-width":1.6*px},gm);
+    var t = el("text",{x:p[0],y:p[1]+4.2*px,"font-size":12*px,"text-anchor":"middle",class:"num"},gm);
+    t.textContent = s._n;
+    var ttl = el("title",{},gm); ttl.textContent = s._n+". "+s.n+" · "+s.t;
+    gm.addEventListener("click",function(){ focusStop(i,false); });
+    gm.addEventListener("keydown",function(e){ if(e.key==="Enter"||e.key===" "){ e.preventDefault(); focusStop(i,false);} });
+  });
+  // scale bar
+  var target = 110*px, nice=[0.1,0.2,0.25,0.5,1,2,5,10], km = nice[0];
+  for(var n=0;n<nice.length;n++){ if(nice[n]<=target) km=nice[n]; }
+  document.getElementById("scale").innerHTML = (km<1? (km*1000)+" m" : km+" km") + '<i style="width:'+(km/px)+'px"></i>';
+}
+
+function focusStop(i, fromList){
+  focusIdx = i;
+  document.querySelectorAll(".stop.focus").forEach(function(e){ e.classList.remove("focus"); });
+  var li = document.getElementById("s-"+i); if(li){ li.classList.add("focus"); if(!fromList) li.scrollIntoView({block:"nearest",behavior:"smooth"}); }
+  var s = DAYS[cur].stops[i];
+  if(fromList && s.ll){
+    var p = proj(s.ll), inside = p[0]>vb.x+vb.w*0.08 && p[0]<vb.x+vb.w*0.92 && p[1]>vb.y+vb.h*0.08 && p[1]<vb.y+vb.h*0.92;
+    if(!inside){ vb.x = p[0]-vb.w/2; vb.y = p[1]-vb.h/2; }
+    if(window.matchMedia("(max-width:860px)").matches) mapEl.scrollIntoView({block:"nearest",behavior:"smooth"});
+  }
+  draw();
+}
+
+function zoom(f, cx, cy){
+  if(cx===undefined){ cx = vb.x+vb.w/2; cy = vb.y+vb.h/2; }
+  var nw = Math.min(Math.max(vb.w*f, 0.4), 30), k = nw/vb.w;
+  vb.x = cx-(cx-vb.x)*k; vb.y = cy-(cy-vb.y)*k; vb.w = nw; vb.h = vb.h*k;
+  draw();
+}
+document.getElementById("zin").addEventListener("click",function(){ zoom(1/1.4); });
+document.getElementById("zout").addEventListener("click",function(){ zoom(1.4); });
+document.getElementById("fit").addEventListener("click",fit);
+svg.addEventListener("wheel",function(e){
+  e.preventDefault();
+  var r = svg.getBoundingClientRect(), cx = vb.x+(e.clientX-r.left)/r.width*vb.w, cy = vb.y+(e.clientY-r.top)/r.height*vb.h;
+  zoom(e.deltaY>0?1.15:1/1.15, cx, cy);
+},{passive:false});
+var ptrs = {}, last = null, pinch0 = null;
+svg.addEventListener("pointerdown",function(e){
+  if(e.target.closest && e.target.closest(".mk")) return;
+  svg.setPointerCapture(e.pointerId); ptrs[e.pointerId]={x:e.clientX,y:e.clientY}; svg.classList.add("dragging");
+  last = {x:e.clientX,y:e.clientY}; pinch0 = null;
+});
+svg.addEventListener("pointermove",function(e){
+  if(!ptrs[e.pointerId]) return;
+  ptrs[e.pointerId]={x:e.clientX,y:e.clientY};
+  var ids = Object.keys(ptrs), r = svg.getBoundingClientRect();
+  if(ids.length===2){
+    var a=ptrs[ids[0]], b=ptrs[ids[1]], dist=Math.hypot(a.x-b.x,a.y-b.y);
+    if(pinch0){ var cx = vb.x+((a.x+b.x)/2-r.left)/r.width*vb.w, cy = vb.y+((a.y+b.y)/2-r.top)/r.height*vb.h; zoom(pinch0/dist, cx, cy); }
+    pinch0 = dist; return;
+  }
+  if(last){ vb.x -= (e.clientX-last.x)/r.width*vb.w; vb.y -= (e.clientY-last.y)/r.height*vb.h; last={x:e.clientX,y:e.clientY}; draw(); }
+});
+function up(e){ delete ptrs[e.pointerId]; if(!Object.keys(ptrs).length){ svg.classList.remove("dragging"); last=null; pinch0=null; } }
+svg.addEventListener("pointerup",up); svg.addEventListener("pointercancel",up);
+
+/* ---------- checklist ---------- */
+var cl = document.getElementById("checklist");
+cl.innerHTML = CHECK.map(function(c){
+  return '<div class="chk"><input type="checkbox" id="c-'+c[0]+'"'+(store("uktrip-"+c[0])==="1"?" checked":"")+'><label for="c-'+c[0]+'">'+esc(c[1])+(c[2]?'<small>'+esc(c[2])+'</small>':'')+'</label><span class="when">'+c[3]+'</span></div>';
+}).join("");
+cl.querySelectorAll("input").forEach(function(i){ i.addEventListener("change",function(){ store("uktrip-"+i.id.slice(2), i.checked?"1":"0"); }); });
+
+/* ---------- routing ---------- */
+function go(id){ if(location.hash!=="#"+id) location.hash = id; else route(); }
+function route(){
+  var h = (location.hash||"").slice(1);
+  if(h==="tips"){ view="tips"; }
+  else { view="plan"; var i = DAYS.findIndex(function(d){return d.id===h;}); cur = i<0 ? cur : i; }
+  document.getElementById("planView").style.display = view==="plan"?"flex":"none";
+  document.getElementById("tipsView").hidden = view!=="tips";
+  document.getElementById("vPlan").setAttribute("aria-pressed", view==="plan");
+  document.getElementById("vTips").setAttribute("aria-pressed", view==="tips");
+  if(view==="plan"){
+    DAYS.forEach(function(d,i){ document.getElementById("tab-"+d.id).setAttribute("aria-selected", i===cur); });
+    var d = DAYS[cur];
+    var c = {london:[51.512,-0.105], glasgow:[55.864,-4.26], edinburgh:[55.951,-3.19]}[d.city];
+    proj = makeProj(c[0], c[1]);
+    focusIdx = -1;
+    var om = document.getElementById("offmap"); om.innerHTML = d.off; om.hidden = !d.off;
+    renderList();
+    requestAnimationFrame(fit);
+  }
+}
+document.getElementById("vPlan").addEventListener("click",function(){ go(DAYS[cur].id); });
+document.getElementById("vTips").addEventListener("click",function(){ go("tips"); });
+document.querySelectorAll("[data-goto]").forEach(function(a){ a.addEventListener("click",function(e){ e.preventDefault(); go(a.dataset.goto); window.scrollTo(0,0); }); });
+window.addEventListener("hashchange", route);
+var rt; window.addEventListener("resize",function(){ clearTimeout(rt); rt=setTimeout(function(){ if(view==="plan") fit(); },150); });
+if(window.matchMedia) window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change",function(){ if(view==="plan") draw(); });
+new MutationObserver(function(){ if(view==="plan") draw(); }).observe(document.documentElement,{attributes:true,attributeFilter:["data-theme"]});
+route();
+})();
+</script>
+</body>
+</html>
