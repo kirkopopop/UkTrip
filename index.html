@@ -274,7 +274,7 @@ details.more .txt p{margin:0}
       <section class="wide bookings">
         <div class="bk-head"><h2>Bookings</h2><span class="progress" id="progress"></span></div>
         <div class="bar" aria-hidden="true"><i id="bar"></i></div>
-        <p>Book the sleeper, the Glasgow hotel and Porter &amp; Rye first: it's a busy weekend. Ticks stay on your own phone.</p>
+        <p>Book the sleeper and Saturday dinner first: it's a busy weekend. Ticks stay on your own phone.</p>
         <div class="checks" id="checklist"></div>
       </section>
 
@@ -324,7 +324,7 @@ details.more .txt p{margin:0}
           <tr><td>Interactive experience (karts, Crystal Maze, Escape Arcade, Prison Island)</td><td><a href="#fri" data-goto="fri">Fri</a></td><td class="num">~£25–79</td></tr>
           <tr><td>Heard Covent Garden, burger and a drink</td><td><a href="#fri" data-goto="fri">Fri</a></td><td class="num">~£25–40</td></tr>
           <tr><td>Caledonian Sleeper, room for two (current fare)</td><td><a href="#fri" data-goto="fri">Fri</a></td><td class="num">~£158 each</td></tr>
-          <tr><td>Glasgow hotel, 1 night (~1,500 DKK a room)</td><td><a href="#sat" data-goto="sat">Sat</a></td><td class="num">~£85 each</td></tr>
+          <tr><td>Maldron Hotel Glasgow City, 1 night (~1,500 DKK a room)</td><td><a href="#sat" data-goto="sat">Sat</a></td><td class="num">~£85 each</td></tr>
           <tr><td>Calton Hill, Royal Mile, Christmas market</td><td><a href="#sat" data-goto="sat">Sat</a></td><td class="num">Free</td></tr>
           <tr><td>Glasgow Cathedral, Necropolis</td><td><a href="#sun" data-goto="sun">Sun</a></td><td class="num">Free</td></tr>
           <tr><td>ScotRail Glasgow ⇄ Edinburgh return</td><td><a href="#sat" data-goto="sat">Sat</a></td><td class="num">~£17–20</td></tr>
@@ -495,9 +495,9 @@ var DAYS = [
  { id:"sat", tab:"Sat 21", place:"Glasgow ⇄ Edinburgh", date:"Saturday 21 November", city:"edinburgh",
    title:"Edinburgh by day, Glasgow by night",
    intro:"Off the sleeper in Glasgow, bags at the hotel, and a 50-minute train to Edinburgh for the castle, the Old Town, Johnnie Walker and dusk on Calton Hill. Back to Glasgow for dry-aged steak and the city's best cocktail bar. We sleep in Glasgow.",
-   off:"<b>~07:30</b> Sleeper arrives at Glasgow Central; bags to the hotel.<br><b>~08:30</b> ScotRail Glasgow Queen Street → Edinburgh Waverley, ~50 min.<br><b>~17:15</b> Back to Glasgow; dinner and drinks below, not on this map.",
+   off:"<b>~07:30</b> Sleeper arrives at Glasgow Central; bags to the Maldron Hotel Glasgow City (50 Renfrew St), ~12 min walk.<br><b>~08:30</b> ScotRail Glasgow Queen Street → Edinburgh Waverley, ~50 min.<br><b>~17:15</b> Back to Glasgow; dinner and drinks below, not on this map.",
    stops:[
-    {t:"07:30", n:"Glasgow: off the sleeper, bags at the hotel", p:"Ask the hotel to hold the bags until check-in. A hotel between Central and Queen Street (city centre or Merchant City) keeps this to a short walk.", off:true},
+    {t:"07:30", n:"Glasgow: off the sleeper, bags at the Maldron", p:"Maldron Hotel Glasgow City, 50 Renfrew St, by the Theatre Royal: ~12 min walk from Central. Check-in is from 15:00, so ask them to hold the bags. Queen Street station is ~8 min walk from the hotel.", booked:true, off:true, q:"Maldron Hotel Glasgow City, 50 Renfrew Street, Glasgow"},
     {t:"08:30", n:"Train: Glasgow Queen Street → Edinburgh Waverley", p:"Fast route via Falkirk High, ~50 min, every 15 min on Saturdays. Buy a return on the day.", fee:["~£17–20 return","paid"], off:true},
     {t:"09:30", n:"Big breakfast near Waverley", p:"Somewhere warm in the Old Town or on Cockburn Street, two minutes up from the station.", off:true},
     {t:"10:30", n:"Edinburgh Castle", p:"Crown Jewels, the One O'Clock Gun battery, views over the New Town. Allow 1.5 h.", fee:["~£23.50","paid"], book:true, ll:[55.9486,-3.1999], q:"Edinburgh Castle"},
@@ -507,8 +507,8 @@ var DAYS = [
       more:"<p>Use the entrance on Hope Street and show the ticket in the lobby.</p>"},
     {t:"15:40", n:"Calton Hill at dusk", p:"Sunset ~15:50: the castle, Old Town and Arthur's Seat from the monuments. 10 min from Waverley.", fee:["Free","free"], ll:[55.9553,-3.1827], q:"Calton Hill, Edinburgh"},
     {t:"16:30", n:"Christmas market, East Princes Street Gardens", p:"Mulled wine among the stalls under the Scott Monument; open 10:00–22:00. Waverley is right below.", fee:["Free","free"], ll:[55.9519,-3.1925], q:"Edinburgh Christmas Market, East Princes Street Gardens"},
-    {t:"17:15", n:"Train back to Glasgow Queen Street", p:"~50 min; trains every 15 min.", off:true},
-    {t:"18:15", n:"Glasgow hotel: check in, shower", p:"First shower since London.", off:true},
+    {t:"17:15", n:"Train back to Glasgow Queen Street", p:"~50 min; trains every 15 min. The Maldron is ~8 min walk from Queen Street.", off:true},
+    {t:"18:15", n:"Maldron Hotel Glasgow City: check in, shower", p:"First shower since London. Rooms have power showers.", booked:true, off:true, q:"Maldron Hotel Glasgow City, 50 Renfrew Street, Glasgow"},
     {t:"19:45", n:"Dinner at Porter & Rye, 1131 Argyle St, Glasgow", p:"Glasgow's serious steakhouse, on the World's 101 Best Steak Restaurants list: beef dry-aged on site for up to 160 days, beef-dripping fries, and you pick your own steak knife.", fee:["~£60–90","paid"], book:true, off:true, q:"Porter & Rye, 1131 Argyle Street, Glasgow",
       more:"<p>Book ahead for a Saturday. Backup: <b>The Butchershop Bar &amp; Grill</b> (1055 Sauchiehall St), 10 minutes' walk away.</p>"},
     {t:"22:00", n:"Daddy Marmalades, 25 Parnie St, Glasgow", p:"Hidden cocktail bar in the Merchant City: No. 22 in the UK's Top 50 Cocktail Bars 2026 and Glasgow's only entry. Casual and walk-in friendly. Taxi from Finnieston, ~10 min.", fee:["~£10–14 a cocktail","paid"], off:true, q:"Daddy Marmalades, 25 Parnie Street, Glasgow",
@@ -519,13 +519,13 @@ var DAYS = [
    intro:"A slow Glasgow morning in the East End: the Necropolis and the cathedral, a pint from the Tennent's tanks, lunch next door at Drygate, then the coach straight to Edinburgh Airport.",
    off:"<b>15:30</b> Citylink Air, Buchanan Bus Station → Edinburgh Airport, ~1 h. Flight <b>19:00</b>.",
    stops:[
-    {t:"09:30", n:"Check out, breakfast", p:"Ask the hotel to hold the bags until ~15:00.", off:true},
+    {t:"09:30", n:"Breakfast and check-out at the Maldron", p:"Buffet breakfast at the hotel; check-out by 11:00. Leave the bags at the desk until ~15:00.", booked:true, ll:[55.8661,-4.2553], q:"Maldron Hotel Glasgow City, 50 Renfrew Street, Glasgow"},
     {t:"10:30", n:"The Necropolis", p:"Victorian hilltop cemetery with the best view over the city. Always open.", fee:["Free","free"], ll:[55.8622,-4.2312], q:"Glasgow Necropolis"},
     {t:"11:15", n:"Glasgow Cathedral", p:"Medieval cathedral that survived the Reformation almost intact. Sunday hours are short and may be afternoon only, so this may be from outside.", fee:["Free","free"], ll:[55.8630,-4.2346], q:"Glasgow Cathedral"},
     {t:"12:00", n:"Tennent's Wellpark Brewery tour, 161 Duke St", p:"Behind the scenes at Scotland's oldest brewery, ~1.5 h, ending with a pint of unpasteurised tank lager straight from the copper tanks.", fee:["£17–21","paid"], book:true, ll:[55.8598,-4.2298], q:"Tennent's Wellpark Brewery, 161 Duke Street, Glasgow",
       more:"<p>Sunday tours appear to start at noon; confirm the slot when booking. Ages 18+. Enter at the Tennent's Visitor Centre.</p>"},
     {t:"13:45", n:"Lunch at Drygate, next door", p:"Craft brewery with a bar and restaurant beside Wellpark: the easiest lunch after the tour.", ll:[55.8616,-4.2318], q:"Drygate Brewing Co, 85 Drygate, Glasgow"},
-    {t:"15:00", n:"Collect bags, Buchanan Bus Station", p:"Taxi from Drygate ~5 min.", ll:[55.8660,-4.2508], q:"Buchanan Bus Station, Glasgow"},
+    {t:"15:00", n:"Collect bags, walk to Buchanan Bus Station", p:"Taxi from Drygate to the Maldron ~8 min; the bus station is ~5 min walk from the hotel.", ll:[55.8660,-4.2508], q:"Buchanan Bus Station, Glasgow"},
     {t:"15:30", n:"Citylink Air to Edinburgh Airport", p:"Direct, non-stop, about an hour; bags go in the hold. Book on citylink.co.uk. Backup: train to Edinburgh Gateway, then the tram.", fee:["~£15","paid"], book:true, off:true},
     {t:"16:30", n:"At the airport", p:"Two and a half hours before the 19:00 flight; there's room for a later coach if lunch runs long.", off:true}
    ]}
@@ -533,7 +533,7 @@ var DAYS = [
 
 var CHECK = [
   ["sleeper","Caledonian Sleeper, Fri ~23:45 Euston → Glasgow","Room for two, ~£315 at sleeper.scot","Now"],
-  ["hotel","Glasgow hotel, Sat night (1 night)","~1,500 DKK; near Central / Queen Street; bag drop at 07:30","Now"],
+  ["hotel","Maldron Hotel Glasgow City, Sat night","50 Renfrew St; check-in from 15:00, bag drop at 07:30","Done",true],
   ["pr","Porter & Rye, Sat 19:45 for 2","porterandrye.com","Now"],
   ["heard","Heard Covent Garden, Fri 17:15 for 2","Booked; ask for the Soda Room on arrival","Done",true],
   ["tatar","Tatar Bunar, Thu 19:30 for 2","Booked; 07771 013190 if running late","Done",true],
