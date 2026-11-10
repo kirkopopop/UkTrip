@@ -274,7 +274,7 @@ details.more .txt p{margin:0}
       <section class="wide bookings">
         <div class="bk-head"><h2>Bookings</h2><span class="progress" id="progress"></span></div>
         <div class="bar" aria-hidden="true"><i id="bar"></i></div>
-        <p>Book the sleeper and Saturday dinner first: it's a busy weekend. Ticks stay on your own phone.</p>
+        <p>Book the sleeper and Johnnie Walker first: it's a busy weekend. Ticks stay on your own phone.</p>
         <div class="checks" id="checklist"></div>
       </section>
 
@@ -330,7 +330,7 @@ details.more .txt p{margin:0}
           <tr><td>ScotRail Glasgow ⇄ Edinburgh return</td><td><a href="#sat" data-goto="sat">Sat</a></td><td class="num">~£17–20</td></tr>
           <tr><td>Edinburgh Castle, online</td><td><a href="#sat" data-goto="sat">Sat</a></td><td class="num">~£23.50</td></tr>
           <tr><td>Johnnie Walker Journey of Flavour, 3 cocktails</td><td><a href="#sat" data-goto="sat">Sat</a></td><td class="num">£30</td></tr>
-          <tr><td>Porter &amp; Rye, steak dinner</td><td><a href="#sat" data-goto="sat">Sat</a></td><td class="num">~£60–90</td></tr>
+          <tr><td>Casual dinner in Glasgow (burgers, curry or pizza)</td><td><a href="#sat" data-goto="sat">Sat</a></td><td class="num">~£15–35</td></tr>
           <tr><td>Tennent's Wellpark Brewery tour, pint included</td><td><a href="#sun" data-goto="sun">Sun</a></td><td class="num">£17–21</td></tr>
           <tr><td>Citylink Air to Edinburgh Airport</td><td><a href="#sun" data-goto="sun">Sun</a></td><td class="num">~£15</td></tr>
         </table>
@@ -344,9 +344,9 @@ details.more .txt p{margin:0}
           <tr><th>Category</th><th>GBP</th></tr>
           <tr><td>Transport (Gatwick, Tube, sleeper share, Glasgow ⇄ Edinburgh, airport coach)</td><td class="num">215–245</td></tr>
           <tr><td>Activities (Friday game, Tennent's, Johnnie Walker, castle; Barry's and Mail Rail for Kirill)</td><td class="num">100–155</td></tr>
-          <tr><td>Food &amp; drink (Tatar Bunar, Heard, Porter &amp; Rye, lunches, pints, cocktails at £11–18)</td><td class="num">300–360</td></tr>
+          <tr><td>Food &amp; drink (Tatar Bunar, Heard, Glasgow dinner, lunches, pints, cocktails at £11–18)</td><td class="num">260–315</td></tr>
           <tr><td>Glasgow hotel, 1 night, room split two ways</td><td class="num">~85</td></tr>
-          <tr class="total"><td>Total</td><td class="num">700–845</td></tr>
+          <tr class="total"><td>Total</td><td class="num">660–800</td></tr>
         </table>
       </section>
 
@@ -404,7 +404,8 @@ details.more .txt p{margin:0}
           <a href="https://www.euston.com/left-luggage" target="_blank" rel="noopener">Euston left luggage</a> ·
           <a href="https://www.hot-dinners.com/2026092815397/Gastroblog/Latest-news/heard-burger-covent-garden-opening-dessert-bar" target="_blank" rel="noopener">Heard Covent Garden</a> ·
           <a href="https://londonist.com/pubs/euston-tap" target="_blank" rel="noopener">Euston Tap</a> ·
-          <a href="https://www.timeout.com/glasgow/restaurants/porter-rye" target="_blank" rel="noopener">Porter &amp; Rye</a> ·
+          <a href="https://www.enprimeurclub.com/restaurants/el-perro-negro-glasgow" target="_blank" rel="noopener">El Perro Negro</a> ·
+          <a href="https://www.visitglasgow.com/food-and-drink/top-restaurants/top-restaurants-in-glasgow/" target="_blank" rel="noopener">Glasgow restaurants</a> ·
           <a href="https://www.visitglasgow.com/food-and-drink/bars-pubs-and-clubs/cocktail-bars/" target="_blank" rel="noopener">Glasgow cocktail bars</a> ·
           <a href="https://www.edinburghtourism.org/edinburgh-to-glasgow/" target="_blank" rel="noopener">Edinburgh–Glasgow trains</a> ·
           <a href="https://tennents.com/uk/experience/tours" target="_blank" rel="noopener">Tennent's tours</a> ·
@@ -494,24 +495,29 @@ var DAYS = [
    ]},
  { id:"sat", tab:"Sat 21", place:"Glasgow ⇄ Edinburgh", date:"Saturday 21 November", city:"edinburgh",
    title:"Edinburgh by day, Glasgow by night",
-   intro:"Off the sleeper in Glasgow, bags at the hotel, and a 50-minute train to Edinburgh for the castle, the Old Town, Johnnie Walker and dusk on Calton Hill. Back to Glasgow for dry-aged steak and the city's best cocktail bar. We sleep in Glasgow.",
-   off:"<b>~07:30</b> Sleeper arrives at Glasgow Central; bags to the Maldron Hotel Glasgow City (50 Renfrew St), ~12 min walk.<br><b>~08:30</b> ScotRail Glasgow Queen Street → Edinburgh Waverley, ~50 min.<br><b>~17:15</b> Back to Glasgow; dinner and drinks below, not on this map.",
+   intro:"Off the sleeper in Glasgow, bags at the hotel, and a 50-minute train to Edinburgh. Daylight goes to the castle, the Old Town and Calton Hill; after dark, Johnnie Walker and the Christmas market lights. Back in Glasgow, a casual local dinner and the city's best cocktail bar. We sleep in Glasgow.",
+   off:"<b>~07:30</b> Sleeper arrives at Glasgow Central; bags to the Maldron Hotel Glasgow City (50 Renfrew St), ~12 min walk.<br><b>~08:30</b> ScotRail Glasgow Queen Street → Edinburgh Waverley, ~50 min.<br><b>~17:50</b> Back to Glasgow; dinner and drinks below, not on this map.",
    stops:[
     {t:"07:30", n:"Glasgow: off the sleeper, bags at the Maldron", p:"Maldron Hotel Glasgow City, 50 Renfrew St, by the Theatre Royal: ~12 min walk from Central. Check-in is from 15:00, so ask them to hold the bags. Queen Street station is ~8 min walk from the hotel.", booked:true, off:true, q:"Maldron Hotel Glasgow City, 50 Renfrew Street, Glasgow"},
     {t:"08:30", n:"Train: Glasgow Queen Street → Edinburgh Waverley", p:"Fast route via Falkirk High, ~50 min, every 15 min on Saturdays. Buy a return on the day.", fee:["~£17–20 return","paid"], off:true},
     {t:"09:30", n:"Big breakfast near Waverley", p:"Somewhere warm in the Old Town or on Cockburn Street, two minutes up from the station.", off:true},
     {t:"10:30", n:"Edinburgh Castle", p:"Crown Jewels, the One O'Clock Gun battery, views over the New Town. Allow 1.5 h.", fee:["~£23.50","paid"], book:true, ll:[55.9486,-3.1999], q:"Edinburgh Castle"},
     {t:"12:00", n:"Royal Mile → Victoria Street", p:"Downhill along the curved, colourful street to the Grassmarket.", fee:["Free","free"], ll:[55.9488,-3.1935], q:"Victoria Street, Edinburgh"},
-    {t:"12:45", n:"Pub lunch in the Grassmarket", p:"Old market square under the castle rock, lined with pubs.", ll:[55.9474,-3.1962], q:"Grassmarket, Edinburgh"},
-    {t:"14:00", n:"Johnnie Walker Princes Street: Journey of Flavour", p:"90 minutes, three cocktails made to match a flavour quiz. Rooftop bar with castle views afterwards if time allows.", fee:["£30","paid"], book:true, ll:[55.9502,-3.2068], q:"Johnnie Walker Princes Street, 145 Princes Street, Edinburgh",
-      more:"<p>Use the entrance on Hope Street and show the ticket in the lobby.</p>"},
-    {t:"15:40", n:"Calton Hill at dusk", p:"Sunset ~15:50: the castle, Old Town and Arthur's Seat from the monuments. 10 min from Waverley.", fee:["Free","free"], ll:[55.9553,-3.1827], q:"Calton Hill, Edinburgh"},
-    {t:"16:30", n:"Christmas market, East Princes Street Gardens", p:"Mulled wine among the stalls under the Scott Monument; open 10:00–22:00. Waverley is right below.", fee:["Free","free"], ll:[55.9519,-3.1925], q:"Edinburgh Christmas Market, East Princes Street Gardens"},
-    {t:"17:15", n:"Train back to Glasgow Queen Street", p:"~50 min; trains every 15 min. The Maldron is ~8 min walk from Queen Street.", off:true},
-    {t:"18:15", n:"Maldron Hotel Glasgow City: check in, shower", p:"First shower since London. Rooms have power showers.", booked:true, off:true, q:"Maldron Hotel Glasgow City, 50 Renfrew Street, Glasgow"},
-    {t:"19:45", n:"Dinner at Porter & Rye, 1131 Argyle St, Glasgow", p:"Glasgow's serious steakhouse, on the World's 101 Best Steak Restaurants list: beef dry-aged on site for up to 160 days, beef-dripping fries, and you pick your own steak knife.", fee:["~£60–90","paid"], book:true, off:true, q:"Porter & Rye, 1131 Argyle Street, Glasgow",
-      more:"<p>Book ahead for a Saturday. Backup: <b>The Butchershop Bar &amp; Grill</b> (1055 Sauchiehall St), 10 minutes' walk away.</p>"},
-    {t:"22:00", n:"Daddy Marmalades, 25 Parnie St, Glasgow", p:"Hidden cocktail bar in the Merchant City: No. 22 in the UK's Top 50 Cocktail Bars 2026 and Glasgow's only entry. Casual and walk-in friendly. Taxi from Finnieston, ~10 min.", fee:["~£10–14 a cocktail","paid"], off:true, q:"Daddy Marmalades, 25 Parnie Street, Glasgow",
+    {t:"12:45", n:"Pub lunch in the Grassmarket", p:"Old market square under the castle rock, lined with pubs. No rush: Johnnie Walker isn't until 15:20.", ll:[55.9474,-3.1962], q:"Grassmarket, Edinburgh"},
+    {t:"14:15", n:"Calton Hill while it's light", p:"The castle, Old Town and Arthur's Seat from the monuments; the light goes golden ahead of sunset ~15:50. 20 min walk from the Grassmarket. Leave by 14:55.", fee:["Free","free"], ll:[55.9553,-3.1827], q:"Calton Hill, Edinburgh"},
+    {t:"15:20", n:"Johnnie Walker Princes Street: Journey of Flavour", p:"90 minutes, three cocktails made to match a flavour quiz, then the rooftop bar with the castle lit up after dark.", fee:["£30","paid"], book:true, ll:[55.9502,-3.2068], q:"Johnnie Walker Princes Street, 145 Princes Street, Edinburgh",
+      more:"<p>Use the entrance on Hope Street and show the ticket in the lobby. 20 min walk along Princes Street from Calton Hill.</p>"},
+    {t:"17:10", n:"Christmas market, East Princes Street Gardens", p:"Mulled wine among the lit-up stalls under the Scott Monument; open 10:00–22:00. Waverley is right below.", fee:["Free","free"], ll:[55.9519,-3.1925], q:"Edinburgh Christmas Market, East Princes Street Gardens"},
+    {t:"17:50", n:"Train back to Glasgow Queen Street", p:"~50 min; trains every 15 min. The Maldron is ~8 min walk from Queen Street.", off:true},
+    {t:"18:50", n:"Maldron Hotel Glasgow City: check in, shower", p:"First shower since London. Rooms have power showers.", booked:true, off:true, q:"Maldron Hotel Glasgow City, 50 Renfrew Street, Glasgow"},
+    {t:"19:45", n:"Casual dinner in Glasgow: pick one", p:"Local and unfussy rather than posh. All walk-in or easy to book.", off:true,
+      subs:[
+        ["El Perro Negro","Argyle St, Finnieston. Started as a pop-up and now on the World's 101 Best Burgers 2026 (No. 56); walk-ins welcome. Get the Top Dog. Taxi to the bar after, ~10 min.","El Perro Negro, Argyle Street, Glasgow"],
+        ["Mother India's Cafe","Argyle St, Finnieston. Glasgow is a curry city, and this is the tapas-style sibling of its best-loved curry house: lots of small plates, cheap.","Mother India's Cafe, Argyle Street, Glasgow"],
+        ["Paesano Pizza","94 Miller St, Merchant City. Wood-fired Neapolitan pizza, cheap and excellent; walk-ins only, so expect a queue. 5 min from the bar.","Paesano Pizza, 94 Miller Street, Glasgow"],
+        ["Café Gandolfi","64 Albion St, Merchant City. A local institution since 1979: Cullen skink, Stornoway black pudding, wooden booths. 5 min from the bar.","Cafe Gandolfi, 64 Albion Street, Glasgow"]
+      ]},
+    {t:"22:00", n:"Daddy Marmalades, 25 Parnie St, Glasgow", p:"Hidden cocktail bar in the Merchant City: No. 22 in the UK's Top 50 Cocktail Bars 2026 and Glasgow's only entry. Casual and walk-in friendly.", fee:["~£10–14 a cocktail","paid"], off:true, q:"Daddy Marmalades, 25 Parnie Street, Glasgow",
       more:"<p>Then, if there's energy: <b>The Gate</b> (Gallowgate), a whisky pub that's been on the Top 50 list too, or just follow Glasgow's Saturday night.</p>"}
    ]},
  { id:"sun", tab:"Sun 22", place:"Glasgow → home", date:"Sunday 22 November", city:"glasgow",
@@ -534,12 +540,11 @@ var DAYS = [
 var CHECK = [
   ["sleeper","Caledonian Sleeper, Fri ~23:45 Euston → Glasgow","Room for two, ~£315 at sleeper.scot","Now"],
   ["hotel","Maldron Hotel Glasgow City, Sat night","50 Renfrew St; check-in from 15:00, bag drop at 07:30","Done",true],
-  ["pr","Porter & Rye, Sat 19:45 for 2","porterandrye.com","Now"],
   ["heard","Heard Covent Garden, Fri 17:15 for 2","Booked; ask for the Soda Room on arrival","Done",true],
   ["tatar","Tatar Bunar, Thu 19:30 for 2","Booked; 07771 013190 if running late","Done",true],
   ["karts","Interactive experience, Fri ~14:00 for 2","Pick one of the four, then book","This week"],
   ["castle","Edinburgh Castle, Sat 10:30","Timed entry, online","Now"],
-  ["jw","Johnnie Walker Journey of Flavour, Sat 14:00 for 2","johnniewalker.com","Now"],
+  ["jw","Johnnie Walker Journey of Flavour, Sat 15:20 for 2","johnniewalker.com","Now"],
   ["tennents","Tennent's brewery tour, Sun 12:00 for 2","tennents.com; check Sunday slots","Now"],
   ["citylink","Citylink Air, Sun 15:30 Glasgow → Edinburgh Airport","citylink.co.uk","This week"],
   ["mail","Postal Museum + Mail Rail, Fri 10:15","Kirill only","This week"],
