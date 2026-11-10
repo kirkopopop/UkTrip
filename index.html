@@ -155,6 +155,7 @@ ol.stops::before{content:"";position:absolute;left:79px;top:14px;bottom:14px;wid
 .tag.fee{background:var(--soft);color:var(--ink)}
 .tag.free{background:color-mix(in srgb,var(--free) 14%,transparent);color:var(--free)}
 .tag.book{background:transparent;color:var(--red-ink);box-shadow:inset 0 0 0 1.5px currentColor}
+.tag.booked{background:var(--free);color:#fff}
 .dir{display:inline-flex;align-items:center;gap:4px;font-weight:600;font-size:13px;text-decoration:none;color:var(--blue);padding:3px 2px}
 .dir:hover{text-decoration:underline}
 .dir svg{width:13px;height:13px}
@@ -273,7 +274,7 @@ details.more .txt p{margin:0}
       <section class="wide bookings">
         <div class="bk-head"><h2>Bookings</h2><span class="progress" id="progress"></span></div>
         <div class="bar" aria-hidden="true"><i id="bar"></i></div>
-        <p>Book the sleeper, the Glasgow hotel and both dinners first: it's a busy weekend. Ticks stay on your own phone.</p>
+        <p>Book the sleeper, the Glasgow hotel and Porter &amp; Rye first: it's a busy weekend. Ticks stay on your own phone.</p>
         <div class="checks" id="checklist"></div>
       </section>
 
@@ -439,8 +440,8 @@ function gq(s){ return "https://www.google.com/maps/search/?api=1&query=" + enco
 var DAYS = [
  { id:"thu", tab:"Thu 19", place:"London", date:"Thursday 19 November", city:"london",
    title:"Borough Market, Soho, a Ukrainian feast",
-   intro:"Kirill grabs the key at your office, drops the bags and does Borough Market and Uniqlo on his own. We meet in Soho at 17:45 for £4 Guinness and a proper cocktail, then dinner at Tatar Bunar and a nightcap at one of the best bars in the world.",
-   off:"<b>08:00</b> Kirill lands at Gatwick → Thameslink to London Bridge, ~35 min.<br><b>10:00 / 15:00</b> Hotel (not on the map).",
+   intro:"Kirill grabs the key at your office, drops the bags and grazes Borough Market on his own. We meet in Soho at 17:30 for £4 Guinness and a quick proper cocktail, then dinner at Tatar Bunar at 19:30 and a nightcap at one of the best bars in the world.",
+   off:"<b>08:00</b> Kirill lands at Gatwick → Thameslink to London Bridge, ~35 min.<br><b>10:00 / 14:00</b> Hotel (not on the map).",
    stops:[
     {t:"08:00", n:"Land at Gatwick, Thameslink to London Bridge", p:"Tap in with contactless; ~30–40 min.", who:"Kirill", off:true},
     {t:"09:15", n:"Pick up the key at Deliveroo HQ", p:"The River Building, 1 Cousin Lane, by Cannon Street station: a 10-min walk across London Bridge.", who:"Kirill", ll:[51.5101,-0.0917], q:"Deliveroo The River Building 1 Cousin Lane London"},
@@ -452,26 +453,25 @@ var DAYS = [
         ["Turnips","The viral cup of strawberries under warm chocolate, ~£8.50.","Turnips Borough Market"],
         ["Bread Ahead","Filled doughnuts from the original bakery stall on Cathedral Street.","Bread Ahead Borough Market Cathedral Street"]
       ]},
-    {t:"13:30", n:"Uniqlo Covent Garden, Long Acre / Floral St", p:"Three floors in a listed Victorian carriage hall, with London-only UTme! prints you can customise in store. Train London Bridge → Charing Cross (5 min), then 8 min on foot.", who:"Kirill", ll:[51.5124,-0.1255], q:"Uniqlo Covent Garden, Long Acre, London"},
-    {t:"15:00", n:"Back to the hotel, rest", p:"Up since ~04:30: recharge before the evening.", who:"Kirill", off:true},
-    {t:"17:45", n:"£4 Guinness at Simmons Greek Street", p:"We meet here. Retro Soho bar with hidden karaoke rooms; happy hour 15:00–20:00, so Soho comes before dinner.", fee:["£4 a pint","paid"], ll:[51.5140,-0.1314], q:"Simmons Greek Street, Soho, London"},
-    {t:"18:45", n:"Swift Soho, 12 Old Compton St", p:"One of London's best cocktail bars. Head downstairs for the whisky room and an Old Fashioned; the Irish coffee upstairs is famous.", fee:["~£14 a cocktail","paid"], ll:[51.5131,-0.1302], q:"Swift Soho, 12 Old Compton Street, London",
+    {t:"14:00", n:"Back to the hotel, rest", p:"Up since ~04:30: recharge before the evening. Or pick something from the spare-time list in Before you go.", who:"Kirill", off:true},
+    {t:"17:30", n:"£4 Guinness at Simmons Greek Street", p:"We meet here. Retro Soho bar with hidden karaoke rooms; happy hour 15:00–20:00, so Soho comes before dinner.", fee:["£4 a pint","paid"], ll:[51.5140,-0.1314], q:"Simmons Greek Street, Soho, London"},
+    {t:"18:20", n:"Swift Soho, 12 Old Compton St", p:"One of London's best cocktail bars: one quick drink. The Irish coffee upstairs is famous; the downstairs whisky room does a great Old Fashioned. Leave by 18:55 for dinner.", fee:["~£14 a cocktail","paid"], ll:[51.5131,-0.1302], q:"Swift Soho, 12 Old Compton Street, London",
       more:"<p>Close by if Swift is full: <b>Three Sheets Soho</b> (13 Manette St), No. 11 in the UK's Top 50 Cocktail Bars 2026. <b>Bar Termini</b> (7 Old Compton St) is No. 8, but it's a Negroni specialist.</p>"},
-    {t:"19:40", n:"Elizabeth line to Shoreditch", p:"Tottenham Court Road → Liverpool Street, 4 min, then a 12-min walk up to Curtain Road.", off:true},
-    {t:"20:15", n:"Dinner at Tatar Bunar, 152 Curtain Rd", p:"Southern Ukrainian (Bessarabian) cooking from an Odesa team; in the Michelin Guide since March 2026. Order a grill centrepiece and the onion bread with lardo.", fee:["~£60–80","paid"], book:true, ll:[51.5262,-0.0808], q:"Tatar Bunar, 152 Curtain Road, London",
-      more:"<p>Book by phone: 07771 013190. Mon–Fri from 17:00.</p><p>Mriya in Earl's Court, long London's best-known Ukrainian place, closed in June 2026, so this is the pick.</p>"},
-    {t:"22:15", n:"Nightcap at Waltz, 28 Scrutton St", p:"Japanese cocktail bar five minutes' walk from dinner: No. 32 in the World's 50 Best Bars 2026 and Time Out's best cocktail bar in London. Sit at the bar and watch them work.", fee:["~£15–18 a cocktail","paid"], ll:[51.5235,-0.0820], q:"Waltz bar, 28 Scrutton Street, London",
+    {t:"18:55", n:"Elizabeth line to Shoreditch", p:"Tottenham Court Road → Liverpool Street, 4 min, then a 12-min walk up to Curtain Road.", off:true},
+    {t:"19:30", n:"Dinner at Tatar Bunar, 152 Curtain Rd", p:"Southern Ukrainian (Bessarabian) cooking from an Odesa team; in the Michelin Guide since March 2026. Order a grill centrepiece and the onion bread with lardo.", fee:["~£60–80","paid"], booked:true, ll:[51.5262,-0.0808], q:"Tatar Bunar, 152 Curtain Road, London",
+      more:"<p>Booked for 19:30. Phone if running late: 07771 013190.</p><p>Mriya in Earl's Court, long London's best-known Ukrainian place, closed in June 2026, so this is the pick.</p>"},
+    {t:"21:45", n:"Nightcap at Waltz, 28 Scrutton St", p:"Japanese cocktail bar five minutes' walk from dinner: No. 32 in the World's 50 Best Bars 2026 and Time Out's best cocktail bar in London. Sit at the bar and watch them work.", fee:["~£15–18 a cocktail","paid"], ll:[51.5235,-0.0820], q:"Waltz bar, 28 Scrutton Street, London",
       more:"<p>Bar seats are walk-in; a few tables can be booked at waltzbar.uk.</p><p>Plan B, also 5 minutes away: <b>Happiness Forgets</b> (8–9 Hoxton Square), a candlelit basement that's a favourite of London bartenders, open till late.</p>"}
    ]},
  { id:"fri", tab:"Fri 20", place:"London → Glasgow", date:"Friday 20 November", city:"london",
    title:"Barry's, games, Heard, sleeper north",
-   intro:"Kirill does Barry's and the old Post Office railway while you finish your short day. Then lunch and an interactive game, a Covent Garden evening (an old pub, Michelin-chef burgers, cocktails above London's oldest restaurant) and the night train to Glasgow.",
+   intro:"Kirill does Barry's and the old Post Office railway while you finish your short day. Then lunch, an interactive game and a quick Uniqlo stop before an early Covent Garden evening: Michelin-chef burgers at 17:15, an old pub, cocktails above London's oldest restaurant, and the night train to Glasgow.",
    off:"<b>~23:45</b> Caledonian Sleeper Euston → Glasgow Central, arrive <b>~07:30</b> Saturday.",
    stops:[
     {t:"08:00", n:"Barry's Central, 163 Euston Rd", p:"The original London studio: treadmill and floor HIIT in the red room. Showers and towels on site.", who:"Kirill", fee:["~£30","paid"], book:true, ll:[51.5266,-0.1338], q:"Barry's London Central 163 Euston Road",
       more:"<p>Booking opens about a week ahead (around Fri 13 Nov). Pick any morning class that ends by 09:30.</p>"},
     {t:"10:15", n:"Postal Museum + Mail Rail, Clerkenwell", p:"20-min walk from Barry's. A 15-minute ride through the tunnels of the Post Office's driverless underground railway (1927–2003), then the museum.", who:"Kirill", fee:["~£18–20","paid"], book:true, ll:[51.5246,-0.1134], q:"The Postal Museum, Phoenix Place, London"},
-    {t:"12:30", n:"Lunch together: place TBD", p:"Pick on the day, near whichever experience you choose: Dishoom in Covent Garden or Carnaby works for most of them.", off:true},
+    {t:"12:30", n:"Light lunch together: place TBD", p:"Keep it small: dinner is at 17:15. Something quick near whichever experience you choose.", off:true},
     {t:"14:00", n:"Interactive experience: pick one", p:"Four game-style options, all about an hour. Choose together over lunch, then book a slot for two.", book:true, off:true,
       subs:[
         ["1. Chaos Karts","Arcade Arena, 26 Lambeth High St (Lambeth North). Electric karts on a projected track: Mario Kart in real life. From ~£30.","Arcade Arena, 26 Lambeth High Street, London"],
@@ -480,14 +480,14 @@ var DAYS = [
         ["4. Prison Island","5-7 Hornsey St, by Holloway Road (Piccadilly line). 31 challenge cells, 60 min of play; arrive 20 min early. Fridays from 2pm. From ~£27.","Prison Island London, 5-7 Hornsey Street"]
       ],
       more:"<p>Closest to King's Cross for the train: Prison Island (Piccadilly line, 3 stops) or the Escape Room Arcade. Crystal Maze is the priciest but the most 'event'.</p>"},
-    {t:"15:30", n:"Bags to Euston left luggage", p:"Collect the bags from the hotel and drop them at the staffed desk at the top of the ramp to platforms 16–18 (07:00–23:00, ~£12.50 a bag), or ask the hotel to hold them until ~22:00.", ll:[51.5284,-0.1346], q:"Left luggage, London Euston station"},
-    {t:"16:30", n:"Free time: Covent Garden", p:"The market hall and the Christmas lights, which are up by late November. Rest and recharge before the evening.", off:true},
-    {t:"17:45", n:"Pint at the Lamb & Flag, 33 Rose St", p:"A tiny, creaky 18th-century pub down an alley off Garrick Street, with low ceilings and wood panelling. On a Friday the crowd spills out into the lane.", fee:["~£7 a pint","paid"], ll:[51.5116,-0.1265], q:"Lamb and Flag, 33 Rose Street, London",
+    {t:"15:15", n:"Bags to Euston left luggage", p:"Collect the bags from the hotel and drop them at the staffed desk at the top of the ramp to platforms 16–18 (07:00–23:00, ~£12.50 a bag), or ask the hotel to hold them until ~21:30.", ll:[51.5284,-0.1346], q:"Left luggage, London Euston station"},
+    {t:"16:15", n:"Uniqlo Covent Garden, Long Acre / Floral St", p:"Three floors in a listed Victorian carriage hall, with London-only UTme! prints you can customise in store. Northern line Euston → Leicester Square, ~6 min, then 4 min on foot. Five minutes from Heard.", ll:[51.5124,-0.1255], q:"Uniqlo Covent Garden, Long Acre, London"},
+    {t:"17:15", n:"Dinner at Heard Covent Garden, 33–35 Wellington St", p:"Burgers from two-Michelin-starred chef Jordan Bailey. This is his biggest site, opened 5 Nov 2026. Order The Heard: a double smash patty with jalapeño hot honey and Ogleshield cheese. Each burger comes with a beer or wine pairing.", fee:["~£25–40","paid"], booked:true, ll:[51.5119,-0.1208], q:"Heard Covent Garden, 33-35 Wellington Street, London",
+      more:"<p>Booked for 17:15. <b>Dessert in the Soda Room downstairs:</b> a speakeasy dessert and cocktail bar with hot apple pie, brûlée cheesecake and milk soft serve. It's for diners only, subject to space, so ask on arrival.</p>"},
+    {t:"18:45", n:"Pint at the Lamb & Flag, 33 Rose St", p:"A tiny, creaky 18th-century pub down an alley off Garrick Street, with low ceilings and wood panelling. On a Friday the crowd spills out into the lane.", fee:["~£7 a pint","paid"], ll:[51.5116,-0.1265], q:"Lamb and Flag, 33 Rose Street, London",
       more:"<p>If it's rammed: <b>The Harp</b> (47 Chandos Place), a narrow, award-winning real-ale pub 5 minutes away.</p>"},
-    {t:"18:45", n:"Dinner at Heard Covent Garden, 33–35 Wellington St", p:"Burgers from two-Michelin-starred chef Jordan Bailey. This is his biggest site, opened 5 Nov 2026. Order The Heard: a double smash patty with jalapeño hot honey and Ogleshield cheese. Each burger comes with a beer or wine pairing.", fee:["~£25–40","paid"], book:true, ll:[51.5119,-0.1208], q:"Heard Covent Garden, 33-35 Wellington Street, London",
-      more:"<p><b>Dessert in the Soda Room downstairs:</b> a speakeasy dessert and cocktail bar with hot apple pie, brûlée cheesecake and milk soft serve. It's for diners only, Wed–Sun, subject to space, so ask for it when you book.</p>"},
-    {t:"20:30", n:"Cocktails upstairs at Rules, 35 Maiden Lane", p:"The bar above London's oldest restaurant (1798): game trophies, red velvet and serious classic cocktails. 4 minutes' walk from Heard.", fee:["~£16–19 a cocktail","paid"], ll:[51.5106,-0.1232], q:"Upstairs at Rules, 35 Maiden Lane, London",
-      more:"<p>Plan B, 2 minutes away: <b>Eve Bar</b> (34 Southampton St), Adam Handling's basement cocktail bar under his restaurant Frog.</p>"},
+    {t:"20:00", n:"Cocktails upstairs at Rules, 35 Maiden Lane", p:"The bar above London's oldest restaurant (1798): game trophies, red velvet and serious classic cocktails. 5 minutes' walk from the Lamb & Flag.", fee:["~£16–19 a cocktail","paid"], ll:[51.5106,-0.1232], q:"Upstairs at Rules, 35 Maiden Lane, London",
+      more:"<p>Time for a second round elsewhere? <b>Eve Bar</b> (34 Southampton St), Adam Handling's basement cocktail bar under his restaurant Frog, is 2 minutes away.</p>"},
     {t:"21:55", n:"Northern line to Euston", p:"Walk to Leicester Square, then the Northern line (Charing Cross branch) is direct to Euston, ~6 min.", off:true},
     {t:"22:15", n:"Bags, then one for the road at the Euston Tap", p:"Craft beer in the two stone lodges at the station gates, the last bits of the old Euston. Collect the bags before 23:00 when left luggage closes.", fee:["~£6–8","paid"], ll:[51.5268,-0.1329], q:"Euston Tap, 190 Euston Road, London"},
     {t:"23:15", n:"Board the Caledonian Sleeper", p:"To Glasgow Central (the Edinburgh portion is sold out). The train splits at Carstairs during the night, so expect a jolt. Boarding opens around 22:30 and the train leaves ~23:45; the exact time is on the ticket.", fee:["£315 for 2","paid"], book:true, off:true}
@@ -535,8 +535,8 @@ var CHECK = [
   ["sleeper","Caledonian Sleeper, Fri ~23:45 Euston → Glasgow","Room for two, ~£315 at sleeper.scot","Now"],
   ["hotel","Glasgow hotel, Sat night (1 night)","~1,500 DKK; near Central / Queen Street; bag drop at 07:30","Now"],
   ["pr","Porter & Rye, Sat 19:45 for 2","porterandrye.com","Now"],
-  ["heard","Heard Covent Garden, Fri 18:45 for 2","Ask for the Soda Room for dessert","Now"],
-  ["tatar","Tatar Bunar, Thu 20:15 for 2","Phone 07771 013190","Now"],
+  ["heard","Heard Covent Garden, Fri 17:15 for 2","Booked; ask for the Soda Room on arrival","Done",true],
+  ["tatar","Tatar Bunar, Thu 19:30 for 2","Booked; 07771 013190 if running late","Done",true],
   ["karts","Interactive experience, Fri ~14:00 for 2","Pick one of the four, then book","This week"],
   ["castle","Edinburgh Castle, Sat 10:30","Timed entry, online","Now"],
   ["jw","Johnnie Walker Journey of Flavour, Sat 14:00 for 2","johnniewalker.com","Now"],
@@ -606,7 +606,8 @@ function renderDay(){
     var meta = "";
     if(s.who) meta += '<span class="tag solo">'+s.who+' solo</span>';
     if(s.fee) meta += '<span class="tag '+(s.fee[1]==="free"?"free":"fee")+'">'+esc(s.fee[0])+'</span>';
-    if(s.book) meta += '<span class="tag book">Book ahead</span>';
+    if(s.booked) meta += '<span class="tag booked">Booked ✓</span>';
+    else if(s.book) meta += '<span class="tag book">Book ahead</span>';
     if(s.q) meta += '<a class="dir" href="'+gq(s.q)+'" target="_blank" rel="noopener">Google Maps'+ICON_GO+'</a>';
     h += '<li class="stop'+(s.who?" solo":"")+'" id="s-'+i+'"><span class="t">'+s.t+'</span>'+pin+
       '<div class="what"><strong>'+esc(s.n)+'</strong><p>'+esc(s.p)+'</p>'+
@@ -751,7 +752,7 @@ svg.addEventListener("pointerup",up); svg.addEventListener("pointercancel",up);
 /* ---------- checklist ---------- */
 var cl = document.getElementById("checklist");
 cl.innerHTML = CHECK.map(function(c){
-  return '<div class="chk"><input type="checkbox" id="c-'+c[0]+'"'+(store("uktrip-"+c[0])==="1"?" checked":"")+'><label for="c-'+c[0]+'">'+esc(c[1])+(c[2]?'<small>'+esc(c[2])+'</small>':'')+'</label><span class="when">'+c[3]+'</span></div>';
+  return '<div class="chk"><input type="checkbox" id="c-'+c[0]+'"'+((function(v){return v==null?!!c[4]:v==="1";})(store("uktrip-"+c[0]))?" checked":"")+'><label for="c-'+c[0]+'">'+esc(c[1])+(c[2]?'<small>'+esc(c[2])+'</small>':'')+'</label><span class="when">'+c[3]+'</span></div>';
 }).join("");
 function progress(){
   var all = cl.querySelectorAll("input"), done = cl.querySelectorAll("input:checked").length;
