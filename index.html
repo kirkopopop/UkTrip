@@ -222,13 +222,60 @@ details.more .txt p{margin:0}
   .stamp b{font-size:38px}
   .stamp span{font-size:13.5px}
   .stamp em{white-space:nowrap}
-  .seg button{padding:9px 13px;font-size:13.5px}
+  .seg button{padding:9px 10px;font-size:13.5px;flex:1}
+  .mast-side{flex-wrap:wrap;row-gap:10px}
+  .seg{width:100%}
   .postmark{width:88px;height:88px}
   .mast-side{align-items:flex-start;width:100%;flex-direction:row;justify-content:space-between;align-items:center}
   ol.stops::before{left:65px}
   .stop{grid-template-columns:44px 42px minmax(0,1fr)}
   .stop .t{font-size:15.5px;padding-right:8px}
 }
+
+/* ---------- expenses ---------- */
+[hidden]{display:none!important}
+.money{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.15fr);gap:18px;align-items:start}
+.mcard{background:var(--surface);border-radius:var(--r);padding:20px 22px;display:flex;flex-direction:column;gap:12px;min-width:0;box-shadow:0 1px 2px rgba(10,20,40,.06)}
+.mcard h2{margin:0;font-weight:800;font-stretch:78%;font-size:25px;line-height:1.1}
+.mcard p{margin:0}
+.mcard .sub{color:var(--muted);font-size:14px}
+.lock{max-width:460px;margin:0 auto;width:100%}
+.lock form{display:flex;gap:8px}
+.fld{font:500 16px/1.2 var(--font);color:var(--ink);background:var(--paper);border:1.5px solid var(--line);border-radius:10px;padding:11px 12px;min-width:0;width:100%}
+.fld:focus{outline:none;border-color:var(--blue)}
+.btn{font:700 15px/1 var(--font);border:0;border-radius:999px;padding:12px 18px;background:var(--red);color:var(--on-red);cursor:pointer;white-space:nowrap}
+.btn:disabled{opacity:.5;cursor:default}
+.btn.ghost{background:transparent;color:var(--blue);padding:6px 2px;font-weight:600;font-size:14px}
+.err{color:var(--red-ink);font-size:14px;font-weight:600}
+.bal{background:var(--ink);color:var(--paper);border-radius:var(--r);padding:20px 22px;display:flex;flex-direction:column;gap:6px;position:relative;overflow:hidden}
+.bal small{font-weight:700;font-stretch:85%;letter-spacing:.08em;text-transform:uppercase;font-size:12px;opacity:.7}
+.bal b{font-weight:800;font-stretch:72%;font-size:clamp(28px,6vw,40px);line-height:1.02;letter-spacing:-.01em}
+.bal b .amt{color:#ffb3bd}
+.bal .tot{display:flex;gap:4px 18px;flex-wrap:wrap;font-size:14px;opacity:.85;margin-top:4px}
+.bal::after{content:"";position:absolute;inset:auto 0 0 0;height:6px;background:repeating-linear-gradient(-45deg,var(--red) 0 12px,transparent 12px 18px,var(--blue) 18px 30px,transparent 30px 36px)}
+.pick{display:flex;flex-wrap:wrap;gap:6px}
+.pick button{font:600 14px/1 var(--font);border:1.5px solid var(--line);background:var(--surface);color:var(--ink);padding:9px 12px;border-radius:999px;cursor:pointer}
+.pick button[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:var(--paper)}
+.row2{display:grid;grid-template-columns:minmax(0,1fr) 130px;gap:8px}
+.lbl{font-weight:700;font-stretch:85%;font-size:12.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--label);margin-bottom:-4px}
+.amtf{position:relative}
+.amtf span{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--muted);font-weight:600}
+.amtf .fld{padding-left:26px}
+.xday{display:flex;justify-content:space-between;align-items:baseline;border-bottom:1.5px solid var(--line);padding:14px 0 6px;font-weight:700;font-stretch:85%;font-size:13px;letter-spacing:.06em;text-transform:uppercase;color:var(--label)}
+.xday:first-child{padding-top:0}
+.xrow{display:grid;grid-template-columns:30px minmax(0,1fr) auto;gap:10px;align-items:center;padding:10px 0;border-bottom:1px solid var(--line)}
+.xrow:last-child{border-bottom:0}
+.xrow .ic{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;background:var(--soft);font-size:15px}
+.xrow .d{min-width:0}
+.xrow .d b{display:block;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.xrow .d span{font-size:13px;color:var(--muted)}
+.xrow .r{text-align:right;display:flex;flex-direction:column;align-items:flex-end;gap:2px}
+.xrow .r b{font-variant-numeric:tabular-nums;font-weight:700}
+.xrow .del{font:600 12px/1 var(--font);border:0;background:none;color:var(--muted);cursor:pointer;padding:4px 0}
+.xrow .del.armed{color:var(--red-ink)}
+.empty{color:var(--muted);text-align:center;padding:18px 0}
+.mfoot{display:flex;justify-content:space-between;align-items:center;gap:10px;font-size:13px;color:var(--muted);flex-wrap:wrap}
+@media (max-width: 860px){ .money{grid-template-columns:minmax(0,1fr)} }
 @media (prefers-reduced-motion: reduce){ *{animation:none!important;transition:none!important} }
 </style>
 </head>
@@ -241,6 +288,7 @@ details.more .txt p{margin:0}
       <div class="seg" role="group" aria-label="View">
         <button type="button" id="vPlan" aria-pressed="true">Day plan</button>
         <button type="button" id="vTips" aria-pressed="false">Before you go</button>
+        <button type="button" id="vMoney" aria-pressed="false">Expenses</button>
       </div>
     </div>
   </div>
@@ -267,6 +315,38 @@ details.more .txt p{margin:0}
       </div>
       <div class="list" id="list"></div>
     </section>
+  </div>
+
+  <div id="moneyView" hidden>
+    <div class="mcard lock" id="mLock">
+      <h2>Shared expenses</h2>
+      <p class="sub">Log what each of us pays and see who owes whom, on both phones. Enter the trip code once; this phone remembers it.</p>
+      <form id="mLockForm" autocomplete="off"><input class="fld" id="mCode" placeholder="Trip code" autocapitalize="characters" spellcheck="false" aria-label="Trip code"><button class="btn" type="submit">Open</button></form>
+      <p class="err" id="mLockErr" hidden></p>
+    </div>
+    <div class="money" id="mApp" hidden>
+      <div style="display:flex;flex-direction:column;gap:18px;min-width:0">
+        <div class="bal" id="mBal" aria-live="polite"></div>
+        <form class="mcard" id="mForm" autocomplete="off">
+          <h2>Add an expense</h2>
+          <div class="row2">
+            <input class="fld" id="mDesc" placeholder="What was it?" maxlength="120" aria-label="Description" required>
+            <div class="amtf"><span>£</span><input class="fld" id="mAmt" inputmode="decimal" placeholder="0.00" aria-label="Amount in pounds" required></div>
+          </div>
+          <div class="lbl">Paid by</div><div class="pick" id="mPayer"></div>
+          <div class="lbl">Split</div><div class="pick" id="mSplit"></div>
+          <div class="lbl">Category</div><div class="pick" id="mCat"></div>
+          <div class="lbl">Day</div><div class="pick" id="mDay"></div>
+          <p class="err" id="mErr" hidden></p>
+          <button class="btn" type="submit" id="mAdd">Add expense</button>
+        </form>
+      </div>
+      <div class="mcard">
+        <h2>All expenses</h2>
+        <div id="mList"></div>
+        <div class="mfoot"><span id="mSync"></span><span><button type="button" class="btn ghost" id="mRename">Rename</button> · <button type="button" class="btn ghost" id="mShare">Copy invite link</button></span></div>
+      </div>
+    </div>
   </div>
 
   <div id="tipsView" hidden>
@@ -767,12 +847,104 @@ function progress(){
 cl.querySelectorAll("input").forEach(function(i){ i.addEventListener("change",function(){ store("uktrip-"+i.id.slice(2), i.checked?"1":"0"); progress(); }); });
 progress();
 
+
+/* ---------- shared expenses (Supabase RPC, trip-code protected) ---------- */
+var SB = "https://iggxntoqfywensvwulod.supabase.co/rest/v1/rpc/", SBK = "sb_publishable_1RdETP5Xyo5HaVqGJAwidw_5jjMPuYO";
+var CATS = [["food","🍔","Food"],["drinks","🍺","Drinks"],["transport","🚆","Transport"],["tickets","🎟️","Tickets"],["stay","🛏️","Stay"],["shopping","🛍️","Shopping"],["other","•","Other"]];
+var TRIPDAYS = [["2026-11-19","Thu 19"],["2026-11-20","Fri 20"],["2026-11-21","Sat 21"],["2026-11-22","Sun 22"]];
+var M = {code:store("uktrip-code")||"", names:["Kirill","Friend"], items:[], payer:0, split:0.5, cat:"food", day:null, timer:null, busy:false};
+function rpc(fn, body){
+  return fetch(SB+fn,{method:"POST",headers:{"apikey":SBK,"Content-Type":"application/json"},body:JSON.stringify(body)}).then(function(r){
+    return r.text().then(function(tx){ var j=null; try{ j=tx?JSON.parse(tx):null; }catch(e){} if(!r.ok){ var m=(j&&j.message)||("Error "+r.status); throw new Error(m); } return j; });
+  });
+}
+function gbp(n){ return "£"+(Math.round(n*100)/100).toFixed(2).replace(/\.00$/,""); }
+function todayISO(){ var d=new Date(); return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0"); }
+function defaultDay(){ var t=todayISO(); return TRIPDAYS.some(function(d){return d[0]===t;}) ? t : "2026-11-19"; }
+function dayLabel(iso){ var f=TRIPDAYS.find(function(d){return d[0]===iso;}); if(f) return f[1]; var d=new Date(iso+"T12:00:00"); return d.toLocaleDateString("en-GB",{weekday:"short",day:"numeric",month:"short"}); }
+function pick(el, opts, val, on){
+  el.innerHTML = opts.map(function(o){ return '<button type="button" data-v="'+esc(o[0])+'" aria-pressed="'+(String(o[0])===String(val))+'">'+o[1]+'</button>'; }).join("");
+  el.querySelectorAll("button").forEach(function(b){ b.addEventListener("click",function(){ on(b.dataset.v); }); });
+}
+function drawPickers(){
+  var n=M.names, other=n[1-M.payer];
+  pick(document.getElementById("mPayer"), [[0,esc(n[0])],[1,esc(n[1])]], M.payer, function(v){ M.payer=+v; drawPickers(); });
+  pick(document.getElementById("mSplit"), [[0.5,"Split 50/50"],[1,esc(other)+" owes it all"],[0,"Just "+esc(n[M.payer])+"'s"]], M.split, function(v){ M.split=+v; drawPickers(); });
+  pick(document.getElementById("mCat"), CATS.map(function(c){return [c[0],c[1]+" "+c[2]];}), M.cat, function(v){ M.cat=v; drawPickers(); });
+  pick(document.getElementById("mDay"), TRIPDAYS, M.day, function(v){ M.day=v; drawPickers(); });
+}
+function drawMoney(){
+  var n=M.names, net=0, tot=0, share=[0,0], paid=[0,0];
+  M.items.forEach(function(e){ var a=+e.amount, o=a*(+e.other_share), p=e.paid_by; tot+=a; paid[p]+=a; share[1-p]+=o; share[p]+=a-o; net += p===0 ? o : -o; });
+  var bal = Math.abs(net)<0.005 ? '<b>All square</b>' : '<b>'+esc(n[net>0?1:0])+' owes '+esc(n[net>0?0:1])+' <span class="amt">'+gbp(Math.abs(net))+'</span></b>';
+  document.getElementById("mBal").innerHTML = '<small>Balance</small>'+bal+'<div class="tot"><span>Total '+gbp(tot)+'</span><span>'+esc(n[0])+' paid '+gbp(paid[0])+' · share '+gbp(share[0])+'</span><span>'+esc(n[1])+' paid '+gbp(paid[1])+' · share '+gbp(share[1])+'</span></div>';
+  var html="", lastDay=null, byDay={};
+  M.items.forEach(function(e){ byDay[e.spent_on]=(byDay[e.spent_on]||0)+(+e.amount); });
+  M.items.forEach(function(e){
+    if(e.spent_on!==lastDay){ lastDay=e.spent_on; html += '<div class="xday"><span>'+esc(dayLabel(e.spent_on))+'</span><span>'+gbp(byDay[e.spent_on])+'</span></div>'; }
+    var c=CATS.find(function(x){return x[0]===e.category;})||CATS[6], sh=+e.other_share, p=e.paid_by;
+    var how = sh===0.5 ? "split 50/50" : sh===1 ? n[1-p]+" owes it all" : sh===0 ? "not split" : Math.round(sh*100)+"% for "+n[1-p];
+    html += '<div class="xrow"><span class="ic" aria-hidden="true">'+c[1]+'</span><div class="d"><b>'+esc(e.description)+'</b><span>'+esc(n[p])+' paid · '+esc(how)+'</span></div><div class="r"><b>'+gbp(+e.amount)+'</b><button type="button" class="del" data-id="'+e.id+'">Delete</button></div></div>';
+  });
+  var list=document.getElementById("mList");
+  list.innerHTML = html || '<p class="empty">Nothing yet. The first round is on whoever adds it.</p>';
+  list.querySelectorAll(".del").forEach(function(b){ b.addEventListener("click",function(){
+    if(!b.classList.contains("armed")){ b.classList.add("armed"); b.textContent="Tap to confirm"; setTimeout(function(){ b.classList.remove("armed"); b.textContent="Delete"; },3500); return; }
+    b.disabled=true; rpc("uktrip_delete",{p_code:M.code,p_id:+b.dataset.id}).then(load).catch(showErr);
+  }); });
+  drawPickers();
+}
+function showErr(e){ var el=document.getElementById("mErr"); el.textContent=e.message||String(e); el.hidden=false; }
+function stamp(){ var d=new Date(); document.getElementById("mSync").textContent="Synced "+d.toLocaleTimeString("en-GB",{hour:"2-digit",minute:"2-digit"}); }
+function load(){
+  if(!M.code) return Promise.resolve();
+  return rpc("uktrip_list",{p_code:M.code}).then(function(j){
+    M.names=j.names||M.names; M.items=j.expenses||[]; store("uktrip-code",M.code);
+    document.getElementById("mLock").hidden=true; document.getElementById("mApp").hidden=false; drawMoney(); stamp();
+  }).catch(function(e){
+    if(/wrong trip code/.test(e.message)){ M.code=""; store("uktrip-code",""); document.getElementById("mApp").hidden=true; document.getElementById("mLock").hidden=false; var le=document.getElementById("mLockErr"); le.textContent="That code didn't work. Check it and try again."; le.hidden=false; }
+    else { document.getElementById("mSync").textContent="Offline: showing the last list"; }
+  });
+}
+function openMoney(){
+  if(!M.day) M.day=defaultDay();
+  document.getElementById("mLock").hidden=!!M.code; if(!M.code){ document.getElementById("mApp").hidden=true; }
+  load(); clearInterval(M.timer); M.timer=setInterval(function(){ if(view==="money" && !document.hidden) load(); },20000);
+}
+document.getElementById("mLockForm").addEventListener("submit",function(e){ e.preventDefault(); M.code=document.getElementById("mCode").value.trim().toUpperCase(); document.getElementById("mLockErr").hidden=true; load(); });
+document.getElementById("mForm").addEventListener("submit",function(e){
+  e.preventDefault(); if(M.busy) return;
+  var desc=document.getElementById("mDesc").value.trim(), amt=parseFloat(document.getElementById("mAmt").value.replace(",","."));
+  if(!desc){ showErr(new Error("Add a short description.")); return; }
+  if(!(amt>0)){ showErr(new Error("Enter an amount in pounds.")); return; }
+  document.getElementById("mErr").hidden=true; M.busy=true; document.getElementById("mAdd").disabled=true;
+  rpc("uktrip_add",{p_code:M.code,p_description:desc,p_amount:amt,p_currency:"GBP",p_paid_by:M.payer,p_other_share:M.split,p_category:M.cat,p_spent_on:M.day}).then(function(){
+    document.getElementById("mDesc").value=""; document.getElementById("mAmt").value=""; return load();
+  }).catch(showErr).then(function(){ M.busy=false; document.getElementById("mAdd").disabled=false; });
+});
+document.getElementById("mRename").addEventListener("click",function(){
+  var f=document.getElementById("mRenameForm");
+  if(f){ f.remove(); return; }
+  f=document.createElement("form"); f.id="mRenameForm"; f.className="row2"; f.style.gridTemplateColumns="1fr 1fr auto";
+  f.innerHTML='<input class="fld" value="'+esc(M.names[0])+'" maxlength="20" aria-label="First name"><input class="fld" value="'+esc(M.names[1])+'" maxlength="20" aria-label="Second name"><button class="btn" type="submit">Save</button>';
+  this.closest(".mcard").appendChild(f);
+  f.addEventListener("submit",function(ev){ ev.preventDefault(); var v=[].map.call(f.querySelectorAll("input"),function(i){return i.value.trim();});
+    rpc("uktrip_set_names",{p_code:M.code,p_names:v}).then(function(){ f.remove(); return load(); }).catch(showErr); });
+});
+document.getElementById("mShare").addEventListener("click",function(){
+  var url=location.origin+location.pathname+"?code="+encodeURIComponent(M.code)+"#money", b=this;
+  (navigator.clipboard?navigator.clipboard.writeText(url):Promise.reject()).then(function(){ b.textContent="Link copied"; },function(){ b.textContent=url; }).then(function(){ setTimeout(function(){ b.textContent="Copy invite link"; },4000); });
+});
+(function(){ var q=new URLSearchParams(location.search).get("code"); if(q){ M.code=q.trim().toUpperCase(); store("uktrip-code",M.code); history.replaceState(null,"",location.pathname+location.hash); } })();
+document.addEventListener("visibilitychange",function(){ if(!document.hidden && view==="money") load(); });
+
 /* ---------- routing ---------- */
 function go(id){ if(location.hash!=="#"+id) location.hash = id; else route(); }
 var lastCity = null;
 function route(){
   var h = (location.hash||"").slice(1);
   if(h==="tips"){ view="tips"; }
+  else if(h==="money"){ view="money"; }
   else {
     view="plan"; var i = DAYS.findIndex(function(d){return d.id===h;});
     if(i<0 && !h){ var now=new Date(); if(now>=START && now<=END) i=Math.min(3,Math.floor((now-START)/864e5)); }
@@ -780,6 +952,9 @@ function route(){
   }
   document.getElementById("planView").style.display = view==="plan"?"flex":"none";
   document.getElementById("tipsView").hidden = view!=="tips";
+  document.getElementById("moneyView").hidden = view!=="money";
+  document.getElementById("vMoney").setAttribute("aria-pressed", view==="money");
+  if(view==="money") openMoney(); else clearInterval(M.timer);
   document.getElementById("vPlan").setAttribute("aria-pressed", view==="plan");
   document.getElementById("vTips").setAttribute("aria-pressed", view==="tips");
   if(view==="plan"){
@@ -798,6 +973,7 @@ tabs.addEventListener("keydown",function(e){
 });
 document.getElementById("vPlan").addEventListener("click",function(){ go(DAYS[cur].id); });
 document.getElementById("vTips").addEventListener("click",function(){ go("tips"); });
+document.getElementById("vMoney").addEventListener("click",function(){ go("money"); });
 document.querySelectorAll("[data-goto]").forEach(function(a){ a.addEventListener("click",function(e){ e.preventDefault(); go(a.dataset.goto); window.scrollTo(0,0); }); });
 window.addEventListener("hashchange", route);
 var rt; window.addEventListener("resize",function(){ clearTimeout(rt); rt=setTimeout(function(){ if(view==="plan") fit(); },150); });
