@@ -274,7 +274,7 @@ details.more .txt p{margin:0}
       <section class="wide bookings">
         <div class="bk-head"><h2>Bookings</h2><span class="progress" id="progress"></span></div>
         <div class="bar" aria-hidden="true"><i id="bar"></i></div>
-        <p>Book the sleeper and Johnnie Walker first: it's a busy weekend. Ticks stay on your own phone.</p>
+        <p>Next up: the castle, Tennent's and the Friday game. Ticks stay on your own phone.</p>
         <div class="checks" id="checklist"></div>
       </section>
 
@@ -491,7 +491,7 @@ var DAYS = [
       more:"<p>Time for a second round elsewhere? <b>Eve Bar</b> (34 Southampton St), Adam Handling's basement cocktail bar under his restaurant Frog, is 2 minutes away.</p>"},
     {t:"21:55", n:"Northern line to Euston", p:"Walk to Leicester Square, then the Northern line (Charing Cross branch) is direct to Euston, ~6 min.", off:true},
     {t:"22:15", n:"Bags, then one for the road at the Euston Tap", p:"Craft beer in the two stone lodges at the station gates, the last bits of the old Euston. Collect the bags before 23:00 when left luggage closes.", fee:["~£6–8","paid"], ll:[51.5268,-0.1329], q:"Euston Tap, 190 Euston Road, London"},
-    {t:"23:15", n:"Board the Caledonian Sleeper", p:"To Glasgow Central (the Edinburgh portion is sold out). The train splits at Carstairs during the night, so expect a jolt. Boarding opens around 22:30 and the train leaves ~23:45; the exact time is on the ticket.", fee:["£315 for 2","paid"], book:true, off:true}
+    {t:"23:15", n:"Board the Caledonian Sleeper", p:"To Glasgow Central (the Edinburgh portion is sold out). The train splits at Carstairs during the night, so expect a jolt. Boarding opens around 22:30 and the train leaves ~23:45; the exact time is on the ticket.", fee:["£315 for 2","paid"], booked:true, off:true}
    ]},
  { id:"sat", tab:"Sat 21", place:"Glasgow ⇄ Edinburgh", date:"Saturday 21 November", city:"edinburgh",
    title:"Edinburgh by day, Glasgow by night",
@@ -505,7 +505,7 @@ var DAYS = [
     {t:"12:00", n:"Royal Mile → Victoria Street", p:"Downhill along the curved, colourful street to the Grassmarket.", fee:["Free","free"], ll:[55.9488,-3.1935], q:"Victoria Street, Edinburgh"},
     {t:"12:45", n:"Pub lunch in the Grassmarket", p:"Old market square under the castle rock, lined with pubs. No rush: Johnnie Walker isn't until 15:20.", ll:[55.9474,-3.1962], q:"Grassmarket, Edinburgh"},
     {t:"14:15", n:"Calton Hill while it's light", p:"The castle, Old Town and Arthur's Seat from the monuments; the light goes golden ahead of sunset ~15:50. 20 min walk from the Grassmarket. Leave by 14:55.", fee:["Free","free"], ll:[55.9553,-3.1827], q:"Calton Hill, Edinburgh"},
-    {t:"15:20", n:"Johnnie Walker Princes Street: Journey of Flavour", p:"90 minutes, three cocktails made to match a flavour quiz, then the rooftop bar with the castle lit up after dark.", fee:["£30","paid"], book:true, ll:[55.9502,-3.2068], q:"Johnnie Walker Princes Street, 145 Princes Street, Edinburgh",
+    {t:"15:20", n:"Johnnie Walker Princes Street: Journey of Flavour", p:"90 minutes, three cocktails made to match a flavour quiz, then the rooftop bar with the castle lit up after dark.", fee:["£30","paid"], booked:true, ll:[55.9502,-3.2068], q:"Johnnie Walker Princes Street, 145 Princes Street, Edinburgh",
       more:"<p>Use the entrance on Hope Street and show the ticket in the lobby. 20 min walk along Princes Street from Calton Hill.</p>"},
     {t:"17:10", n:"Christmas market, East Princes Street Gardens", p:"Mulled wine among the lit-up stalls under the Scott Monument; open 10:00–22:00. Waverley is right below.", fee:["Free","free"], ll:[55.9519,-3.1925], q:"Edinburgh Christmas Market, East Princes Street Gardens"},
     {t:"17:50", n:"Train back to Glasgow Queen Street", p:"~50 min; trains every 15 min. The Maldron is ~8 min walk from Queen Street.", off:true},
@@ -538,13 +538,13 @@ var DAYS = [
 ];
 
 var CHECK = [
-  ["sleeper","Caledonian Sleeper, Fri ~23:45 Euston → Glasgow","Room for two, ~£315 at sleeper.scot","Now"],
+  ["sleeper","Caledonian Sleeper, Fri ~23:45 Euston → Glasgow","Booked; room for two","Done",true],
   ["hotel","Maldron Hotel Glasgow City, Sat night","50 Renfrew St; check-in from 15:00, bag drop at 07:30","Done",true],
   ["heard","Heard Covent Garden, Fri 17:15 for 2","Booked; ask for the Soda Room on arrival","Done",true],
   ["tatar","Tatar Bunar, Thu 19:30 for 2","Booked; 07771 013190 if running late","Done",true],
   ["karts","Interactive experience, Fri ~14:00 for 2","Pick one of the four, then book","This week"],
   ["castle","Edinburgh Castle, Sat 10:30","Timed entry, online","Now"],
-  ["jw","Johnnie Walker Journey of Flavour, Sat 15:20 for 2","johnniewalker.com","Now"],
+  ["jw","Johnnie Walker Journey of Flavour, Sat 15:20 for 2","Booked; Hope Street entrance","Done",true],
   ["tennents","Tennent's brewery tour, Sun 12:00 for 2","tennents.com; check Sunday slots","Now"],
   ["citylink","Citylink Air, Sun 15:30 Glasgow → Edinburgh Airport","citylink.co.uk","This week"],
   ["mail","Postal Museum + Mail Rail, Fri 10:15","Kirill only","This week"],
