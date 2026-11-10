@@ -522,11 +522,11 @@ var DAYS = [
  { id:"thu", tab:"Thu 19", place:"London", date:"Thursday 19 November", city:"london",
    title:"Borough Market, Soho, a Ukrainian feast",
    intro:"Kirill grabs the key at Dima's office, drops the bags and grazes Borough Market on his own. We meet in Soho at 17:30 for £4 Guinness and a quick proper cocktail, then dinner at Tatar Bunar at 19:30 and a nightcap at one of the best bars in the world.",
-   off:"<b>08:00</b> Kirill lands at Gatwick → Thameslink to London Bridge, ~35 min.<br><b>10:00 / 14:00</b> Hotel (not on the map).",
+   off:"<b>08:00</b> Kirill lands at Gatwick → Thameslink to London Bridge, ~35 min.<br><b>Hotel:</b> DoubleTree by Hilton Tower of London, 7 Pepys St (Tower Hill). Check-in from 15:00, check-out by 12:00.",
    stops:[
     {t:"08:00", n:"Land at Gatwick, Thameslink to London Bridge", p:"Tap in with contactless; ~30–40 min.", who:"Kirill", off:true},
     {t:"09:15", n:"Pick up the key at Deliveroo HQ", p:"The River Building, 1 Cousin Lane, by Cannon Street station: a 10-min walk across London Bridge.", who:"Kirill", ll:[51.5101,-0.0917], q:"Deliveroo The River Building 1 Cousin Lane London"},
-    {t:"10:00", n:"Hotel: drop the bags", p:"Freshen up after the early flight.", who:"Kirill", off:true},
+    {t:"10:00", n:"DoubleTree by Hilton Tower of London: drop the bags", p:"7 Pepys St, 3 min from Tower Hill station; a 15-min walk east along the river from Deliveroo HQ. Check-in is from 15:00, so ask about early check-in and freshen up after the early flight.", who:"Kirill", booked:true, ll:[51.5106,-0.0780], q:"DoubleTree by Hilton London Tower of London, 7 Pepys Street"},
     {t:"12:00", n:"Lunch at Borough Market", p:"Full market day (10:00–17:00). Graze these four, all within a couple of minutes of each other:", who:"Kirill", ll:[51.5055,-0.0910], q:"Borough Market, London",
       subs:[
         ["Ginger Pig","The butcher's cult hot sausage roll; Scotch eggs too. Three Crown Square.","Ginger Pig Borough Market"],
@@ -534,7 +534,7 @@ var DAYS = [
         ["Turnips","The viral cup of strawberries under warm chocolate, ~£8.50.","Turnips Borough Market"],
         ["Bread Ahead","Filled doughnuts from the original bakery stall on Cathedral Street.","Bread Ahead Borough Market Cathedral Street"]
       ]},
-    {t:"14:00", n:"Back to the hotel, rest", p:"Up since ~04:30: recharge before the evening. Or pick something from the spare-time list in Before you go.", who:"Kirill", off:true},
+    {t:"14:00", n:"Back to the DoubleTree, rest", p:"20 min on foot from Borough Market over London Bridge. Up since ~04:30: recharge before the evening; the rooftop bar is right there. Or pick something from the spare-time list in Before you go.", who:"Kirill", off:true},
     {t:"17:30", n:"£4 Guinness at Simmons Greek Street", p:"We meet here. Retro Soho bar with hidden karaoke rooms; happy hour 15:00–20:00, so Soho comes before dinner.", fee:["£4 a pint","paid"], ll:[51.5140,-0.1314], q:"Simmons Greek Street, Soho, London"},
     {t:"18:20", n:"Swift Soho, 12 Old Compton St", p:"One of London's best cocktail bars: one quick drink. The Irish coffee upstairs is famous; the downstairs whisky room does a great Old Fashioned. Leave by 18:55 for dinner.", fee:["~£14 a cocktail","paid"], ll:[51.5131,-0.1302], q:"Swift Soho, 12 Old Compton Street, London",
       more:"<p>Close by if Swift is full: <b>Three Sheets Soho</b> (13 Manette St), No. 11 in the UK's Top 50 Cocktail Bars 2026. <b>Bar Termini</b> (7 Old Compton St) is No. 8, but it's a Negroni specialist.</p>"},
@@ -542,13 +542,15 @@ var DAYS = [
     {t:"19:30", n:"Dinner at Tatar Bunar, 152 Curtain Rd", p:"Southern Ukrainian (Bessarabian) cooking from an Odesa team; in the Michelin Guide since March 2026. Order a grill centrepiece and the onion bread with lardo.", fee:["~£60–80","paid"], booked:true, ll:[51.5262,-0.0808], q:"Tatar Bunar, 152 Curtain Road, London",
       more:"<p>Booked for 19:30. Phone if running late: 07771 013190.</p><p>Mriya in Earl's Court, long London's best-known Ukrainian place, closed in June 2026, so this is the pick.</p>"},
     {t:"21:45", n:"Nightcap at Waltz, 28 Scrutton St", p:"Japanese cocktail bar five minutes' walk from dinner: No. 32 in the World's 50 Best Bars 2026 and Time Out's best cocktail bar in London. Sit at the bar and watch them work.", fee:["~£15–18 a cocktail","paid"], ll:[51.5235,-0.0820], q:"Waltz bar, 28 Scrutton Street, London",
-      more:"<p>Bar seats are walk-in; a few tables can be booked at waltzbar.uk.</p><p>Plan B, also 5 minutes away: <b>Happiness Forgets</b> (8–9 Hoxton Square), a candlelit basement that's a favourite of London bartenders, open till late.</p>"}
+      more:"<p>Bar seats are walk-in; a few tables can be booked at waltzbar.uk.</p><p>Plan B, also 5 minutes away: <b>Happiness Forgets</b> (8–9 Hoxton Square), a candlelit basement that's a favourite of London bartenders, open till late.</p>"},
+    {t:"~23:30", n:"Back to the DoubleTree", p:"25 min on foot from Shoreditch, or an Uber (~£10–15). Early start tomorrow for Barry's.", off:true}
    ]},
  { id:"fri", tab:"Fri 20", place:"London → Glasgow", date:"Friday 20 November", city:"london",
    title:"Barry's, games, Heard, sleeper north",
    intro:"Kirill does Barry's and the old Post Office railway while Dima finishes his short day. Then lunch, an interactive game and a quick Uniqlo stop before an early Covent Garden evening: Michelin-chef burgers at 17:15, an old pub, cocktails above London's oldest restaurant, and the night train to Glasgow.",
    off:"<b>~23:45</b> Caledonian Sleeper Euston → Glasgow Central, arrive <b>~07:30</b> Saturday.",
    stops:[
+    {t:"07:15", n:"Check out of the DoubleTree, leave the bags", p:"Check-out is noon, but you're out all day: check out now and leave the bags at the desk. Circle line Tower Hill → Euston Square, ~20 min.", who:"Kirill", booked:true, ll:[51.5106,-0.0780], q:"DoubleTree by Hilton London Tower of London, 7 Pepys Street"},
     {t:"08:00", n:"Barry's Central, 163 Euston Rd", p:"The original London studio: treadmill and floor HIIT in the red room. Showers and towels on site.", who:"Kirill", fee:["~£30","paid"], book:true, ll:[51.5266,-0.1338], q:"Barry's London Central 163 Euston Road",
       more:"<p>Booking opens about a week ahead (around Fri 13 Nov). Pick any morning class that ends by 09:30.</p>"},
     {t:"10:15", n:"Postal Museum + Mail Rail, Clerkenwell", p:"20-min walk from Barry's. A 15-minute ride through the tunnels of the Post Office's driverless underground railway (1927–2003), then the museum.", who:"Kirill", fee:["~£18–20","paid"], book:true, ll:[51.5246,-0.1134], q:"The Postal Museum, Phoenix Place, London"},
@@ -561,7 +563,7 @@ var DAYS = [
         ["4. Prison Island","5-7 Hornsey St, by Holloway Road (Piccadilly line). 31 challenge cells, 60 min of play; arrive 20 min early. Fridays from 2pm. From ~£27.","Prison Island London, 5-7 Hornsey Street"]
       ],
       more:"<p>Closest to King's Cross for the train: Prison Island (Piccadilly line, 3 stops) or the Escape Room Arcade. Crystal Maze is the priciest but the most 'event'.</p>"},
-    {t:"15:15", n:"Bags to Euston left luggage", p:"Collect the bags from the hotel and drop them at the staffed desk at the top of the ramp to platforms 16–18 (07:00–23:00, ~£12.50 a bag), or ask the hotel to hold them until ~21:30.", ll:[51.5284,-0.1346], q:"Left luggage, London Euston station"},
+    {t:"15:15", n:"Bags: DoubleTree → Euston left luggage", p:"Collect the bags at the DoubleTree, then Circle line Tower Hill → King's Cross St Pancras (~20 min) and a 5-min walk to Euston. The staffed desk is at the top of the ramp to platforms 16–18 (07:00–23:00, ~£12.50 a bag). Or leave them at the DoubleTree and collect around 21:15 instead.", ll:[51.5284,-0.1346], q:"Left luggage, London Euston station"},
     {t:"16:15", n:"Uniqlo Covent Garden, Long Acre / Floral St", p:"Three floors in a listed Victorian carriage hall, with London-only UTme! prints you can customise in store. Northern line Euston → Leicester Square, ~6 min, then 4 min on foot. Five minutes from Heard.", ll:[51.5124,-0.1255], q:"Uniqlo Covent Garden, Long Acre, London"},
     {t:"17:15", n:"Dinner at Heard Covent Garden, 33–35 Wellington St", p:"Burgers from two-Michelin-starred chef Jordan Bailey. This is his biggest site, opened 5 Nov 2026. Order The Heard: a double smash patty with jalapeño hot honey and Ogleshield cheese. Each burger comes with a beer or wine pairing.", fee:["~£25–40","paid"], booked:true, ll:[51.5119,-0.1208], q:"Heard Covent Garden, 33-35 Wellington Street, London",
       more:"<p>Booked for 17:15. <b>Dessert in the Soda Room downstairs:</b> a speakeasy dessert and cocktail bar with hot apple pie, brûlée cheesecake and milk soft serve. It's for diners only, subject to space, so ask on arrival.</p>"},
