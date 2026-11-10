@@ -521,7 +521,7 @@ function gq(s){ return "https://www.google.com/maps/search/?api=1&query=" + enco
 var DAYS = [
  { id:"thu", tab:"Thu 19", place:"London", date:"Thursday 19 November", city:"london",
    title:"Borough Market, Soho, a Ukrainian feast",
-   intro:"Kirill grabs the key at your office, drops the bags and grazes Borough Market on his own. We meet in Soho at 17:30 for £4 Guinness and a quick proper cocktail, then dinner at Tatar Bunar at 19:30 and a nightcap at one of the best bars in the world.",
+   intro:"Kirill grabs the key at Dima's office, drops the bags and grazes Borough Market on his own. We meet in Soho at 17:30 for £4 Guinness and a quick proper cocktail, then dinner at Tatar Bunar at 19:30 and a nightcap at one of the best bars in the world.",
    off:"<b>08:00</b> Kirill lands at Gatwick → Thameslink to London Bridge, ~35 min.<br><b>10:00 / 14:00</b> Hotel (not on the map).",
    stops:[
     {t:"08:00", n:"Land at Gatwick, Thameslink to London Bridge", p:"Tap in with contactless; ~30–40 min.", who:"Kirill", off:true},
@@ -546,7 +546,7 @@ var DAYS = [
    ]},
  { id:"fri", tab:"Fri 20", place:"London → Glasgow", date:"Friday 20 November", city:"london",
    title:"Barry's, games, Heard, sleeper north",
-   intro:"Kirill does Barry's and the old Post Office railway while you finish your short day. Then lunch, an interactive game and a quick Uniqlo stop before an early Covent Garden evening: Michelin-chef burgers at 17:15, an old pub, cocktails above London's oldest restaurant, and the night train to Glasgow.",
+   intro:"Kirill does Barry's and the old Post Office railway while Dima finishes his short day. Then lunch, an interactive game and a quick Uniqlo stop before an early Covent Garden evening: Michelin-chef burgers at 17:15, an old pub, cocktails above London's oldest restaurant, and the night train to Glasgow.",
    off:"<b>~23:45</b> Caledonian Sleeper Euston → Glasgow Central, arrive <b>~07:30</b> Saturday.",
    stops:[
     {t:"08:00", n:"Barry's Central, 163 Euston Rd", p:"The original London studio: treadmill and floor HIIT in the red room. Showers and towels on site.", who:"Kirill", fee:["~£30","paid"], book:true, ll:[51.5266,-0.1338], q:"Barry's London Central 163 Euston Road",
@@ -852,7 +852,7 @@ progress();
 var SB = "https://iggxntoqfywensvwulod.supabase.co/rest/v1/rpc/", SBK = "sb_publishable_1RdETP5Xyo5HaVqGJAwidw_5jjMPuYO";
 var CATS = [["food","🍔","Food"],["drinks","🍺","Drinks"],["transport","🚆","Transport"],["tickets","🎟️","Tickets"],["stay","🛏️","Stay"],["shopping","🛍️","Shopping"],["other","•","Other"]];
 var TRIPDAYS = [["2026-11-19","Thu 19"],["2026-11-20","Fri 20"],["2026-11-21","Sat 21"],["2026-11-22","Sun 22"]];
-var M = {code:store("uktrip-code")||"", names:["Kirill","Friend"], items:[], payer:0, split:0.5, cat:"food", day:null, timer:null, busy:false};
+var M = {code:store("uktrip-code")||"", names:["Kirill","Dima"], items:[], payer:0, split:0.5, cat:"food", day:null, timer:null, busy:false};
 function rpc(fn, body){
   return fetch(SB+fn,{method:"POST",headers:{"apikey":SBK,"Content-Type":"application/json"},body:JSON.stringify(body)}).then(function(r){
     return r.text().then(function(tx){ var j=null; try{ j=tx?JSON.parse(tx):null; }catch(e){} if(!r.ok){ var m=(j&&j.message)||("Error "+r.status); throw new Error(m); } return j; });
