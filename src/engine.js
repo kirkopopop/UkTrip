@@ -164,6 +164,7 @@ function sheetHtml(d,i){
 function drawSheet(){ sheetEl.innerHTML = sheetHtml(DAYS[cur], sheetIdx); sheetEl.scrollTop = 0; }
 function openSheet(i){
   var was = sheetIdx>=0; sheetIdx = i; drawSheet();
+  var hid = document.getElementById("s-"+i); if(hid && hid.classList.contains("past") && !pastOpen){ pastOpen=true; renderDay(); }
   document.querySelectorAll(".stop.focus").forEach(function(x){ x.classList.remove("focus"); });
   var li=document.getElementById("s-"+i); if(li) li.classList.add("focus");
   if(was) return;
@@ -193,7 +194,7 @@ sheetEl.addEventListener("click", function(e){
 
 /* ---------- spare time and rain ideas ---------- */
 var CITYNAME = {}; DAYS.forEach(function(d){ (d.cities||[d.city]).forEach(function(c){ CITYNAME[c]=c.charAt(0).toUpperCase()+c.slice(1); }); });
-var spareF = {indoor:false, quick:false}, spareOpen = false;
+var spareF = {indoor:false, quick:false}, spareOpen = false, pastOpen = false;
 function refPoint(d){
   var n=nowTrip(), pts=d.stops.filter(function(s){ return s.ll; });
   if(d.iso===n.iso){ var nx=d.stops.filter(function(s){ return s.ll && tmin(s.t)!=null && tmin(s.t)>=n.min-45; })[0]; if(nx) return {ll:nx.ll, name:nx.n}; }
@@ -225,15 +226,22 @@ function renderDay(){
   if(d.iso===n.iso){ var f=findNow(); if(f){ if(f.curI>=0) autoOpen[f.curI]="Now"; if(f.nextI>=0) autoOpen[f.nextI]="Next"; } }
   document.getElementById("dayhead").innerHTML = '<div><div class="date">'+d.date+' · '+esc(d.place)+'</div><h2>'+esc(d.title)+'</h2>'+
     '<p class="intro" id="intro">'+esc(d.intro)+'</p>'+
-    (d.rain&&d.rain.length?'<details class="more rain"><summary>If it rains</summary><div class="txt">'+d.rain.map(function(r){ return '<p>'+esc(r)+'</p>'; }).join("")+'</div></details>':'')+
+    '<details class="more rain"><summary><span class="wide-only">If it rains</span><span class="phone-only">About the day and the rain plan</span></summary><div class="txt"><p class="phone-only">'+esc(d.intro)+'</p>'+
+    (d.rain||[]).map(function(r,ri){ return '<p>'+(ri===0?'<b>If it rains:</b> ':'')+esc(r)+'</p>'; }).join("")+'</div></details>'+
     '</div>'+postmark(d);
   var k = 0;
   d.stops.forEach(function(s){ s._n = (!s.off && s.ll) ? ++k : null; });
   var h = '<ol class="stops">', cb = document.getElementById("cmpBtn");
   cb.textContent = compact ? "Show all details" : "Compact view";
-  d.stops.forEach(function(s,i){ h += legHtml(d,i) + stopHtml(d,s,i,autoOpen); });
+  /* on the day itself, stops that are over fold away so the list starts at "now" */
+  var pastN = 0; if(compact && d.iso===n.iso){ var fn=findNow(); if(fn && fn.curI>0) pastN = fn.curI; }
+  if(pastN) h += '<li class="pastbar"><button type="button" data-past>'+(pastOpen?"Hide":"Show")+' '+pastN+' earlier '+(pastN===1?"stop":"stops")+'</button></li>';
+  d.stops.forEach(function(s,i){
+    var part = legHtml(d,i) + stopHtml(d,s,i,autoOpen);
+    h += i<pastN ? part.replace(/<li class="/g,'<li class="past ') : part;
+  });
   h += '</ol><p class="legend">'+(compact?"Tap a stop for the details. ":"")+'<span class="tag fixed">Fixed</span> times can\'t move. <span class="tag opt">Optional</span> stops go first if you are running late.</p>' + spareHtml(d);
-  var list = document.getElementById("list"); list.innerHTML = h; list.classList.toggle("compact", compact);
+  var list = document.getElementById("list"); list.innerHTML = h; list.classList.toggle("compact", compact); list.classList.toggle("hide-past", !!pastN && !pastOpen);
   var pts = d.stops.filter(function(s){ return s.ll && !s.off; });
   var row = document.getElementById("maprow");
   if(pts.length>1){
@@ -249,9 +257,9 @@ document.getElementById("list").addEventListener("click", function(e){
   b = e.target.closest("[data-goto]"); if(b){ e.preventDefault(); go(b.dataset.goto); window.scrollTo(0,0); return; }
   b = e.target.closest("[data-sf]"); if(b){ spareF[b.dataset.sf]=!spareF[b.dataset.sf]; spareOpen=true; var y=window.scrollY; renderDay(); window.scrollTo(0,y); return; }
   b = e.target.closest("[data-open]"); if(b){ openSheet(+b.dataset.open); return; }
+  b = e.target.closest("[data-past]"); if(b){ pastOpen=!pastOpen; renderDay(); return; }
 });
 document.getElementById("cmpBtn").addEventListener("click", function(){ compact=!compact; S.compact=compact; save(); renderDay(); });
-document.getElementById("dayhead").addEventListener("click", function(e){ var p=e.target.closest(".intro"); if(p) p.classList.toggle("all"); });
 
 /* ---------- now and next ---------- */
 function findNow(){
@@ -272,13 +280,12 @@ function jumpTo(di,i){
 function updateNow(){
   drawCount();
   var el=document.getElementById("nowcard"), ph=phase(), h="";
+  el.classList.toggle("slim", ph!=="during");
   if(ph==="before"){
-    var todo=CHECK.filter(function(c){ return !isDone(c[0]); }), d=daysTo();
-    h = '<div class="now-top"><span>'+(d<=1?"Starts tomorrow":"Starts in "+d+" days")+'</span></div>'+
-      (todo.length ? '<div class="now-main"><small>Still to sort out</small><b>'+todo.length+(todo.length===1?" thing":" things")+' before you go</b><span>'+esc(todo.slice(0,4).map(function(c){ return c[1].split(",")[0]; }).join(" · "))+(todo.length>4?" · and "+(todo.length-4)+" more":"")+'</span></div><div class="now-act"><a class="routebtn" href="#tips" data-goto="tips">Open the list</a></div>'
-                   : '<div class="now-main"><small>Ready</small><b>Everything is booked</b><span>Check the tickets and add the fixed times to your calendar.</span></div><div class="now-act"><a class="routebtn" href="#tips" data-goto="tips">Tickets and calendar</a></div>');
+    var todo=CHECK.filter(function(c){ return !isDone(c[0]); }).length, d=daysTo();
+    h = '<a class="now-strip" href="#tips" data-goto="tips"><b>'+(d<=1?"Starts tomorrow":"Starts in "+d+" days")+'</b><span>'+(todo?todo+(todo===1?" thing":" things")+" still to sort out":"everything is booked")+'</span><i aria-hidden="true"></i></a>';
   } else if(ph==="after"){
-    h = '<div class="now-top"><span>Trip complete</span></div><div class="now-main"><small>One last thing</small><b>Settle up</b><span>See who owes whom.</span></div><div class="now-act"><a class="routebtn" href="#money" data-goto="money">Open expenses</a></div>';
+    h = '<a class="now-strip" href="#money" data-goto="money"><b>Trip complete</b><span>settle up the expenses</span><i aria-hidden="true"></i></a>';
   } else {
     var f=findNow(), dd=DAYS[f.di], st=dd.stops;
     h = '<div class="now-top"><span>'+esc(dd.tab)+' · '+hhmm(f.n.min)+' local time</span><span>Day '+(f.di+1)+' of '+DAYS.length+'</span></div>';
