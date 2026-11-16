@@ -69,8 +69,13 @@ destination), `utcOffsetMin` (its offset from UTC on the trip dates), `people`.
 
 ## What is saved where
 
-- Ticks, picks, tickets, compact/full view: on each phone (`localStorage`). "Send to the other phone" packs them into a link.
-- Expenses: a small Supabase backend behind the trip code (`uktrip_*` functions in `src/engine.js`). A new trip needs its own code.
+- Ticks, picks and tickets: shared live between phones through the trip code (Supabase table `uktrip_state`,
+  functions `uktrip_state_get` / `uktrip_state_set`). Changes queue on the phone and go up when there is signal;
+  the page checks for the other phone's changes every 20 s and whenever you switch day or tab.
+  Without the trip code they stay on the phone, and "Send to the other phone" packs them into a link instead.
+- Compact/full view and map open/closed: on each phone only.
+- Expenses: the same Supabase backend behind the trip code (`uktrip_*` functions). The code is checked by
+  `uktrip.check_code`, which compares a SHA-256 hash, so the code itself is never stored. A new trip needs its own code.
 - Add `?now=2026-11-20T13:10` to the address to preview the page at that moment of the trip.
 
 ## Starting a new trip

@@ -508,6 +508,10 @@ details.spare[open] > summary::after{transform:rotate(-135deg)}
 .pastbar button{font:600 13.5px/1 var(--font);color:var(--blue);background:none;border:0;padding:8px 0;min-height:40px;cursor:pointer}
 .hide-past .past{display:none}
 
+.syncline{font-size:13.5px;color:var(--muted);margin:0;display:flex;gap:6px;align-items:baseline}
+.syncline::before{content:"";flex:none;width:8px;height:8px;border-radius:50%;background:var(--line);align-self:center}
+.syncline.on::before{background:var(--free)}
+
 </style>
 </head>
 <body>
@@ -592,13 +596,14 @@ details.spare[open] > summary::after{transform:rotate(-135deg)}
         <div class="bk-head"><h2>Bookings</h2><span class="progress" id="progress"></span></div>
         <div class="bar" aria-hidden="true"><i id="bar"></i></div>
         <p id="nextup"></p>
+        <p class="syncline"></p>
         <div class="checks" id="checklist"></div>
         <div class="sharebox"><button type="button" class="btn" id="icsBtn">Add the fixed times to my calendar</button><span class="sub">Downloads a calendar file with every fixed time: trains, bookings and the coach to the airport.</span></div>
       </section>
 
       <section class="wide" id="tix">
         <div class="bk-head"><h2>Tickets and references</h2><span class="progress" id="tixCount"></span></div>
-        <p class="sub">Booking references, ticket links, coach and room numbers. They are saved on this phone only and never appear on the public page.</p>
+        <p class="sub">Booking references, ticket links, coach and room numbers. <span id="tixPrivacy"></span></p>
         <div id="tixList"></div>
         <form id="tixForm" class="tixform" autocomplete="off">
           <input class="fld" id="tixTitle" placeholder="What is it? e.g. Caledonian Sleeper" maxlength="80" list="tixNames" required aria-label="Ticket name">
@@ -608,7 +613,7 @@ details.spare[open] > summary::after{transform:rotate(-135deg)}
           <input class="fld" id="tixNote" placeholder="Note, e.g. coach and room (optional)" maxlength="160" aria-label="Note">
           <button class="btn" type="submit">Save ticket</button>
         </form>
-        <div class="sharebox"><button type="button" class="btn" id="shareBtn">Send to the other phone</button><span class="sub" id="shareMsg">Makes a private link holding your ticks, picks and tickets. Opening it on the other phone copies them across.</span></div>
+        <div class="sharebox" id="shareBox"><button type="button" class="btn" id="shareBtn">Send to the other phone</button><span class="sub" id="shareMsg">Makes a private link holding your ticks, picks and tickets. Opening it on the other phone copies them across.</span></div>
       </section>
 
 
@@ -1097,7 +1102,7 @@ document.addEventListener("keydown", function(e){ if(e.key==="Escape") closeShee
 sheetEl.addEventListener("click", function(e){
   var b = e.target.closest("[data-close]"); if(b){ closeSheet(); return; }
   b = e.target.closest("[data-step]"); if(b){ openSheet(sheetIdx + (+b.dataset.step)); return; }
-  b = e.target.closest(".choose"); if(b){ var id=b.dataset.pick, x=+b.dataset.x, keep=sheetIdx; if(S.picks[id]===x) delete S.picks[id]; else S.picks[id]=x; save(); renderDay(); sheetIdx=keep; drawSheet(); return; }
+  b = e.target.closest(".choose"); if(b){ var id=b.dataset.pick, x=+b.dataset.x, keep=sheetIdx; if(S.picks[id]===x) delete S.picks[id]; else S.picks[id]=x; save(); push("p:"+id, S.picks[id]); renderDay(); sheetIdx=keep; drawSheet(); return; }
   b = e.target.closest("[data-goto]"); if(b){ e.preventDefault(); var to=b.dataset.goto; hideSheet(); go(to); window.scrollTo(0,0); return; }
   b = e.target.closest("[data-onmap]"); if(b){ var n=+b.dataset.onmap; hideSheet(); focusStop(n, true); }
 });
@@ -1163,7 +1168,7 @@ function renderDay(){
 }
 document.getElementById("list").addEventListener("click", function(e){
   var b = e.target.closest(".pin[data-i]"); if(b){ focusStop(+b.dataset.i, true); return; }
-  b = e.target.closest(".choose"); if(b){ var id=b.dataset.pick, x=+b.dataset.x; if(S.picks[id]===x) delete S.picks[id]; else S.picks[id]=x; save(); renderDay(); return; }
+  b = e.target.closest(".choose"); if(b){ var id=b.dataset.pick, x=+b.dataset.x; if(S.picks[id]===x) delete S.picks[id]; else S.picks[id]=x; save(); push("p:"+id, S.picks[id]); renderDay(); return; }
   b = e.target.closest("[data-goto]"); if(b){ e.preventDefault(); go(b.dataset.goto); window.scrollTo(0,0); return; }
   b = e.target.closest("[data-sf]"); if(b){ spareF[b.dataset.sf]=!spareF[b.dataset.sf]; spareOpen=true; var y=window.scrollY; renderDay(); window.scrollTo(0,y); return; }
   b = e.target.closest("[data-open]"); if(b){ openSheet(+b.dataset.open); return; }
@@ -1376,7 +1381,7 @@ function drawChecks(){
 }
 cl.addEventListener("change", function(e){
   var i=e.target; if(i.type!=="checkbox") return;
-  S.ticks[i.id.slice(2)] = i.checked?1:0; save(); drawChecks(); updateNow();
+  S.ticks[i.id.slice(2)] = i.checked?1:0; save(); push("t:"+i.id.slice(2), S.ticks[i.id.slice(2)]); drawChecks(); updateNow();
 });
 
 /* ---------- calendar file with the fixed times ---------- */
@@ -1404,7 +1409,7 @@ document.getElementById("icsBtn").addEventListener("click", function(){
 function safeUrl(u){ u=String(u||"").trim(); if(!u) return ""; if(!/^https?:\/\//i.test(u)){ if(/^[\w-]+(\.[\w-]+)+(\/|$)/.test(u)) u="https://"+u; else return ""; } return u.slice(0,400); }
 function drawTix(){
   var list=document.getElementById("tixList");
-  document.getElementById("tixCount").textContent = S.tickets.length ? S.tickets.length+" saved on this phone" : "";
+  document.getElementById("tixCount").textContent = S.tickets.length ? S.tickets.length+" saved" : "";
   list.innerHTML = S.tickets.length ? S.tickets.map(function(t){
     return '<div class="tix"><div class="tix-tx"><b>'+esc(t.title)+'</b>'+(t.ref?'<span class="ref">'+esc(t.ref)+'</span>':'')+(t.note?'<small>'+esc(t.note)+'</small>':'')+'</div><div class="tix-act">'+
       (t.ref?'<button type="button" class="btn ghost" data-copy="'+esc(t.id)+'">Copy</button>':'')+
@@ -1416,15 +1421,15 @@ document.getElementById("tixNames").innerHTML = CHECK.map(function(c){ return '<
 document.getElementById("tixForm").addEventListener("submit", function(e){
   e.preventDefault();
   var g=function(id){ return document.getElementById(id).value.trim(); }, title=g("tixTitle"); if(!title) return;
-  S.tickets.push({id:Date.now().toString(36)+Math.random().toString(36).slice(2,6), title:title.slice(0,80), ref:g("tixRef").slice(0,80), url:safeUrl(g("tixUrl")), note:g("tixNote").slice(0,160)});
-  save(); drawTix(); e.target.reset(); toast("Saved on this phone.");
+  var nt={id:Date.now().toString(36)+Math.random().toString(36).slice(2,6), title:title.slice(0,80), ref:g("tixRef").slice(0,80), url:safeUrl(g("tixUrl")), note:g("tixNote").slice(0,160)};
+  S.tickets.push(nt); save(); push("x:"+nt.id, nt); drawTix(); e.target.reset(); toast(syncOn()?"Saved and shared.":"Saved on this phone.");
 });
 document.getElementById("tixList").addEventListener("click", function(e){
   var b=e.target.closest("[data-copy]");
   if(b){ var t=S.tickets.find(function(x){ return x.id===b.dataset.copy; }); if(t&&navigator.clipboard) navigator.clipboard.writeText(t.ref).then(function(){ toast("Copied."); },function(){}); return; }
   b=e.target.closest("[data-del]");
   if(b){ if(!b.classList.contains("armed")){ b.classList.add("armed"); b.textContent="Tap to confirm"; setTimeout(function(){ b.classList.remove("armed"); b.textContent="Remove"; },3500); return; }
-    S.tickets=S.tickets.filter(function(x){ return x.id!==b.dataset.del; }); save(); drawTix(); }
+    S.tickets=S.tickets.filter(function(x){ return x.id!==b.dataset.del; }); save(); push("x:"+b.dataset.del, null); drawTix(); }
 });
 
 /* ---------- send ticks, picks and tickets to the other phone (in the link itself, not on a server) ---------- */
@@ -1448,7 +1453,7 @@ function applySync(str){
     var c={id:str80(t.id,40), title:str80(t.title), ref:str80(t.ref), url:safeUrl(t.url), note:str80(t.note,160)}, i=S.tickets.findIndex(function(x){ return x.id===c.id; });
     if(i>=0) S.tickets[i]=c; else S.tickets.push(c);
   });
-  save(); toast("Updated from the shared link.");
+  save(); queueAll(); toast("Updated from the shared link.");
 }
 
 /* ---------- every spare-time idea, by city ---------- */
@@ -1526,7 +1531,7 @@ function stamp(){ var d=new Date(); document.getElementById("mSync").textContent
 function load(){
   if(!M.code) return Promise.resolve();
   return rpc("uktrip_list",{p_code:M.code}).then(function(j){
-    M.names=j.names||M.names; M.items=j.expenses||[]; store(TRIP.key+"-code",M.code);
+    M.names=j.names||M.names; M.items=j.expenses||[]; store(TRIP.key+"-code",M.code); pull();
     document.getElementById("mLock").hidden=true; document.getElementById("mApp").hidden=false; drawMoney(); stamp();
   }).catch(function(e){
     if(/wrong trip code/.test(e.message)){ M.code=""; store(TRIP.key+"-code",""); document.getElementById("mApp").hidden=true; document.getElementById("mLock").hidden=false; var le=document.getElementById("mLockErr"); le.textContent="That code didn't work. Check it and try again."; le.hidden=false; }
@@ -1565,6 +1570,80 @@ document.getElementById("mShare").addEventListener("click",function(){
 (function(){ var q=new URLSearchParams(location.search).get("code"); if(q){ M.code=q.trim().toUpperCase(); store(TRIP.key+"-code",M.code); history.replaceState(null,"",location.pathname+location.hash); } })();
 document.addEventListener("visibilitychange",function(){ if(!document.hidden && view==="money") load(); });
 
+/* ---------- live sync: ticks, picks and tickets shared through the trip code ----------
+   Each change is one key: "t:<check id>" tick, "p:<pick id>" pick, "x:<ticket id>" ticket (null = removed).
+   Changes queue on the phone and go up one by one, so nothing is lost without signal.
+   Every 20 s (while the page is open) the shared copy comes down; queued keys win until they are sent. */
+var SYNC = {flushing:false, last:null, err:""};
+function syncOn(){ return !!M.code; }
+function push(k, v){ S.pending = S.pending||{}; S.pending[k] = (v===undefined ? null : v); save(); flush(); drawSync(); }
+function queueAll(){
+  S.pending = S.pending||{};
+  Object.keys(S.ticks).forEach(function(k){ S.pending["t:"+k] = S.ticks[k]; });
+  Object.keys(S.picks).forEach(function(k){ S.pending["p:"+k] = S.picks[k]; });
+  S.tickets.forEach(function(t){ S.pending["x:"+t.id] = t; });
+  save(); flush();
+}
+function flush(){
+  if(!syncOn() || SYNC.flushing) return;
+  var keys = Object.keys(S.pending||{}); if(!keys.length){ drawSync(); return; }
+  var k = keys[0], v = S.pending[k], sent = JSON.stringify(v);
+  SYNC.flushing = true;
+  rpc("uktrip_state_set", {p_code:M.code, p_key:k, p_value:v}).then(function(){
+    if(S.pending && JSON.stringify(S.pending[k])===sent) delete S.pending[k];
+    save(); SYNC.flushing = false; SYNC.err = ""; flush();
+  }).catch(function(e){ SYNC.flushing = false; syncErr(e); });
+}
+function cleanTicket(v, id){ var s=function(x,n){ return String(x==null?"":x).slice(0,n||80); }; return {id:s(id,40), title:s(v.title), ref:s(v.ref), url:safeUrl(v.url), note:s(v.note,160)}; }
+function applyRemote(j){
+  var before = JSON.stringify([S.ticks,S.picks,S.tickets]), pend = S.pending||{};
+  Object.keys(j||{}).forEach(function(k){
+    if(Object.prototype.hasOwnProperty.call(pend,k)) return;
+    var v = j[k] ? j[k].v : null, kind = k.charAt(0), id = k.slice(2);
+    if(!id || k.charAt(1)!==":") return;
+    if(kind==="t") S.ticks[id] = v ? 1 : 0;
+    else if(kind==="p"){ if(typeof v==="number") S.picks[id] = v; else delete S.picks[id]; }
+    else if(kind==="x"){
+      var i = S.tickets.findIndex(function(x){ return x.id===id; });
+      if(v && typeof v==="object"){ var c = cleanTicket(v,id); if(i>=0) S.tickets[i]=c; else S.tickets.push(c); }
+      else if(i>=0) S.tickets.splice(i,1);
+    }
+  });
+  if(JSON.stringify([S.ticks,S.picks,S.tickets])!==before){ save(); refreshShared(); }
+}
+function refreshShared(){
+  drawChecks(); drawTix(); updateNow();
+  if(view==="plan"){ var keep = sheetIdx, y = window.scrollY; renderDay(); window.scrollTo(0,y); if(keep>=0){ sheetIdx = keep; drawSheet(); } }
+}
+function pull(){
+  if(!syncOn() || document.hidden) return;
+  SYNC.at = Date.now();
+  if(S.syncCode!==M.code){ S.syncCode = M.code; queueAll(); }
+  rpc("uktrip_state_get", {p_code:M.code}).then(function(j){
+    applyRemote(j); SYNC.last = new Date(); SYNC.err = ""; drawSync(); flush();
+  }).catch(syncErr);
+}
+function syncErr(e){
+  SYNC.err = /wrong trip code/.test(e && e.message) ? "code" : "offline";
+  if(SYNC.err==="code"){ M.code = ""; store(TRIP.key+"-code",""); }
+  drawSync();
+}
+function drawSync(){
+  var on = syncOn(), n = Object.keys(S.pending||{}).length, t;
+  if(!on) t = SYNC.err==="code" ? 'The trip code didn\'t work. <a href="#money" data-goto="money">Enter it again</a> to share with the other phone.'
+                                 : 'Only on this phone. <a href="#money" data-goto="money">Enter the trip code</a> to share ticks, picks and tickets with the other phone.';
+  else if(SYNC.err==="offline") t = "No connection. "+(n?n+(n===1?" change":" changes")+" will be shared when you're back online.":"Showing the last shared copy.");
+  else if(n) t = "Sharing "+n+(n===1?" change":" changes")+"…";
+  else t = "Shared with the other phone"+(SYNC.last?" · updated "+SYNC.last.toLocaleTimeString("en-GB",{hour:"2-digit",minute:"2-digit"}):"")+".";
+  document.querySelectorAll(".syncline").forEach(function(el){ el.innerHTML = t; el.classList.toggle("on", on && !SYNC.err); });
+  document.getElementById("tixPrivacy").textContent = on ? "Shared between both phones through the trip code. They never appear on the public page." : "Saved on this phone. They never appear on the public page.";
+  document.getElementById("shareBox").hidden = on;
+}
+document.addEventListener("click", function(e){ var a = e.target.closest(".syncline [data-goto]"); if(a){ e.preventDefault(); go(a.dataset.goto); window.scrollTo(0,0); } });
+setInterval(pull, 20000);
+document.addEventListener("visibilitychange", function(){ if(!document.hidden){ pull(); flush(); } });
+window.addEventListener("online", function(){ pull(); flush(); });
+
 /* ---------- routing ---------- */
 function go(id){ if(location.hash!=="#"+id) location.hash = id; else route(); }
 var lastCity = null;
@@ -1586,6 +1665,7 @@ function route(){
   document.getElementById("vPlan").setAttribute("aria-pressed", view==="plan");
   document.getElementById("vTips").setAttribute("aria-pressed", view==="tips");
   updateNow();
+  if(typeof SYNC!=="undefined" && Date.now()-(SYNC.at||0)>4000) pull();  /* switching day or tab also checks for the other phone's changes */
   if(view==="plan"){
     DAYS.forEach(function(d,i){ var t=document.getElementById("tab-"+d.id); t.setAttribute("aria-selected", i===cur); t.tabIndex = i===cur?0:-1; });
     var st = document.getElementById("tab-"+DAYS[cur].id); if(tabs.scrollWidth>tabs.clientWidth) tabs.scrollTo({left:st.offsetLeft-18,behavior:"smooth"});
@@ -1606,8 +1686,9 @@ document.getElementById("vMoney").addEventListener("click",function(){ go("money
 document.querySelectorAll("#tipsView [data-goto]").forEach(function(a){ a.addEventListener("click",function(e){ e.preventDefault(); go(a.dataset.goto); window.scrollTo(0,0); }); });
 window.addEventListener("hashchange", route);
 var rt; window.addEventListener("resize",function(){ clearTimeout(rt); rt=setTimeout(function(){ if(view==="plan"){ drawMapToggle(); fit(); } },150); });
-drawChecks(); drawTix();
+drawChecks(); drawTix(); drawSync();
 route();
+pull();
 
 /* ---------- works without signal once it has been opened ---------- */
 if("serviceWorker" in navigator && (location.protocol==="https:" || location.hostname==="localhost")){

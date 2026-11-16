@@ -491,3 +491,7 @@ details.spare[open] > summary::after{transform:rotate(-135deg)}
 .pastbar{list-style:none;padding:0 0 4px}
 .pastbar button{font:600 13.5px/1 var(--font);color:var(--blue);background:none;border:0;padding:8px 0;min-height:40px;cursor:pointer}
 .hide-past .past{display:none}
+
+.syncline{font-size:13.5px;color:var(--muted);margin:0;display:flex;gap:6px;align-items:baseline}
+.syncline::before{content:"";flex:none;width:8px;height:8px;border-radius:50%;background:var(--line);align-self:center}
+.syncline.on::before{background:var(--free)}

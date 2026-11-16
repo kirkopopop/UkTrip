@@ -99,13 +99,14 @@
         <div class="bk-head"><h2>Bookings</h2><span class="progress" id="progress"></span></div>
         <div class="bar" aria-hidden="true"><i id="bar"></i></div>
         <p id="nextup"></p>
+        <p class="syncline"></p>
         <div class="checks" id="checklist"></div>
         <div class="sharebox"><button type="button" class="btn" id="icsBtn">Add the fixed times to my calendar</button><span class="sub">Downloads a calendar file with every fixed time: trains, bookings and the coach to the airport.</span></div>
       </section>
 
       <section class="wide" id="tix">
         <div class="bk-head"><h2>Tickets and references</h2><span class="progress" id="tixCount"></span></div>
-        <p class="sub">Booking references, ticket links, coach and room numbers. They are saved on this phone only and never appear on the public page.</p>
+        <p class="sub">Booking references, ticket links, coach and room numbers. <span id="tixPrivacy"></span></p>
         <div id="tixList"></div>
         <form id="tixForm" class="tixform" autocomplete="off">
           <input class="fld" id="tixTitle" placeholder="What is it? e.g. Caledonian Sleeper" maxlength="80" list="tixNames" required aria-label="Ticket name">
@@ -115,7 +116,7 @@
           <input class="fld" id="tixNote" placeholder="Note, e.g. coach and room (optional)" maxlength="160" aria-label="Note">
           <button class="btn" type="submit">Save ticket</button>
         </form>
-        <div class="sharebox"><button type="button" class="btn" id="shareBtn">Send to the other phone</button><span class="sub" id="shareMsg">Makes a private link holding your ticks, picks and tickets. Opening it on the other phone copies them across.</span></div>
+        <div class="sharebox" id="shareBox"><button type="button" class="btn" id="shareBtn">Send to the other phone</button><span class="sub" id="shareMsg">Makes a private link holding your ticks, picks and tickets. Opening it on the other phone copies them across.</span></div>
       </section>
 
 
