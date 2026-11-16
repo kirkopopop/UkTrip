@@ -309,17 +309,58 @@ a.tag{text-decoration:none}
 .stop.k-opt .hd strong{font-weight:600}
 .stop .pin.off.tr{width:28px;height:28px;margin-top:0;border:0;background:var(--paper);font-size:16px;display:grid;place-items:center}
 
-/* collapsible stops */
-.hd{font:inherit;color:inherit;background:none;border:0;padding:0;margin:0;text-align:left;display:flex;align-items:flex-start;justify-content:space-between;gap:10px;width:100%;cursor:default}
-.hd .chev{display:none;flex:none;width:8px;height:8px;margin:7px 4px 0 0;border-right:2px solid var(--muted);border-bottom:2px solid var(--muted);transform:rotate(45deg);transition:transform .2s}
+/* stops: full view shows everything inline; compact view is one calm row that opens a sheet */
+.hd{font:inherit;color:inherit;background:none;border:0;padding:0;margin:0;text-align:left;display:flex;align-items:center;justify-content:space-between;gap:10px;width:100%}
+.hd .chev{display:none}
 .links{display:flex;flex-wrap:wrap;gap:4px 14px}
 .dir{min-height:32px}
-.compact .hd{cursor:pointer;min-height:30px}
-.compact .hd .chev{display:block}
-.compact .stop.open .hd .chev{transform:rotate(-135deg);margin-top:11px}
-.compact .stop:not(.open) .what p{display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical;overflow:hidden}
-.compact .stop:not(.open) .subs,.compact .stop:not(.open) .links,.compact .stop:not(.open) details.more{display:none}
-.compact .stop{padding-top:9px;padding-bottom:9px}
+.compact .stop{padding:7px 6px 7px 0;align-items:center}
+.compact .stop .t{padding-top:0;font-size:15px;line-height:1.3}
+.compact .stop .pin.off{margin-top:0}
+.compact .hd{cursor:pointer;min-height:44px;padding:4px 0}
+.compact .hd-tx{display:flex;flex-direction:column;gap:2px;min-width:0}
+.compact .hd strong{font-weight:600;font-size:16px;line-height:1.25}
+.compact .stop.k-opt .hd strong{font-weight:500;color:var(--muted)}
+.compact .hd .chev{display:block;flex:none;width:7px;height:7px;margin-right:4px;border-right:2px solid var(--line);border-top:2px solid var(--line);transform:rotate(45deg)}
+.sl{font-size:12.5px;color:var(--muted);line-height:1.3}
+.sl .s-fix{color:var(--red-ink);font-weight:700}
+.sl .s-ok{color:var(--free);font-weight:600}
+.sl .s-do{color:var(--red-ink);font-weight:700}
+.sl .s-now{font-weight:800;font-stretch:85%;letter-spacing:.06em;text-transform:uppercase;font-size:11.5px;color:var(--paper);background:var(--ink);padding:1px 7px;border-radius:99px}
+.compact .stop.is-now,.compact .stop.is-next{background:var(--surface);box-shadow:0 1px 2px rgba(10,20,40,.08)}
+.compact .leg{padding:0 10px 0 0}
+.compact .legtx{font-size:12px;opacity:.85}
+.compact .legtx b{color:var(--red-ink);font-weight:700}
+.compact .legdot{width:4px;height:4px}
+
+/* detail sheet */
+html.sheet-open{overflow:hidden}
+.sheet-bg{position:fixed;inset:0;z-index:50;background:rgba(8,14,28,.55);animation:fadein .2s}
+.sheet{position:fixed;left:0;right:0;bottom:0;z-index:51;max-height:88dvh;overflow-y:auto;overscroll-behavior:contain;background:var(--paper);color:var(--ink);border-radius:20px 20px 0 0;padding:14px 20px calc(22px + env(safe-area-inset-bottom,0px));display:flex;flex-direction:column;gap:12px;box-shadow:0 -12px 40px rgba(8,14,28,.35);animation:sheetup .28s cubic-bezier(.2,.8,.2,1)}
+.sheet::before{content:"";width:40px;height:4px;border-radius:99px;background:var(--line);align-self:center;flex:none}
+@keyframes sheetup{from{transform:translateY(40px);opacity:0}to{transform:none;opacity:1}}
+@keyframes fadein{from{opacity:0}to{opacity:1}}
+.sh-top{display:flex;justify-content:space-between;align-items:center}
+.sh-t{font-weight:800;font-stretch:75%;font-size:22px}
+.sh-t.fix{color:var(--red-ink)}
+.sh-x{font:600 16px/1 var(--font);width:44px;height:44px;margin:-6px -10px -6px 0;border:0;border-radius:50%;background:var(--soft);color:var(--ink);cursor:pointer}
+.sheet h3{margin:-4px 0 0;font-weight:800;font-stretch:80%;font-size:24px;line-height:1.12;text-wrap:balance}
+.sheet > p{margin:0;font-size:16px;line-height:1.55}
+.sh-box{background:var(--surface);border-radius:12px;padding:11px 13px;display:flex;flex-direction:column;gap:3px;box-shadow:0 1px 2px rgba(10,20,40,.08)}
+.sh-box small{font-weight:700;font-stretch:85%;font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--label)}
+.sh-box span{color:var(--muted);font-size:14.5px}
+.sh-box.more-box p{margin:4px 0 0;font-size:15px}
+.sh-act{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.sh-act .routebtn,.sh-act .chipbtn,.sh-nav .chipbtn{min-height:44px}
+.sh-act .chipbtn,.sh-nav .chipbtn{background:var(--surface);box-shadow:inset 0 0 0 1.5px var(--line)}
+.sh-nav{display:flex;justify-content:space-between;align-items:center;gap:10px;border-top:1px solid var(--line);padding-top:12px;font-size:13px;color:var(--muted)}
+.sh-nav .chipbtn:disabled{opacity:.35;cursor:default}
+@media (min-width:700px){ .sheet{left:50%;right:auto;bottom:24px;width:560px;transform:translateX(-50%);border-radius:20px;max-height:82vh;animation:fadein .2s} .sheet::before{display:none} }
+
+details.spare > summary{cursor:pointer;list-style:none;display:flex;align-items:center;justify-content:space-between;gap:10px;min-height:32px}
+details.spare > summary::-webkit-details-marker{display:none}
+details.spare > summary::after{content:"";width:8px;height:8px;border-right:2px solid var(--muted);border-bottom:2px solid var(--muted);transform:rotate(45deg);margin-right:4px;transition:transform .2s}
+details.spare[open] > summary::after{transform:rotate(-135deg)}
 
 /* travel legs */
 .leg{display:grid;grid-template-columns:56px 46px minmax(0,1fr);align-items:center;padding:1px 10px 1px 0;position:relative}

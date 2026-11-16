@@ -35,7 +35,7 @@ destination), `utcOffsetMin` (its offset from UTC on the trip dates), `people`.
 
 | Field | Meaning |
 |---|---|
-| `t`, `n`, `p` | Time (`"19:30"`, `"~23:30"`), name, one paragraph. The first sentence is what shows when the stop is collapsed, so lead with the useful bit |
+| `t`, `n`, `p` | Time (`"19:30"`, `"~23:30"`), name, one paragraph. In compact view a stop is one row (time, name, status); the paragraph and everything else open in the detail sheet |
 | `k` | `"fixed"` (a train, a booked slot: cannot move), `"opt"` (drop first if late), or leave out for a normal stop |
 | `go` | How you get here from the previous stop: `{m:"walk"|"tube"|"train"|"bus"|"taxi", min:20, txt:"…", leave:"18:55", est:true}`. `leave` overrides the computed leave-by time; `est` marks a guess. Leave `go` out and a walking time is estimated when both stops have coordinates and are under 1.7 km apart |
 | `tr` | `"train"`, `"bus"` or `"plane"` when the stop itself is a journey |

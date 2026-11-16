@@ -73,7 +73,6 @@ function postmark(d){
 /* ---------- stops: type, booking state, travel legs ---------- */
 var narrowMQ = window.matchMedia("(max-width:960px)");
 var compact = S.compact!=null ? !!S.compact : narrowMQ.matches;
-var openStops = {};
 var MODES = {walk:["🚶","walk"], tube:["🚇","by Tube"], train:["🚆","by train"], bus:["🚌","by coach"], taxi:["🚕","by taxi"]};
 var TRICON = {train:"🚆", bus:"🚌", plane:"✈️"};
 function kindOf(s){ return s.k||"core"; }
@@ -95,15 +94,15 @@ function legLine(d,i){
 }
 function legHtml(d,i){
   var L=legLine(d,i); if(!L) return "";
+  if(compact){
+    var fixed = kindOf(d.stops[i])==="fixed" && L.leave;
+    return '<li class="leg"><span></span><span class="legdot" aria-hidden="true"></span><div class="legtx"><span>'+L.icon+' '+esc(L.text.replace(/ (walk|by .*)$/,""))+(fixed?' · <b>leave '+L.leave+'</b>':'')+'</span></div></li>';
+  }
   return '<li class="leg"><span></span><span class="legdot" aria-hidden="true"></span><div class="legtx"><span class="legm">'+L.icon+' '+esc(L.text)+'</span>'+
     (L.leave?'<span class="legl">leave by '+L.leave+'</span>':'')+(L.note?'<span class="legd">'+esc(L.note)+'</span>':'')+'</div></li>';
 }
-function stopHtml(d,s,i,autoOpen){
-  var mapped = !s.off && s.ll, k = kindOf(s), key = d.id+":"+i;
-  var open = !compact || (openStops[key]!=null ? openStops[key] : !!autoOpen[i]);
-  var pin = mapped ? '<button type="button" class="pin" data-i="'+i+'" aria-label="Show stop '+s._n+' on the map">'+s._n+'</button>'
-                   : '<span class="pin off'+(s.tr?" tr":"")+'" aria-hidden="true">'+(s.tr?(TRICON[s.tr]||""):"")+'</span>';
-  var meta = "", pi = s.pick ? S.picks[s.pick] : null;
+function metaHtml(s){
+  var k=kindOf(s), meta="", pi = s.pick ? S.picks[s.pick] : null;
   if(k==="fixed") meta += '<span class="tag fixed">Fixed time</span>';
   if(k==="opt") meta += '<span class="tag opt">Optional</span>';
   if(s.who) meta += '<span class="tag solo">'+esc(s.who)+' solo</span>';
@@ -111,23 +110,90 @@ function stopHtml(d,s,i,autoOpen){
   if(s.fee) meta += '<span class="tag '+(s.fee[1]==="free"?"free":"fee")+'">'+esc(s.fee[0])+'</span>';
   if(stopBooked(s)) meta += '<span class="tag booked">Booked ✓</span>';
   else if(s.chk||s.book) meta += '<a class="tag book" href="#tips" data-goto="tips">Book ahead</a>';
-  var subs = "";
-  if(s.subs) subs = '<ul class="subs">'+s.subs.map(function(x,xi){
+  return meta;
+}
+function subsHtml(s){
+  if(!s.subs) return "";
+  var pi = s.pick ? S.picks[s.pick] : null;
+  return '<ul class="subs">'+s.subs.map(function(x,xi){
     var cls = s.pick ? (pi===xi ? "chosen" : pi!=null ? "dim" : "") : "";
     return '<li class="'+cls+'"><div><b>'+esc(x[0])+'</b> <span>'+esc(x[1])+'</span> <a class="dir" href="'+gq(x[2])+'" target="_blank" rel="noopener">Map'+ICON_GO+'</a>'+
       (s.pick?'<button type="button" class="choose" data-pick="'+esc(s.pick)+'" data-x="'+xi+'" aria-pressed="'+(pi===xi)+'">'+(pi===xi?"Picked ✓":"Pick this")+'</button>':'')+'</div></li>';
   }).join("")+'</ul>';
-  return '<li class="stop k-'+k+(s.who?" solo":"")+(open?" open":"")+'" id="s-'+i+'" data-key="'+key+'"><span class="t">'+esc(s.t)+'</span>'+pin+
-    '<div class="what"><button type="button" class="hd" aria-expanded="'+open+'"><strong>'+esc(s.n)+'</strong><i class="chev" aria-hidden="true"></i></button>'+
-    '<p>'+esc(s.p)+'</p>'+subs+
+}
+function pinHtml(s,i){
+  return (!s.off && s.ll) ? '<button type="button" class="pin" data-i="'+i+'" aria-label="Show stop '+s._n+' on the map">'+s._n+'</button>'
+                          : '<span class="pin off'+(s.tr?" tr":"")+'" aria-hidden="true">'+(s.tr?(TRICON[s.tr]||""):"")+'</span>';
+}
+/* Compact view: one calm row per stop. Everything else lives in the detail sheet. */
+function rowHtml(d,s,i,mark){
+  var k=kindOf(s), bits=[], pi = s.pick ? S.picks[s.pick] : null;
+  if(mark[i]) bits.push('<span class="s-now">'+mark[i]+'</span>');
+  if(k==="fixed") bits.push('<span class="s-fix">Fixed</span>');
+  if(k==="opt") bits.push('Optional');
+  if(s.pick) bits.push((pi!=null && s.subs[pi]) ? esc(shortName(s.subs[pi][0])) : '<span class="s-do">Pick one</span>');
+  if(stopBooked(s)) bits.push('<span class="s-ok">Booked ✓</span>');
+  else if(s.chk||s.book) bits.push('<span class="s-do">To book</span>');
+  return '<li class="stop row k-'+k+(s.who?" solo":"")+(mark[i]?" is-"+mark[i].toLowerCase():"")+'" id="s-'+i+'"><span class="t">'+esc(s.t)+'</span>'+pinHtml(s,i)+
+    '<div class="what"><button type="button" class="hd" data-open="'+i+'" aria-haspopup="dialog"><span class="hd-tx"><strong>'+esc(s.n)+'</strong>'+
+    (bits.length?'<span class="sl">'+bits.join(" · ")+'</span>':'')+'</span><i class="chev" aria-hidden="true"></i></button></div></li>';
+}
+function stopHtml(d,s,i,mark){
+  if(compact) return rowHtml(d,s,i,mark);
+  var meta = metaHtml(s);
+  return '<li class="stop open k-'+kindOf(s)+(s.who?" solo":"")+'" id="s-'+i+'"><span class="t">'+esc(s.t)+'</span>'+pinHtml(s,i)+
+    '<div class="what"><div class="hd"><strong>'+esc(s.n)+'</strong></div>'+
+    '<p>'+esc(s.p)+'</p>'+subsHtml(s)+
     (meta?'<div class="meta">'+meta+'</div>':'')+
     (s.q?'<div class="links"><a class="dir" href="'+gq(s.q)+'" target="_blank" rel="noopener">Google Maps'+ICON_GO+'</a></div>':'')+
     (s.more?'<details class="more"><summary>More</summary><div class="txt">'+s.more+'</div></details>':'')+'</div></li>';
 }
 
+/* ---------- detail sheet ---------- */
+var sheetEl = document.getElementById("sheet"), sheetBg = document.getElementById("sheetBg"), sheetIdx = -1, sheetFrom = null;
+function sheetHtml(d,i){
+  var s=d.stops[i], L=legLine(d,i), meta=metaHtml(s), mapped=!s.off&&s.ll;
+  return '<div class="sh-top"><span class="sh-t'+(kindOf(s)==="fixed"?" fix":"")+'">'+esc(s.t)+'</span><button type="button" class="sh-x" data-close aria-label="Close">✕</button></div>'+
+    '<h3 id="sheetTitle">'+esc(s.n)+'</h3>'+(meta?'<div class="meta">'+meta+'</div>':'')+
+    (L?'<div class="sh-box"><small>Getting there</small><b>'+L.icon+' '+esc(L.text)+(L.leave?' · leave by '+L.leave:'')+'</b>'+(L.note?'<span>'+esc(L.note)+'</span>':'')+'</div>':'')+
+    '<p>'+esc(s.p)+'</p>'+subsHtml(s)+
+    (s.more?'<div class="sh-box more-box"><small>Good to know</small>'+s.more+'</div>':'')+
+    '<div class="sh-act">'+(s.q?'<a class="routebtn" href="'+gq(s.q)+'" target="_blank" rel="noopener">'+ICON_ROUTE+'Open in Google Maps</a>':'')+(mapped?'<button type="button" class="chipbtn" data-onmap="'+i+'">Show on the map</button>':'')+'</div>'+
+    '<div class="sh-nav"><button type="button" class="chipbtn" data-step="-1"'+(i===0?" disabled":"")+'>← Earlier</button><span>'+(i+1)+' of '+d.stops.length+'</span><button type="button" class="chipbtn" data-step="1"'+(i===d.stops.length-1?" disabled":"")+'>Later →</button></div>';
+}
+function drawSheet(){ sheetEl.innerHTML = sheetHtml(DAYS[cur], sheetIdx); sheetEl.scrollTop = 0; }
+function openSheet(i){
+  var was = sheetIdx>=0; sheetIdx = i; drawSheet();
+  document.querySelectorAll(".stop.focus").forEach(function(x){ x.classList.remove("focus"); });
+  var li=document.getElementById("s-"+i); if(li) li.classList.add("focus");
+  if(was) return;
+  sheetFrom = document.activeElement;
+  sheetBg.hidden = false; sheetEl.hidden = false; document.documentElement.classList.add("sheet-open");
+  try{ history.pushState({sheet:1}, ""); }catch(e){}
+  var x = sheetEl.querySelector("[data-close]"); if(x) x.focus();
+}
+function hideSheet(){
+  if(sheetIdx<0) return;
+  var li=document.getElementById("s-"+sheetIdx);
+  sheetIdx = -1; sheetBg.hidden = true; sheetEl.hidden = true; document.documentElement.classList.remove("sheet-open");
+  if(li) li.scrollIntoView({block:"nearest"});
+  if(sheetFrom && sheetFrom.focus) try{ sheetFrom.focus({preventScroll:true}); }catch(e){}
+}
+function closeSheet(){ if(sheetIdx<0) return; if(history.state && history.state.sheet) history.back(); else hideSheet(); }
+window.addEventListener("popstate", hideSheet);
+sheetBg.addEventListener("click", closeSheet);
+document.addEventListener("keydown", function(e){ if(e.key==="Escape") closeSheet(); });
+sheetEl.addEventListener("click", function(e){
+  var b = e.target.closest("[data-close]"); if(b){ closeSheet(); return; }
+  b = e.target.closest("[data-step]"); if(b){ openSheet(sheetIdx + (+b.dataset.step)); return; }
+  b = e.target.closest(".choose"); if(b){ var id=b.dataset.pick, x=+b.dataset.x, keep=sheetIdx; if(S.picks[id]===x) delete S.picks[id]; else S.picks[id]=x; save(); renderDay(); sheetIdx=keep; drawSheet(); return; }
+  b = e.target.closest("[data-goto]"); if(b){ e.preventDefault(); var to=b.dataset.goto; hideSheet(); go(to); window.scrollTo(0,0); return; }
+  b = e.target.closest("[data-onmap]"); if(b){ var n=+b.dataset.onmap; hideSheet(); focusStop(n, true); }
+});
+
 /* ---------- spare time and rain ideas ---------- */
 var CITYNAME = {}; DAYS.forEach(function(d){ (d.cities||[d.city]).forEach(function(c){ CITYNAME[c]=c.charAt(0).toUpperCase()+c.slice(1); }); });
-var spareF = {indoor:false, quick:false};
+var spareF = {indoor:false, quick:false}, spareOpen = false;
 function refPoint(d){
   var n=nowTrip(), pts=d.stops.filter(function(s){ return s.ll; });
   if(d.iso===n.iso){ var nx=d.stops.filter(function(s){ return s.ll && tmin(s.t)!=null && tmin(s.t)>=n.min-45; })[0]; if(nx) return {ll:nx.ll, name:nx.n}; }
@@ -145,16 +211,18 @@ function spareHtml(d){
   var items = SPARE.filter(function(x){ return cities.indexOf(x[1])>=0 && (!spareF.indoor||x[4]) && (!spareF.quick||x[5]<=60); })
     .map(function(x){ return {x:x, km:(ref&&x[6])?distKm(ref.ll,x[6]):null}; })
     .sort(function(a,b){ return (a.km==null?1e9:a.km)-(b.km==null?1e9:b.km); });
-  return '<section class="spare"><h3>Spare time or a change of plan</h3>'+
+  var body = 
     '<p class="sub">Nearest first'+(ref&&ref.name?', measured from '+esc(ref.name):ref?", measured from today's stops":"")+'.</p>'+
     '<div class="pick"><button type="button" data-sf="indoor" aria-pressed="'+spareF.indoor+'">Indoors only</button><button type="button" data-sf="quick" aria-pressed="'+spareF.quick+'">An hour or less</button></div>'+
-    (items.length?'<ul class="sparelist">'+items.map(function(o){ return spareItem(o.x,o.km); }).join("")+'</ul>':'<p class="empty">Nothing matches those filters.</p>')+'</section>';
+    (items.length?'<ul class="sparelist">'+items.map(function(o){ return spareItem(o.x,o.km); }).join("")+'</ul>':'<p class="empty">Nothing matches those filters.</p>');
+  return compact ? '<details class="spare"'+(spareOpen?" open":"")+'><summary><h3>Spare time or a change of plan</h3></summary>'+body+'</details>'
+                 : '<section class="spare"><h3>Spare time or a change of plan</h3>'+body+'</section>';
 }
 
 /* ---------- the day ---------- */
 function renderDay(){
   var d = DAYS[cur], n = nowTrip(), autoOpen = {};
-  if(d.iso===n.iso){ var f=findNow(); if(f){ if(f.curI>=0) autoOpen[f.curI]=1; if(f.nextI>=0) autoOpen[f.nextI]=1; } }
+  if(d.iso===n.iso){ var f=findNow(); if(f){ if(f.curI>=0) autoOpen[f.curI]="Now"; if(f.nextI>=0) autoOpen[f.nextI]="Next"; } }
   document.getElementById("dayhead").innerHTML = '<div><div class="date">'+d.date+' · '+esc(d.place)+'</div><h2>'+esc(d.title)+'</h2>'+
     '<p class="intro" id="intro">'+esc(d.intro)+'</p>'+
     (d.rain&&d.rain.length?'<details class="more rain"><summary>If it rains</summary><div class="txt">'+d.rain.map(function(r){ return '<p>'+esc(r)+'</p>'; }).join("")+'</div></details>':'')+
@@ -164,7 +232,7 @@ function renderDay(){
   var h = '<ol class="stops">', cb = document.getElementById("cmpBtn");
   cb.textContent = compact ? "Show all details" : "Compact view";
   d.stops.forEach(function(s,i){ h += legHtml(d,i) + stopHtml(d,s,i,autoOpen); });
-  h += '</ol><p class="legend"><span class="tag fixed">Fixed time</span> can\'t move. <span class="tag opt">Optional</span> drop first if you are running late.</p>' + spareHtml(d);
+  h += '</ol><p class="legend">'+(compact?"Tap a stop for the details. ":"")+'<span class="tag fixed">Fixed</span> times can\'t move. <span class="tag opt">Optional</span> stops go first if you are running late.</p>' + spareHtml(d);
   var list = document.getElementById("list"); list.innerHTML = h; list.classList.toggle("compact", compact);
   var pts = d.stops.filter(function(s){ return s.ll && !s.off; });
   var row = document.getElementById("maprow");
@@ -179,10 +247,10 @@ document.getElementById("list").addEventListener("click", function(e){
   var b = e.target.closest(".pin[data-i]"); if(b){ focusStop(+b.dataset.i, true); return; }
   b = e.target.closest(".choose"); if(b){ var id=b.dataset.pick, x=+b.dataset.x; if(S.picks[id]===x) delete S.picks[id]; else S.picks[id]=x; save(); renderDay(); return; }
   b = e.target.closest("[data-goto]"); if(b){ e.preventDefault(); go(b.dataset.goto); window.scrollTo(0,0); return; }
-  b = e.target.closest("[data-sf]"); if(b){ spareF[b.dataset.sf]=!spareF[b.dataset.sf]; var y=window.scrollY; renderDay(); window.scrollTo(0,y); return; }
-  b = e.target.closest(".hd"); if(b){ var li=b.closest(".stop"), on=!li.classList.contains("open"); openStops[li.dataset.key]=on; li.classList.toggle("open",on); b.setAttribute("aria-expanded",on); }
+  b = e.target.closest("[data-sf]"); if(b){ spareF[b.dataset.sf]=!spareF[b.dataset.sf]; spareOpen=true; var y=window.scrollY; renderDay(); window.scrollTo(0,y); return; }
+  b = e.target.closest("[data-open]"); if(b){ openSheet(+b.dataset.open); return; }
 });
-document.getElementById("cmpBtn").addEventListener("click", function(){ compact=!compact; S.compact=compact; openStops={}; save(); renderDay(); });
+document.getElementById("cmpBtn").addEventListener("click", function(){ compact=!compact; S.compact=compact; save(); renderDay(); });
 document.getElementById("dayhead").addEventListener("click", function(e){ var p=e.target.closest(".intro"); if(p) p.classList.toggle("all"); });
 
 /* ---------- now and next ---------- */
@@ -194,9 +262,12 @@ function findNow(){
   return {n:n, di:di, curI:curI, nextI:nextI, fixI:fixI};
 }
 function jumpTo(di,i){
-  openStops[DAYS[di].id+":"+i] = true;
-  if(view!=="plan" || cur!==di) go(DAYS[di].id); else renderDay();
-  setTimeout(function(){ var li=document.getElementById("s-"+i); if(li){ li.classList.add("focus"); li.scrollIntoView({block:"center",behavior:"smooth"}); } }, 80);
+  if(view!=="plan" || cur!==di) go(DAYS[di].id);
+  setTimeout(function(){
+    var li=document.getElementById("s-"+i); if(!li) return;
+    li.scrollIntoView({block:"center",behavior:"smooth"});
+    if(compact) openSheet(i); else li.classList.add("focus");
+  }, 120);
 }
 function updateNow(){
   drawCount();
@@ -329,7 +400,7 @@ function focusStop(i, fromList){
   focusIdx = i;
   document.querySelectorAll(".stop.focus").forEach(function(x){ x.classList.remove("focus"); });
   var li = document.getElementById("s-"+i);
-  if(li){ li.classList.add("focus"); if(!fromList){ openStops[li.dataset.key]=true; li.classList.add("open"); li.scrollIntoView({block:"nearest",behavior:"smooth"}); } }
+  if(li){ li.classList.add("focus"); if(!fromList) li.scrollIntoView({block:"center",behavior:"smooth"}); }
   var s = DAYS[cur].stops[i];
   if(fromList && s.ll){
     if(!mapShown()){ mapOpen=true; S.mapOpen=true; save(); drawMapToggle(); fit(); }
