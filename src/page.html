@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#c8102e">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-180.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="UK trip">
+<title>London, Glasgow &amp; Edinburgh · 19–22 Nov</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,300..900&display=swap">
+<style>
+/*__CSS__*/
+</style>
+</head>
+<body>
+<header class="mast">
+  <div class="mast-in">
+    <h1>London, Glasgow &amp; Edinburgh<span>Thu 19 – Sun 22 November 2026 · Gatwick 08:00 Thursday, home from Edinburgh 19:00 Sunday</span></h1>
+    <div class="mast-side">
+      <div class="count" id="count"></div>
+      <div class="seg" role="group" aria-label="View">
+        <button type="button" id="vPlan" aria-pressed="true">Day plan</button>
+        <button type="button" id="vTips" aria-pressed="false">Before you go</button>
+        <button type="button" id="vMoney" aria-pressed="false">Expenses</button>
+      </div>
+    </div>
+  </div>
+</header>
+<div class="airmail" aria-hidden="true"></div>
+
+<main class="wrap">
+  <div id="planView" style="display:flex;flex-direction:column;gap:24px">
+    <section class="nowcard" id="nowcard" aria-live="polite" aria-label="Now and next"></section>
+    <nav class="stamps" id="tabs" role="tablist" aria-label="Days"></nav>
+    <section class="day">
+      <div class="dayhead" id="dayhead"></div>
+      <div class="mapcard">
+        <div class="daytools"><button type="button" class="chipbtn maptoggle" id="mapToggle" aria-controls="mapwrap"></button><button type="button" class="chipbtn" id="cmpBtn"></button></div>
+        <div id="mapwrap">
+        <div class="map" id="map">
+          <svg id="svg" role="img" aria-label="Street map of the day's stops"></svg>
+          <div class="ctrls">
+            <div class="zoom"><button type="button" id="zin" aria-label="Zoom in">+</button><button type="button" id="zout" aria-label="Zoom out">−</button></div>
+            <button class="chipbtn" id="fit" type="button">Show all stops</button>
+            <button class="chipbtn" id="mapDone" type="button" hidden>Done with the map</button>
+          </div>
+          <div class="scale" id="scale"></div>
+          <div class="attr">© OpenStreetMap contributors</div>
+          <button type="button" class="maplock" id="mapLock" hidden><span>Tap to move the map</span></button>
+        </div>
+        <div class="maprow" id="maprow"></div>
+        </div>
+      </div>
+      <div class="list" id="list"></div>
+    </section>
+  </div>
+
+  <div id="moneyView" hidden>
+    <div class="mcard lock" id="mLock">
+      <h2>Shared expenses</h2>
+      <p class="sub">Log what each of us pays and see who owes whom, on both phones. Enter the trip code once; this phone remembers it.</p>
+      <form id="mLockForm" autocomplete="off"><input class="fld" id="mCode" placeholder="Trip code" autocapitalize="characters" spellcheck="false" aria-label="Trip code"><button class="btn" type="submit">Open</button></form>
+      <p class="err" id="mLockErr" hidden></p>
+    </div>
+    <div class="money" id="mApp" hidden>
+      <div style="display:flex;flex-direction:column;gap:18px;min-width:0">
+        <div class="bal" id="mBal" aria-live="polite"></div>
+        <form class="mcard" id="mForm" autocomplete="off">
+          <h2>Add an expense</h2>
+          <div class="row2">
+            <input class="fld" id="mDesc" placeholder="What was it?" maxlength="120" aria-label="Description" required>
+            <div class="amtf"><span>£</span><input class="fld" id="mAmt" inputmode="decimal" placeholder="0.00" aria-label="Amount in pounds" required></div>
+          </div>
+          <div class="lbl">Paid by</div><div class="pick" id="mPayer"></div>
+          <div class="lbl">Split</div><div class="pick" id="mSplit"></div>
+          <div class="lbl">Category</div><div class="pick" id="mCat"></div>
+          <div class="lbl">Day</div><div class="pick" id="mDay"></div>
+          <p class="err" id="mErr" hidden></p>
+          <button class="btn" type="submit" id="mAdd">Add expense</button>
+        </form>
+        <div class="mcard" id="mBudget"></div>
+      </div>
+      <div class="mcard">
+        <h2>All expenses</h2>
+        <div id="mList"></div>
+        <div class="mfoot"><span id="mSync"></span><span><button type="button" class="btn ghost" id="mRename">Rename</button> · <button type="button" class="btn ghost" id="mShare">Copy invite link</button></span></div>
+      </div>
+    </div>
+  </div>
+
+  <div id="tipsView" hidden>
+    <div class="tips">
+      <section class="wide bookings">
+        <div class="bk-head"><h2>Bookings</h2><span class="progress" id="progress"></span></div>
+        <div class="bar" aria-hidden="true"><i id="bar"></i></div>
+        <p id="nextup"></p>
+        <div class="checks" id="checklist"></div>
+        <div class="sharebox"><button type="button" class="btn" id="icsBtn">Add the fixed times to my calendar</button><span class="sub">Downloads a calendar file with every fixed time: trains, bookings and the coach to the airport.</span></div>
+      </section>
+
+      <section class="wide" id="tix">
+        <div class="bk-head"><h2>Tickets and references</h2><span class="progress" id="tixCount"></span></div>
+        <p class="sub">Booking references, ticket links, coach and room numbers. They are saved on this phone only and never appear on the public page.</p>
+        <div id="tixList"></div>
+        <form id="tixForm" class="tixform" autocomplete="off">
+          <input class="fld" id="tixTitle" placeholder="What is it? e.g. Caledonian Sleeper" maxlength="80" list="tixNames" required aria-label="Ticket name">
+          <datalist id="tixNames"></datalist>
+          <input class="fld" id="tixRef" placeholder="Reference or code" maxlength="80" aria-label="Reference or code">
+          <input class="fld" id="tixUrl" placeholder="Link to the ticket (optional)" inputmode="url" maxlength="400" aria-label="Link to the ticket">
+          <input class="fld" id="tixNote" placeholder="Note, e.g. coach and room (optional)" maxlength="160" aria-label="Note">
+          <button class="btn" type="submit">Save ticket</button>
+        </form>
+        <div class="sharebox"><button type="button" class="btn" id="shareBtn">Send to the other phone</button><span class="sub" id="shareMsg">Makes a private link holding your ticks, picks and tickets. Opening it on the other phone copies them across.</span></div>
+      </section>
+
+
+      <section>
+        <h2>Getting around</h2>
+        <h3>London</h3>
+        <ul>
+          <li>Tap in and out with a contactless card or phone on trains, Tube and buses. Daily fares cap automatically.</li>
+          <li><b>Gatwick → London Bridge:</b> Thameslink, about 30–40 min, same contactless tap.</li>
+          <li><b>Euston → Glasgow:</b> the Caledonian Sleeper leaves Euston (not King's Cross) at ~23:45 and reaches Glasgow Central ~07:30. Rooms are priced per room, so the twin is shared.</li>
+          <li><b>Bags on Friday:</b> Kirill drops his bag at Euston's left-luggage desk (top of the ramp to platforms 16–18) at about 07:40, on the way to Barry's. It is open 07:00–23:00, about £12.50 a bag; there are no lockers. Collect before 23:00.</li>
+        </ul>
+        <h3>Glasgow</h3>
+        <ul>
+          <li><b>Saturday, Glasgow ⇄ Edinburgh:</b> ScotRail Queen Street ⇄ Waverley via Falkirk High is the fast route (~45–50 min), every 15 min on Saturdays. Sort the app by journey time: other routes are much slower. Buy a return on the day.</li>
+          <li><b>Glasgow Central → Queen Street:</b> about a 5-minute walk.</li>
+          <li><b>Sunday to the airport:</b> Citylink Air runs direct from Buchanan Bus Station to Edinburgh Airport in about an hour; bags go in the hold.</li>
+          <li>Glasgow's subway is one small loop: Buchanan Street ⇄ Kelvinhall / Hillhead for the West End.</li>
+        </ul>
+        <h3>Edinburgh</h3>
+        <ul>
+          <li>The centre is walkable: Waverley, the Old Town and the New Town are 10–15 min apart.</li>
+          <li><b>Bags on Saturday:</b> they stay at the Glasgow hotel, so nothing to carry around Edinburgh.</li>
+        </ul>
+      </section>
+
+      <section>
+        <h2>Apps to have</h2>
+        <div class="app"><b>Citymapper</b><span>Best for London: Tube, buses and walking in one plan.</span></div>
+                <div class="app"><b>ScotRail</b><span>Saturday's Glasgow ⇄ Edinburgh return; filter by journey time.</span></div>
+        <div class="app"><b>Citylink</b><span>Sunday's coach from Glasgow to Edinburgh Airport.</span></div>
+        <div class="app"><b>Uber</b><span>Works in all three cities; handy for Duke Street → Finnieston in Glasgow.</span></div>
+        <div class="app"><b>Barry's</b><span>Book Friday morning's class here as soon as the slot opens.</span></div>
+              </section>
+
+      <section class="wide">
+        <h2>Prices</h2>
+        <p>Per person, approximate, checked 10 Nov 2026.</p>
+        <div style="overflow-x:auto">
+        <table>
+          <tr><th>What</th><th>Day</th><th>Price</th></tr>
+          <tr><td>Guinness at Simmons, happy hour 15:00–20:00</td><td><a href="#thu" data-goto="thu">Thu</a></td><td class="num">£4 a pint</td></tr>
+          <tr><td>Cocktails at Swift and Waltz</td><td><a href="#thu" data-goto="thu">Thu</a></td><td class="num">£14–18 each</td></tr>
+          <tr><td>Barry's Central, one class (Kirill)</td><td><a href="#fri" data-goto="fri">Fri</a></td><td class="num">~£30</td></tr>
+          <tr><td>Postal Museum + Mail Rail (Kirill)</td><td><a href="#fri" data-goto="fri">Fri</a></td><td class="num">~£18–20</td></tr>
+          <tr><td>Interactive experience (karts, Crystal Maze, Escape Arcade, Prison Island)</td><td><a href="#fri" data-goto="fri">Fri</a></td><td class="num">~£25–79</td></tr>
+          <tr><td>Heard Covent Garden, burger and a drink</td><td><a href="#fri" data-goto="fri">Fri</a></td><td class="num">~£25–40</td></tr>
+          <tr><td>Caledonian Sleeper, room for two (current fare)</td><td><a href="#fri" data-goto="fri">Fri</a></td><td class="num">~£158 each</td></tr>
+          <tr><td>Maldron Hotel Glasgow City, 1 night (~1,500 DKK a room)</td><td><a href="#sat" data-goto="sat">Sat</a></td><td class="num">~£85 each</td></tr>
+          <tr><td>Calton Hill, Royal Mile, Christmas market</td><td><a href="#sat" data-goto="sat">Sat</a></td><td class="num">Free</td></tr>
+          <tr><td>Glasgow Cathedral, Necropolis</td><td><a href="#sun" data-goto="sun">Sun</a></td><td class="num">Free</td></tr>
+          <tr><td>ScotRail Glasgow ⇄ Edinburgh return</td><td><a href="#sat" data-goto="sat">Sat</a></td><td class="num">~£17–20</td></tr>
+          <tr><td>Edinburgh Castle, online</td><td><a href="#sat" data-goto="sat">Sat</a></td><td class="num">~£23.50</td></tr>
+          <tr><td>Johnnie Walker Journey of Flavour, 3 cocktails</td><td><a href="#sat" data-goto="sat">Sat</a></td><td class="num">£30</td></tr>
+          <tr><td>Casual dinner in Glasgow (burgers, curry or pizza)</td><td><a href="#sat" data-goto="sat">Sat</a></td><td class="num">~£15–35</td></tr>
+          <tr><td>Tennent's Wellpark Brewery tour, pint included</td><td><a href="#sun" data-goto="sun">Sun</a></td><td class="num">£17–21</td></tr>
+          <tr><td>Citylink Air to Edinburgh Airport</td><td><a href="#sun" data-goto="sun">Sun</a></td><td class="num">~£15</td></tr>
+        </table>
+        </div>
+      </section>
+
+      <section>
+        <h2>Rough budget</h2>
+        <p>Per person, flights excluded.</p>
+        <table>
+          <tr><th>Category</th><th>GBP</th></tr>
+          <tr><td>Transport (Gatwick, Tube, sleeper share, Glasgow ⇄ Edinburgh, airport coach)</td><td class="num">215–245</td></tr>
+          <tr><td>Activities (Friday game, Tennent's, Johnnie Walker, castle; Barry's and Mail Rail for Kirill)</td><td class="num">100–155</td></tr>
+          <tr><td>Food &amp; drink (Tatar Bunar, Heard, Glasgow dinner, lunches, pints, cocktails at £11–18)</td><td class="num">260–315</td></tr>
+          <tr><td>Glasgow hotel, 1 night, room split two ways</td><td class="num">~85</td></tr>
+          <tr class="total"><td>Total</td><td class="num">660–800</td></tr>
+        </table>
+      </section>
+
+      <section>
+        <h2>Good to know</h2>
+        <ul>
+          <li><b>Dark early:</b> sunset is around 16:00 in London and 15:45 in Scotland. Daylight things go first.</li>
+          <li><b>Weather:</b> late November is cold and often wet. Bring a proper jacket and shoes for the Necropolis hill and Edinburgh's wet cobbles.</li>
+          <li><b>Pubs:</b> order and pay at the bar; no table service, no tipping for drinks.</li>
+          <li><b>Restaurants:</b> a 12.5% service charge is often already on the bill in London.</li>
+          <li><b>Plugs:</b> UK type G (three flat pins).</li>
+          <li><b>Emergency:</b> 999 or 112.</li>
+          <li><b>Time:</b> UK is 1 h behind Copenhagen.</li>
+        </ul>
+      </section>
+
+      <section class="wide">
+        <h2>If there's spare time</h2>
+        <p class="sub">Each day's plan lists these nearest first, with an indoor filter for wet weather.</p>
+        <div id="spareAll"></div>
+      </section>
+
+      <section class="wide">
+        <h2>Sources</h2>
+        <p class="src">Checked 10 Nov 2026; times and prices can change.
+          <a href="https://www.timeout.com/london/restaurants/tatar-bunar" target="_blank" rel="noopener">Tatar Bunar</a> ·
+          <a href="https://www.barrys.com/studio/london-central/" target="_blank" rel="noopener">Barry's Central</a> ·
+          <a href="https://www.timeout.com/london/museums/british-postal-museum-and-archive" target="_blank" rel="noopener">Postal Museum</a> ·
+          <a href="https://www.timeout.com/london/news/arcade-arena-london-southbank-games-080926" target="_blank" rel="noopener">Arcade Arena</a> ·
+          <a href="https://www.simmonsbar.co.uk/?p=264" target="_blank" rel="noopener">Simmons Greek Street</a> ·
+          <a href="https://www.timeout.com/london/bars-and-pubs/waltz" target="_blank" rel="noopener">Waltz</a> ·
+          <a href="https://www.timeout.com/london/bars-pubs/soho-london-bars" target="_blank" rel="noopener">Soho bars</a> ·
+          <a href="https://boroughmarket.org.uk/traders-of-the-month" target="_blank" rel="noopener">Borough Market traders</a> ·
+          <a href="https://www.seat61.com/CaledonianSleepers.htm" target="_blank" rel="noopener">Caledonian Sleeper</a> ·
+          <a href="https://www.euston.com/left-luggage" target="_blank" rel="noopener">Euston left luggage</a> ·
+          <a href="https://www.hot-dinners.com/2026092815397/Gastroblog/Latest-news/heard-burger-covent-garden-opening-dessert-bar" target="_blank" rel="noopener">Heard Covent Garden</a> ·
+          <a href="https://londonist.com/pubs/euston-tap" target="_blank" rel="noopener">Euston Tap</a> ·
+          <a href="https://www.enprimeurclub.com/restaurants/el-perro-negro-glasgow" target="_blank" rel="noopener">El Perro Negro</a> ·
+          <a href="https://www.visitglasgow.com/food-and-drink/top-restaurants/top-restaurants-in-glasgow/" target="_blank" rel="noopener">Glasgow restaurants</a> ·
+          <a href="https://www.visitglasgow.com/food-and-drink/bars-pubs-and-clubs/cocktail-bars/" target="_blank" rel="noopener">Glasgow cocktail bars</a> ·
+          <a href="https://www.edinburghtourism.org/edinburgh-to-glasgow/" target="_blank" rel="noopener">Edinburgh–Glasgow trains</a> ·
+          <a href="https://tennents.com/uk/experience/tours" target="_blank" rel="noopener">Tennent's tours</a> ·
+          <a href="https://www.johnniewalker.com/en-gb/visit-us-princes-street/book-whisky-tasting/johnnie-walker-s-journey-of-flavour" target="_blank" rel="noopener">Johnnie Walker Journey of Flavour</a> ·
+          <a href="https://www.edinburghtourism.org/airport-to-city-centre/" target="_blank" rel="noopener">Edinburgh airport transport</a> ·
+          
+          <a href="https://londonist.com/london/art-and-photography/the-top-exhibitions-to-see-in-london-november-and-december-2026" target="_blank" rel="noopener">London exhibitions</a></p>
+      </section>
+    </div>
+  </div>
+  <p class="foot" id="offline"></p>
+</main>
+<div class="toast" id="toast" role="status" hidden></div>
+
+<script>
+/*__JS__*/
+</script>
+</body>
+</html>

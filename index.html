@@ -4,6 +4,11 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#c8102e">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-180.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="UK trip">
 <title>London, Glasgow &amp; Edinburgh · 19–22 Nov</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -277,6 +282,154 @@ details.more .txt p{margin:0}
 .mfoot{display:flex;justify-content:space-between;align-items:center;gap:10px;font-size:13px;color:var(--muted);flex-wrap:wrap}
 @media (max-width: 860px){ .money{grid-template-columns:minmax(0,1fr)} }
 @media (prefers-reduced-motion: reduce){ *{animation:none!important;transition:none!important} }
+
+/* ================= v9: phone-first day view, stop types, legs, picks, tickets ================= */
+.sub{color:var(--muted);font-size:14px;margin:0}
+.foot{color:var(--muted);font-size:13px;text-align:center;margin:0}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(22px + env(safe-area-inset-bottom,0px));z-index:40;background:var(--ink);color:var(--paper);font-weight:600;font-size:14.5px;padding:11px 16px;border-radius:999px;box-shadow:0 8px 28px -8px rgba(10,20,40,.5);max-width:calc(100vw - 32px);text-align:center}
+
+/* now and next */
+.nowcard{background:var(--ink);color:var(--paper);border-radius:var(--r);padding:16px 18px 18px;display:flex;flex-direction:column;gap:10px;position:relative;overflow:hidden}
+.nowcard::after{content:"";position:absolute;inset:auto 0 0 0;height:5px;background:repeating-linear-gradient(-45deg,var(--red) 0 12px,transparent 12px 18px,var(--blue) 18px 30px,transparent 30px 36px)}
+.nowcard:empty{display:none}
+.now-top{display:flex;justify-content:space-between;gap:12px;font-weight:700;font-stretch:85%;font-size:12.5px;letter-spacing:.07em;text-transform:uppercase;opacity:.75}
+.now-main,.now-row{display:flex;flex-direction:column;gap:2px;text-align:left}
+.now-row{font:inherit;color:inherit;background:color-mix(in srgb,var(--paper) 9%,transparent);border:0;border-radius:12px;padding:11px 13px;cursor:pointer;width:100%}
+.now-row.next{background:color-mix(in srgb,var(--paper) 16%,transparent)}
+.now-row:focus-visible{outline-color:var(--paper)}
+.nowcard small{font-weight:700;font-stretch:85%;font-size:12px;letter-spacing:.06em;text-transform:uppercase;opacity:.75}
+.nowcard b{font-weight:800;font-stretch:80%;font-size:20px;line-height:1.15}
+.now-row.next b{font-size:23px}
+.nowcard span{font-size:14.5px;opacity:.9}
+.now-act{display:flex;flex-wrap:wrap;gap:8px;margin-top:2px}
+.nowcard .routebtn{min-height:44px}
+
+/* day head */
+.dayhead .intro{cursor:default}
+details.rain{margin-top:10px}
+.daytools{display:flex;flex-wrap:wrap;gap:8px;justify-content:flex-end}
+.daytools .chipbtn{min-height:44px;background:var(--surface);box-shadow:inset 0 0 0 1.5px var(--line)}
+#mapwrap{display:flex;flex-direction:column;gap:10px}
+.legend{font-size:13px;color:var(--muted);margin:14px 0 0;line-height:2}
+.now-rows{display:flex;flex-direction:column;gap:8px}
+@media (min-width:961px){ .now-rows{flex-direction:row} .now-rows > *{flex:1} }
+
+/* stop types */
+.tag.fixed{background:var(--ink);color:var(--paper)}
+.tag.opt{background:transparent;color:var(--muted);box-shadow:inset 0 0 0 1.5px var(--line)}
+.tag.picked{background:var(--blue-soft);color:var(--blue)}
+a.tag{text-decoration:none}
+.stop.k-fixed .t{color:var(--red-ink)}
+.stop.k-opt .pin:not(.off){background:var(--paper);color:var(--red-ink);border:2px dashed var(--red)}
+.stop.k-opt.solo .pin:not(.off){color:var(--blue);border-color:var(--blue)}
+.stop.k-opt .hd strong{font-weight:600}
+.stop .pin.off.tr{width:28px;height:28px;margin-top:0;border:0;background:var(--paper);font-size:16px;display:grid;place-items:center}
+
+/* collapsible stops */
+.hd{font:inherit;color:inherit;background:none;border:0;padding:0;margin:0;text-align:left;display:flex;align-items:flex-start;justify-content:space-between;gap:10px;width:100%;cursor:default}
+.hd .chev{display:none;flex:none;width:8px;height:8px;margin:7px 4px 0 0;border-right:2px solid var(--muted);border-bottom:2px solid var(--muted);transform:rotate(45deg);transition:transform .2s}
+.links{display:flex;flex-wrap:wrap;gap:4px 14px}
+.dir{min-height:32px}
+.compact .hd{cursor:pointer;min-height:30px}
+.compact .hd .chev{display:block}
+.compact .stop.open .hd .chev{transform:rotate(-135deg);margin-top:11px}
+.compact .stop:not(.open) .what p{display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical;overflow:hidden}
+.compact .stop:not(.open) .subs,.compact .stop:not(.open) .links,.compact .stop:not(.open) details.more{display:none}
+.compact .stop{padding-top:9px;padding-bottom:9px}
+
+/* travel legs */
+.leg{display:grid;grid-template-columns:56px 46px minmax(0,1fr);align-items:center;padding:1px 10px 1px 0;position:relative}
+.legdot{justify-self:center;width:6px;height:6px;border-radius:50%;background:var(--muted);position:relative;z-index:1;box-shadow:0 0 0 3px var(--paper)}
+.legtx{display:flex;flex-wrap:wrap;gap:2px 10px;align-items:baseline;font-size:13px;color:var(--muted);padding-left:4px}
+.legm{font-weight:700;color:var(--ink)}
+.legl{font-weight:700;color:var(--red-ink)}
+
+/* pick one */
+.subs li.chosen{background:var(--blue-soft);margin:-4px -6px;padding:4px 6px;border-radius:8px}
+.subs li.dim{opacity:.55}
+.choose{font:700 13px/1 var(--font);border:1.5px solid var(--blue);background:transparent;color:var(--blue);padding:8px 12px;border-radius:999px;cursor:pointer;margin:6px 0 2px;display:block;min-height:36px}
+.choose[aria-pressed="true"]{background:var(--blue);color:var(--paper)}
+
+/* map: toggle and scroll lock */
+.maptoggle{display:none}
+.ctrls{z-index:2}
+.maplock{position:absolute;inset:0;z-index:1;background:transparent;border:0;padding:0 0 14px;display:flex;align-items:flex-end;justify-content:center;cursor:pointer}
+.maplock span{font:600 13px/1 var(--font);background:var(--ink);color:var(--paper);padding:9px 13px;border-radius:999px;box-shadow:0 2px 10px rgba(10,20,40,.3)}
+.map.locked svg{pointer-events:none}
+.map.locked .attr,.map.locked .scale{opacity:.0}
+
+/* spare time */
+.spare{margin-top:22px;background:var(--surface);border-radius:var(--r);padding:16px 18px;display:flex;flex-direction:column;gap:10px;box-shadow:0 1px 2px rgba(10,20,40,.06)}
+.spare h3{margin:0;font-weight:800;font-stretch:80%;font-size:19px}
+.sparelist{list-style:none;margin:0;padding:0;display:flex;flex-direction:column}
+.sparelist li{padding:10px 0;border-top:1px solid var(--line);display:flex;flex-direction:column;gap:5px}
+.sparelist li:first-child{border-top:0}
+.tips .sparelist{padding-left:0;gap:0}
+.sp-tx span{color:var(--muted);font-size:14.5px}
+
+/* bookings: done stays readable */
+.chk input:checked + label{color:var(--ink);text-decoration:none}
+.chk.done .when{color:var(--free)}
+.chk{min-height:44px}
+.sharebox{display:flex;flex-wrap:wrap;align-items:center;gap:8px 14px;margin-top:6px}
+.sharebox .sub{flex:1 1 240px}
+.tixform{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:4px}
+.tixform .btn{justify-self:start}
+.tix{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:6px 14px;padding:12px 0;border-top:1px solid var(--line)}
+.tix:first-child{border-top:0}
+.tix-tx{display:flex;flex-direction:column;gap:2px;min-width:0}
+.tix-tx .ref{font-weight:800;font-stretch:85%;font-size:20px;letter-spacing:.04em;overflow-wrap:anywhere;user-select:all;-webkit-user-select:all}
+.tix-tx small{color:var(--muted);font-size:13.5px}
+.tix-act{display:flex;gap:14px;align-items:center}
+.tix-act .btn.ghost{text-decoration:none;min-height:36px;display:inline-flex;align-items:center}
+.btn.ghost.armed{color:var(--red-ink)}
+
+/* budget */
+.bud{display:flex;flex-direction:column;gap:5px;padding:10px 0;border-top:1px solid var(--line)}
+.bud-h{display:flex;justify-content:space-between;gap:10px;align-items:baseline}
+.bud-h span{font-size:13px;color:var(--muted)}
+.bud-r{display:grid;grid-template-columns:64px minmax(0,1fr) 64px;gap:10px;align-items:center;font-size:13.5px}
+.bud-r i{display:block;height:8px;border-radius:99px;background:var(--soft);overflow:hidden}
+.bud-r u{display:block;height:100%;background:var(--blue);border-radius:99px}
+.bud-r.over u{background:var(--red)}
+.bud-r b{text-align:right;font-variant-numeric:tabular-nums}
+.bud-r.over b{color:var(--red-ink)}
+
+@media (max-width:960px){
+  .maptoggle{display:inline-flex;align-items:center}
+  .daytools{justify-content:space-between}
+  .map{height:300px}
+  .mapcard{gap:12px}
+}
+@media (max-width:620px){
+  html{scroll-padding-top:86px}
+  .mast{padding-top:calc(14px + env(safe-area-inset-top,0px));padding-bottom:14px}
+  .mast h1{font-size:25px}
+  .mast h1 span{font-size:13.5px;margin-top:7px;line-height:1.3}
+  .mast-in{gap:10px}
+  .wrap{padding-top:16px;gap:16px;padding-bottom:calc(104px + env(safe-area-inset-bottom,0px))}
+  #planView{gap:16px!important}
+  /* the three views move to a thumb-reach bar at the bottom */
+  .seg{position:fixed;left:12px;right:12px;bottom:calc(10px + env(safe-area-inset-bottom,0px));width:auto;z-index:30;padding:4px;box-shadow:0 10px 30px -8px rgba(10,20,40,.55)}
+  .seg button{padding:14px 8px;font-size:14px;opacity:.9}
+  .toast{bottom:calc(84px + env(safe-area-inset-bottom,0px))}
+  /* day tabs stay in reach while you scroll */
+  .stamps{position:sticky;top:0;z-index:20;background:var(--paper);padding-top:8px;padding-bottom:8px}
+  .stamp{flex:0 0 132px;padding:5px}
+  .stamp-in{padding:6px 9px 6px;gap:0 8px}
+  .stamp b{font-size:27px}
+  .stamp em{font-size:11.5px}
+  .stamp span{font-size:12.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .dayhead h2{font-size:25px}
+  .dayhead .intro{font-size:14.5px}
+  .dayhead .intro:not(.all){display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;cursor:pointer}
+  .postmark{width:72px;height:72px}
+  .leg{grid-template-columns:44px 42px minmax(0,1fr)}
+  .tixform{grid-template-columns:minmax(0,1fr)}
+  .nowcard b{font-size:18px}
+  .now-row.next b{font-size:21px}
+}
+
 </style>
 </head>
 <body>
@@ -297,21 +450,26 @@ details.more .txt p{margin:0}
 
 <main class="wrap">
   <div id="planView" style="display:flex;flex-direction:column;gap:24px">
+    <section class="nowcard" id="nowcard" aria-live="polite" aria-label="Now and next"></section>
     <nav class="stamps" id="tabs" role="tablist" aria-label="Days"></nav>
     <section class="day">
       <div class="dayhead" id="dayhead"></div>
       <div class="mapcard">
+        <div class="daytools"><button type="button" class="chipbtn maptoggle" id="mapToggle" aria-controls="mapwrap"></button><button type="button" class="chipbtn" id="cmpBtn"></button></div>
+        <div id="mapwrap">
         <div class="map" id="map">
           <svg id="svg" role="img" aria-label="Street map of the day's stops"></svg>
           <div class="ctrls">
             <div class="zoom"><button type="button" id="zin" aria-label="Zoom in">+</button><button type="button" id="zout" aria-label="Zoom out">−</button></div>
             <button class="chipbtn" id="fit" type="button">Show all stops</button>
+            <button class="chipbtn" id="mapDone" type="button" hidden>Done with the map</button>
           </div>
           <div class="scale" id="scale"></div>
           <div class="attr">© OpenStreetMap contributors</div>
+          <button type="button" class="maplock" id="mapLock" hidden><span>Tap to move the map</span></button>
         </div>
         <div class="maprow" id="maprow"></div>
-        <ul class="offlist" id="offlist"></ul>
+        </div>
       </div>
       <div class="list" id="list"></div>
     </section>
@@ -340,6 +498,7 @@ details.more .txt p{margin:0}
           <p class="err" id="mErr" hidden></p>
           <button class="btn" type="submit" id="mAdd">Add expense</button>
         </form>
+        <div class="mcard" id="mBudget"></div>
       </div>
       <div class="mcard">
         <h2>All expenses</h2>
@@ -354,8 +513,24 @@ details.more .txt p{margin:0}
       <section class="wide bookings">
         <div class="bk-head"><h2>Bookings</h2><span class="progress" id="progress"></span></div>
         <div class="bar" aria-hidden="true"><i id="bar"></i></div>
-        <p>Next up: the castle, Tennent's and the Friday game. Ticks stay on your own phone.</p>
+        <p id="nextup"></p>
         <div class="checks" id="checklist"></div>
+        <div class="sharebox"><button type="button" class="btn" id="icsBtn">Add the fixed times to my calendar</button><span class="sub">Downloads a calendar file with every fixed time: trains, bookings and the coach to the airport.</span></div>
+      </section>
+
+      <section class="wide" id="tix">
+        <div class="bk-head"><h2>Tickets and references</h2><span class="progress" id="tixCount"></span></div>
+        <p class="sub">Booking references, ticket links, coach and room numbers. They are saved on this phone only and never appear on the public page.</p>
+        <div id="tixList"></div>
+        <form id="tixForm" class="tixform" autocomplete="off">
+          <input class="fld" id="tixTitle" placeholder="What is it? e.g. Caledonian Sleeper" maxlength="80" list="tixNames" required aria-label="Ticket name">
+          <datalist id="tixNames"></datalist>
+          <input class="fld" id="tixRef" placeholder="Reference or code" maxlength="80" aria-label="Reference or code">
+          <input class="fld" id="tixUrl" placeholder="Link to the ticket (optional)" inputmode="url" maxlength="400" aria-label="Link to the ticket">
+          <input class="fld" id="tixNote" placeholder="Note, e.g. coach and room (optional)" maxlength="160" aria-label="Note">
+          <button class="btn" type="submit">Save ticket</button>
+        </form>
+        <div class="sharebox"><button type="button" class="btn" id="shareBtn">Send to the other phone</button><span class="sub" id="shareMsg">Makes a private link holding your ticks, picks and tickets. Opening it on the other phone copies them across.</span></div>
       </section>
 
 
@@ -366,7 +541,7 @@ details.more .txt p{margin:0}
           <li>Tap in and out with a contactless card or phone on trains, Tube and buses. Daily fares cap automatically.</li>
           <li><b>Gatwick → London Bridge:</b> Thameslink, about 30–40 min, same contactless tap.</li>
           <li><b>Euston → Glasgow:</b> the Caledonian Sleeper leaves Euston (not King's Cross) at ~23:45 and reaches Glasgow Central ~07:30. Rooms are priced per room, so the twin is shared.</li>
-          <li><b>Bags on Friday:</b> Euston's left-luggage desk (top of the ramp to platforms 16–18) is open 07:00–23:00; there are no lockers.</li>
+          <li><b>Bags on Friday:</b> Kirill drops his bag at Euston's left-luggage desk (top of the ramp to platforms 16–18) at about 07:40, on the way to Barry's. It is open 07:00–23:00, about £12.50 a bag; there are no lockers. Collect before 23:00.</li>
         </ul>
         <h3>Glasgow</h3>
         <ul>
@@ -445,28 +620,8 @@ details.more .txt p{margin:0}
 
       <section class="wide">
         <h2>If there's spare time</h2>
-        <h3>London</h3>
-        <ul>
-          <li><b>Constantinople to Istanbul</b>, V&amp;A South Kensington, from 7 Nov, £25–27.</li>
-          <li><b>The Bayeux Tapestry</b>, British Museum, this autumn's big one-off loan.</li>
-          <li><b>Beyond the Streets</b>, Saatchi Gallery, from 11 Nov: graffiti and street art, £25.</li>
-          <li><b>Horizon 22</b>, Bishopsgate: free 58th-floor viewing deck, timed booking.</li>
-          <li><b>St Dunstan in the East</b> and the <b>London Mithraeum</b>, the City: a bombed church garden and a Roman temple, both free.</li>
-          <li><b>Sir John Soane's Museum</b>, Lincoln's Inn Fields: free, crammed and strange.</li>
-          <li><b>Wellcome Collection</b>, Euston: free, medicine and the human body.</li>
-          <li><b>Leake Street Tunnel</b>, Waterloo: legal graffiti tunnel by Waterloo station.</li>
-          <li><b>Somerset House ice rink</b>, Strand: timed skating sessions.</li>
-          <li>Other workouts: <b>Kobox</b> (boxing HIIT), <b>1Rebel</b> (Reshape, Ride), <b>Psycle</b> or <b>SoulCycle</b> (cycling).</li>
-        </ul>
-        <h3>Glasgow &amp; Edinburgh</h3>
-        <ul>
-          <li><b>Clydeside Distillery</b>, Glasgow: on the river near Finnieston, tour ends with three drams.</li>
-          <li><b>Holyrood Distillery</b>, Edinburgh: at the foot of Arthur's Seat, ~90 min, £20–25.</li>
-          <li><b>Port of Leith Distillery</b>: nine-storey vertical distillery with a bar on top.</li>
-          <li><b>Barnton nuclear bunker tours</b>, Edinburgh: Saturdays and Sundays.</li>
-          <li><b>Kelvingrove Art Gallery</b> and the <b>West End</b>, Glasgow: Kelvingrove opens 11:00 on Sundays if you swap it for Tennent's.</li>
-          <li><b>Arthur's Seat</b>, Edinburgh: the hike up from Holyrood is ~1.5 h return; swap it for the Grassmarket lunch and Victoria Street if you'd rather climb.</li>
-        </ul>
+        <p class="sub">Each day's plan lists these nearest first, with an indoor filter for wet weather.</p>
+        <div id="spareAll"></div>
       </section>
 
       <section class="wide">
@@ -496,7 +651,9 @@ details.more .txt p{margin:0}
       </section>
     </div>
   </div>
+  <p class="foot" id="offline"></p>
 </main>
+<div class="toast" id="toast" role="status" hidden></div>
 
 <script>
 (function(){
@@ -516,46 +673,47 @@ var AREAS = {
 };
 AREAS.glasgow = AREAS.glasgow.map(function(a){ return [a[0],a[3],a[4]]; });
 
-
 function gq(s){ return "https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent(s); }
 var DAYS = [
- { id:"thu", tab:"Thu 19", place:"London", date:"Thursday 19 November", city:"london",
+ { id:"thu", iso:"2026-11-19", cities:["london"], tab:"Thu 19", place:"London", date:"Thursday 19 November", city:"london",
    title:"Borough Market, Soho, a Ukrainian feast",
+   rain:["Borough Market is under cover, so lunch works in any weather.","Wet afternoon: the London Mithraeum (free, indoors) is a short walk from the hotel. Skip Horizon 22 unless the cloud is high.","The evening is all indoors; Soho to Shoreditch is by Elizabeth line."],
    intro:"Kirill grabs the key at Dima's office, drops the bags and grazes Borough Market on his own. We meet in Soho at 17:30 for £4 Guinness and a quick proper cocktail, then dinner at Tatar Bunar at 19:30 and a nightcap at one of the best bars in the world.",
    off:"<b>08:00</b> Kirill lands at Gatwick → Thameslink to London Bridge, ~35 min.<br><b>Hotel:</b> DoubleTree by Hilton Tower of London, 7 Pepys St (Tower Hill). Check-in from 15:00, check-out by 12:00.",
    stops:[
-    {t:"08:00", n:"Land at Gatwick, Thameslink to London Bridge", p:"Tap in with contactless; ~30–40 min.", who:"Kirill", off:true},
-    {t:"09:15", n:"Pick up the key at Deliveroo HQ", p:"The River Building, 1 Cousin Lane, by Cannon Street station: a 10-min walk across London Bridge.", who:"Kirill", ll:[51.5101,-0.0917], q:"Deliveroo The River Building 1 Cousin Lane London"},
-    {t:"10:00", n:"DoubleTree by Hilton Tower of London: drop the bags", p:"7 Pepys St, 3 min from Tower Hill station; a 15-min walk east along the river from Deliveroo HQ. Check-in is from 15:00, so ask about early check-in and freshen up after the early flight.", who:"Kirill", booked:true, ll:[51.5106,-0.0780], q:"DoubleTree by Hilton London Tower of London, 7 Pepys Street"},
-    {t:"12:00", n:"Lunch at Borough Market", p:"Full market day (10:00–17:00). Graze these four, all within a couple of minutes of each other:", who:"Kirill", ll:[51.5055,-0.0910], q:"Borough Market, London",
+    {t:"08:00", n:"Land at Gatwick, Thameslink to London Bridge", k:"fixed", tr:"train", p:"Tap in with contactless; ~30–40 min.", who:"Kirill", off:true},
+    {t:"09:15", n:"Pick up the key at Deliveroo HQ", go:{m:"walk",min:10,txt:"across London Bridge"}, p:"The River Building, 1 Cousin Lane, by Cannon Street station: a 10-min walk across London Bridge.", who:"Kirill", ll:[51.5101,-0.0917], q:"Deliveroo The River Building 1 Cousin Lane London"},
+    {t:"10:00", n:"DoubleTree by Hilton Tower of London: drop the bags", chk:"doubletree", go:{m:"walk",min:15,txt:"east along the river"}, p:"7 Pepys St, 3 min from Tower Hill station; a 15-min walk east along the river from Deliveroo HQ. Check-in is from 15:00, so ask about early check-in and freshen up after the early flight.", who:"Kirill", booked:true, ll:[51.5106,-0.0780], q:"DoubleTree by Hilton London Tower of London, 7 Pepys Street"},
+    {t:"12:00", n:"Lunch at Borough Market", go:{m:"walk",min:20,txt:"over London Bridge"}, p:"Full market day (10:00–17:00). Graze these four, all within a couple of minutes of each other:", who:"Kirill", ll:[51.5055,-0.0910], q:"Borough Market, London",
       subs:[
         ["Ginger Pig","The butcher's cult hot sausage roll; Scotch eggs too. Three Crown Square.","Ginger Pig Borough Market"],
         ["The Black Pig","Honey, truffle and parmesan pork ciabatta, finished over coals.","The Black Pig Borough Market"],
         ["Turnips","The viral cup of strawberries under warm chocolate, ~£8.50.","Turnips Borough Market"],
         ["Bread Ahead","Filled doughnuts from the original bakery stall on Cathedral Street.","Bread Ahead Borough Market Cathedral Street"]
       ]},
-    {t:"14:00", n:"Back to the DoubleTree, rest", p:"20 min on foot from Borough Market over London Bridge. Up since ~04:30: recharge before the evening; the rooftop bar is right there. Or pick something from the spare-time list in Before you go.", who:"Kirill", off:true},
-    {t:"17:30", n:"£4 Guinness at Simmons Greek Street", p:"We meet here. Retro Soho bar with hidden karaoke rooms; happy hour 15:00–20:00, so Soho comes before dinner.", fee:["£4 a pint","paid"], ll:[51.5140,-0.1314], q:"Simmons Greek Street, Soho, London"},
-    {t:"18:20", n:"Swift Soho, 12 Old Compton St", p:"One of London's best cocktail bars: one quick drink. The Irish coffee upstairs is famous; the downstairs whisky room does a great Old Fashioned. Leave by 18:55 for dinner.", fee:["~£14 a cocktail","paid"], ll:[51.5131,-0.1302], q:"Swift Soho, 12 Old Compton Street, London",
+    {t:"14:00", n:"Back to the DoubleTree, rest", k:"opt", go:{m:"walk",min:20,txt:"back over London Bridge"}, p:"20 min on foot from Borough Market over London Bridge. Up since ~04:30: recharge before the evening; the rooftop bar is right there. Or pick something from the spare-time list in Before you go.", who:"Kirill", off:true},
+    {t:"17:30", n:"£4 Guinness at Simmons Greek Street", go:{m:"tube",min:30,est:true,txt:"Tower Hill to Soho"}, p:"We meet here. Retro Soho bar with hidden karaoke rooms; happy hour 15:00–20:00, so Soho comes before dinner.", fee:["£4 a pint","paid"], ll:[51.5140,-0.1314], q:"Simmons Greek Street, Soho, London"},
+    {t:"18:20", n:"Swift Soho, 12 Old Compton St", k:"opt", p:"One of London's best cocktail bars: one quick drink. The Irish coffee upstairs is famous; the downstairs whisky room does a great Old Fashioned. Leave by 18:55 for dinner.", fee:["~£14 a cocktail","paid"], ll:[51.5131,-0.1302], q:"Swift Soho, 12 Old Compton Street, London",
       more:"<p>Close by if Swift is full: <b>Three Sheets Soho</b> (13 Manette St), No. 11 in the UK's Top 50 Cocktail Bars 2026. <b>Bar Termini</b> (7 Old Compton St) is No. 8, but it's a Negroni specialist.</p>"},
-    {t:"18:55", n:"Elizabeth line to Shoreditch", p:"Tottenham Court Road → Liverpool Street, 4 min, then a 12-min walk up to Curtain Road.", off:true},
-    {t:"19:30", n:"Dinner at Tatar Bunar, 152 Curtain Rd", p:"Southern Ukrainian (Bessarabian) cooking from an Odesa team; in the Michelin Guide since March 2026. Order a grill centrepiece and the onion bread with lardo.", fee:["~£60–80","paid"], booked:true, ll:[51.5262,-0.0808], q:"Tatar Bunar, 152 Curtain Road, London",
+    {t:"19:30", n:"Dinner at Tatar Bunar, 152 Curtain Rd", k:"fixed", chk:"tatar", go:{m:"tube",min:20,leave:"18:55",txt:"Elizabeth line Tottenham Court Road → Liverpool Street (4 min), then a 12-min walk up to Curtain Road"}, p:"Southern Ukrainian (Bessarabian) cooking from an Odesa team; in the Michelin Guide since March 2026. Order a grill centrepiece and the onion bread with lardo.", fee:["~£60–80","paid"], booked:true, ll:[51.5262,-0.0808], q:"Tatar Bunar, 152 Curtain Road, London",
       more:"<p>Booked for 19:30. Phone if running late: 07771 013190.</p><p>Mriya in Earl's Court, long London's best-known Ukrainian place, closed in June 2026, so this is the pick.</p>"},
-    {t:"21:45", n:"Nightcap at Waltz, 28 Scrutton St", p:"Japanese cocktail bar five minutes' walk from dinner: No. 32 in the World's 50 Best Bars 2026 and Time Out's best cocktail bar in London. Sit at the bar and watch them work.", fee:["~£15–18 a cocktail","paid"], ll:[51.5235,-0.0820], q:"Waltz bar, 28 Scrutton Street, London",
+    {t:"21:45", n:"Nightcap at Waltz, 28 Scrutton St", k:"opt", go:{m:"walk",min:5}, p:"Japanese cocktail bar five minutes' walk from dinner: No. 32 in the World's 50 Best Bars 2026 and Time Out's best cocktail bar in London. Sit at the bar and watch them work.", fee:["~£15–18 a cocktail","paid"], ll:[51.5235,-0.0820], q:"Waltz bar, 28 Scrutton Street, London",
       more:"<p>Bar seats are walk-in; a few tables can be booked at waltzbar.uk.</p><p>Plan B, also 5 minutes away: <b>Happiness Forgets</b> (8–9 Hoxton Square), a candlelit basement that's a favourite of London bartenders, open till late.</p>"},
-    {t:"~23:30", n:"Back to the DoubleTree", p:"25 min on foot from Shoreditch, or an Uber (~£10–15). Early start tomorrow for Barry's.", off:true}
+    {t:"~23:30", n:"Back to the DoubleTree", go:{m:"walk",min:25,txt:"or an Uber, ~£10–15"}, p:"25 min on foot from Shoreditch, or an Uber (~£10–15). Early start tomorrow for Barry's.", off:true}
    ]},
- { id:"fri", tab:"Fri 20", place:"London → Glasgow", date:"Friday 20 November", city:"london",
+ { id:"fri", iso:"2026-11-20", cities:["london"], mark:"LONDON · EUSTON", tab:"Fri 20", place:"London → Glasgow", date:"Friday 20 November", city:"london",
    title:"Barry's, games, Heard, sleeper north",
-   intro:"Kirill does Barry's and the old Post Office railway while Dima finishes his short day. Then lunch, an interactive game and a quick Uniqlo stop before an early Covent Garden evening: Michelin-chef burgers at 17:15, an old pub, cocktails above London's oldest restaurant, and the night train to Glasgow.",
+   rain:["Every stop today is indoors, and the Covent Garden hops are about 5 minutes each.","Take a bus or a cab for the 20-minute walk from Barry's to the Postal Museum."],
+   intro:"Kirill drops his bag at Euston, then does Barry's and the old Post Office railway while Dima finishes his short day. Then lunch, an interactive game and a quick Uniqlo stop before an early Covent Garden evening: Michelin-chef burgers at 17:15, an old pub, cocktails above London's oldest restaurant, and the night train to Glasgow.",
    off:"<b>~23:45</b> Caledonian Sleeper Euston → Glasgow Central, arrive <b>~07:30</b> Saturday.",
    stops:[
-    {t:"07:15", n:"Check out of the DoubleTree, leave the bags", p:"Check-out is noon, but you're out all day: check out now and leave the bags at the desk. Circle line Tower Hill → Euston Square, ~20 min.", who:"Kirill", booked:true, ll:[51.5106,-0.0780], q:"DoubleTree by Hilton London Tower of London, 7 Pepys Street"},
-    {t:"08:00", n:"Barry's Central, 163 Euston Rd", p:"The original London studio: treadmill and floor HIIT in the red room. Showers and towels on site.", who:"Kirill", fee:["~£30","paid"], book:true, ll:[51.5266,-0.1338], q:"Barry's London Central 163 Euston Road",
+    {t:"07:15", n:"Check out of the DoubleTree, take your bag", p:"Check-out is noon, but you're out all day. Take the bag with you: Euston is next to Barry's, and it saves a cross-town bag run in the afternoon. Keep your gym kit and a change of clothes out.", who:"Kirill", chk:"doubletree", ll:[51.5106,-0.0780], q:"DoubleTree by Hilton London Tower of London, 7 Pepys Street"},
+    {t:"07:40", n:"Drop the bag at Euston left luggage", p:"Staffed desk at the top of the ramp to platforms 16–18, open 07:00–23:00, ~£12.50 a bag; there are no lockers. Barry's is 3 minutes away. Dima's bag: wherever suits, as long as it is at Euston by 22:15.", who:"Kirill", fee:["~£12.50 a bag","paid"], go:{m:"tube",min:20,leave:"07:15",txt:"Circle line Tower Hill → Euston Square (~20 min), then a short walk"}, ll:[51.5284,-0.1346], q:"Left luggage, London Euston station"},
+    {t:"08:00", n:"Barry's Central, 163 Euston Rd", k:"fixed", chk:"barrys", p:"The original London studio: treadmill and floor HIIT in the red room. Showers and towels on site.", who:"Kirill", fee:["~£30","paid"], book:true, ll:[51.5266,-0.1338], q:"Barry's London Central 163 Euston Road",
       more:"<p>Booking opens about a week ahead (around Fri 13 Nov). Pick any morning class that ends by 09:30.</p>"},
-    {t:"10:15", n:"Postal Museum + Mail Rail, Clerkenwell", p:"20-min walk from Barry's. A 15-minute ride through the tunnels of the Post Office's driverless underground railway (1927–2003), then the museum.", who:"Kirill", fee:["~£18–20","paid"], book:true, ll:[51.5246,-0.1134], q:"The Postal Museum, Phoenix Place, London"},
+    {t:"10:15", n:"Postal Museum + Mail Rail, Clerkenwell", chk:"mail", go:{m:"walk",min:20,txt:"from Barry's"}, p:"20-min walk from Barry's. A 15-minute ride through the tunnels of the Post Office's driverless underground railway (1927–2003), then the museum.", who:"Kirill", fee:["~£18–20","paid"], book:true, ll:[51.5246,-0.1134], q:"The Postal Museum, Phoenix Place, London"},
     {t:"12:30", n:"Light lunch together: place TBD", p:"Keep it small: dinner is at 17:15. Something quick near whichever experience you choose.", off:true},
-    {t:"14:00", n:"Interactive experience: pick one", p:"Four game-style options, all about an hour. Choose together over lunch, then book a slot for two.", book:true, off:true,
+    {t:"14:00", n:"Interactive experience: pick one", pick:"game", chk:"karts", p:"Four game-style options, all about an hour. Choose together over lunch, then book a slot for two.", book:true, off:true,
       subs:[
         ["1. Chaos Karts","Arcade Arena, 26 Lambeth High St (Lambeth North). Electric karts on a projected track: Mario Kart in real life. From ~£30.","Arcade Arena, 26 Lambeth High Street, London"],
         ["2. The Crystal Maze LIVE","22–32 Shaftesbury Ave, Piccadilly Circus. The 90s game show: four zones of challenges, then the Crystal Dome. About 75 min, from £79 (check for deals).","The Crystal Maze LIVE Experience, 22-32 Shaftesbury Avenue, London"],
@@ -563,63 +721,97 @@ var DAYS = [
         ["4. Prison Island","5-7 Hornsey St, by Holloway Road (Piccadilly line). 31 challenge cells, 60 min of play; arrive 20 min early. Fridays from 2pm. From ~£27.","Prison Island London, 5-7 Hornsey Street"]
       ],
       more:"<p>Closest to King's Cross for the train: Prison Island (Piccadilly line, 3 stops) or the Escape Room Arcade. Crystal Maze is the priciest but the most 'event'.</p>"},
-    {t:"15:15", n:"Bags: DoubleTree → Euston left luggage", p:"Collect the bags at the DoubleTree, then Circle line Tower Hill → King's Cross St Pancras (~20 min) and a 5-min walk to Euston. The staffed desk is at the top of the ramp to platforms 16–18 (07:00–23:00, ~£12.50 a bag). Or leave them at the DoubleTree and collect around 21:15 instead.", ll:[51.5284,-0.1346], q:"Left luggage, London Euston station"},
-    {t:"16:15", n:"Uniqlo Covent Garden, Long Acre / Floral St", p:"Three floors in a listed Victorian carriage hall, with London-only UTme! prints you can customise in store. Northern line Euston → Leicester Square, ~6 min, then 4 min on foot. Five minutes from Heard.", ll:[51.5124,-0.1255], q:"Uniqlo Covent Garden, Long Acre, London"},
-    {t:"17:15", n:"Dinner at Heard Covent Garden, 33–35 Wellington St", p:"Burgers from two-Michelin-starred chef Jordan Bailey. This is his biggest site, opened 5 Nov 2026. Order The Heard: a double smash patty with jalapeño hot honey and Ogleshield cheese. Each burger comes with a beer or wine pairing.", fee:["~£25–40","paid"], booked:true, ll:[51.5119,-0.1208], q:"Heard Covent Garden, 33-35 Wellington Street, London",
+    {t:"16:15", n:"Uniqlo Covent Garden, Long Acre / Floral St", k:"opt", p:"Three floors in a listed Victorian carriage hall, with London-only UTme! prints you can customise in store. Allow up to 30 min from the game, depending on which one you picked. Five minutes from Heard.", ll:[51.5124,-0.1255], q:"Uniqlo Covent Garden, Long Acre, London"},
+    {t:"17:15", n:"Dinner at Heard Covent Garden, 33–35 Wellington St", k:"fixed", chk:"heard", go:{m:"walk",min:5,txt:"from Uniqlo"}, p:"Burgers from two-Michelin-starred chef Jordan Bailey. This is his biggest site, opened 5 Nov 2026. Order The Heard: a double smash patty with jalapeño hot honey and Ogleshield cheese. Each burger comes with a beer or wine pairing.", fee:["~£25–40","paid"], booked:true, ll:[51.5119,-0.1208], q:"Heard Covent Garden, 33-35 Wellington Street, London",
       more:"<p>Booked for 17:15. <b>Dessert in the Soda Room downstairs:</b> a speakeasy dessert and cocktail bar with hot apple pie, brûlée cheesecake and milk soft serve. It's for diners only, subject to space, so ask on arrival.</p>"},
-    {t:"18:45", n:"Pint at the Lamb & Flag, 33 Rose St", p:"A tiny, creaky 18th-century pub down an alley off Garrick Street, with low ceilings and wood panelling. On a Friday the crowd spills out into the lane.", fee:["~£7 a pint","paid"], ll:[51.5116,-0.1265], q:"Lamb and Flag, 33 Rose Street, London",
+    {t:"18:45", n:"Pint at the Lamb & Flag, 33 Rose St", k:"opt", p:"A tiny, creaky 18th-century pub down an alley off Garrick Street, with low ceilings and wood panelling. On a Friday the crowd spills out into the lane.", fee:["~£7 a pint","paid"], ll:[51.5116,-0.1265], q:"Lamb and Flag, 33 Rose Street, London",
       more:"<p>If it's rammed: <b>The Harp</b> (47 Chandos Place), a narrow, award-winning real-ale pub 5 minutes away.</p>"},
-    {t:"20:00", n:"Cocktails upstairs at Rules, 35 Maiden Lane", p:"The bar above London's oldest restaurant (1798): game trophies, red velvet and serious classic cocktails. 5 minutes' walk from the Lamb & Flag.", fee:["~£16–19 a cocktail","paid"], ll:[51.5106,-0.1232], q:"Upstairs at Rules, 35 Maiden Lane, London",
+    {t:"20:00", n:"Cocktails upstairs at Rules, 35 Maiden Lane", k:"opt", go:{m:"walk",min:5}, p:"The bar above London's oldest restaurant (1798): game trophies, red velvet and serious classic cocktails. 5 minutes' walk from the Lamb & Flag.", fee:["~£16–19 a cocktail","paid"], ll:[51.5106,-0.1232], q:"Upstairs at Rules, 35 Maiden Lane, London",
       more:"<p>Time for a second round elsewhere? <b>Eve Bar</b> (34 Southampton St), Adam Handling's basement cocktail bar under his restaurant Frog, is 2 minutes away.</p>"},
-    {t:"21:55", n:"Northern line to Euston", p:"Walk to Leicester Square, then the Northern line (Charing Cross branch) is direct to Euston, ~6 min.", off:true},
-    {t:"22:15", n:"Bags, then one for the road at the Euston Tap", p:"Craft beer in the two stone lodges at the station gates, the last bits of the old Euston. Collect the bags before 23:00 when left luggage closes.", fee:["~£6–8","paid"], ll:[51.5268,-0.1329], q:"Euston Tap, 190 Euston Road, London"},
-    {t:"23:15", n:"Board the Caledonian Sleeper", p:"To Glasgow Central (the Edinburgh portion is sold out). The train splits at Carstairs during the night, so expect a jolt. Boarding opens around 22:30 and the train leaves ~23:45; the exact time is on the ticket.", fee:["£315 for 2","paid"], booked:true, off:true}
+    {t:"22:15", n:"Bags, then one for the road at the Euston Tap", k:"fixed", go:{m:"tube",min:20,leave:"21:55",txt:"Walk to Leicester Square, then the Northern line (Charing Cross branch) direct to Euston, ~6 min"}, p:"Craft beer in the two stone lodges at the station gates, the last bits of the old Euston. Collect the bags before 23:00 when left luggage closes.", fee:["~£6–8","paid"], ll:[51.5268,-0.1329], q:"Euston Tap, 190 Euston Road, London"},
+    {t:"23:15", n:"Board the Caledonian Sleeper", k:"fixed", chk:"sleeper", tr:"train", p:"To Glasgow Central (the Edinburgh portion is sold out). The train splits at Carstairs during the night, so expect a jolt. Boarding opens around 22:30 and the train leaves ~23:45; the exact time is on the ticket.", fee:["£315 for 2","paid"], booked:true, off:true}
    ]},
- { id:"sat", tab:"Sat 21", place:"Glasgow ⇄ Edinburgh", date:"Saturday 21 November", city:"edinburgh",
+ { id:"sat", iso:"2026-11-21", cities:["edinburgh","glasgow"], tab:"Sat 21", place:"Glasgow ⇄ Edinburgh", date:"Saturday 21 November", city:"edinburgh",
    title:"Edinburgh by day, Glasgow by night",
+   rain:["The castle is mostly outdoors between buildings and runs rain or shine: jacket on.","Swap Calton Hill for the National Museum of Scotland on Chambers Street: free, open daily 10:00–17:00, about 5 minutes from the Grassmarket.","Johnnie Walker is indoors. If the market is a washout, take an earlier train back: they run every 15 minutes."],
    intro:"Off the sleeper in Glasgow, bags at the hotel, and a 50-minute train to Edinburgh. Daylight goes to the castle, the Old Town and Calton Hill; after dark, Johnnie Walker and the Christmas market lights. Back in Glasgow, a casual local dinner and the city's best cocktail bar. We sleep in Glasgow.",
    off:"<b>~07:30</b> Sleeper arrives at Glasgow Central; bags to the Maldron Hotel Glasgow City (50 Renfrew St), ~12 min walk.<br><b>~08:30</b> ScotRail Glasgow Queen Street → Edinburgh Waverley, ~50 min.<br><b>~17:50</b> Back to Glasgow; dinner and drinks below, not on this map.",
    stops:[
-    {t:"07:30", n:"Glasgow: off the sleeper, bags at the Maldron", p:"Maldron Hotel Glasgow City, 50 Renfrew St, by the Theatre Royal: ~12 min walk from Central. Check-in is from 15:00, so ask them to hold the bags. Queen Street station is ~8 min walk from the hotel.", booked:true, off:true, q:"Maldron Hotel Glasgow City, 50 Renfrew Street, Glasgow"},
-    {t:"08:30", n:"Train: Glasgow Queen Street → Edinburgh Waverley", p:"Fast route via Falkirk High, ~50 min, every 15 min on Saturdays. Buy a return on the day.", fee:["~£17–20 return","paid"], off:true},
+    {t:"07:30", n:"Glasgow: off the sleeper, bags at the Maldron", chk:"hotel", p:"Maldron Hotel Glasgow City, 50 Renfrew St, by the Theatre Royal: ~12 min walk from Central. Check-in is from 15:00, so ask them to hold the bags. Queen Street station is ~8 min walk from the hotel. Ask about early check-in or somewhere to shower: it is a long day otherwise.", booked:true, off:true, q:"Maldron Hotel Glasgow City, 50 Renfrew Street, Glasgow"},
+    {t:"08:30", n:"Train: Glasgow Queen Street → Edinburgh Waverley", tr:"train", go:{m:"walk",min:8,txt:"hotel to Queen Street"}, p:"Fast route via Falkirk High, ~50 min, every 15 min on Saturdays. Buy a return on the day.", fee:["~£17–20 return","paid"], off:true},
     {t:"09:30", n:"Big breakfast near Waverley", p:"Somewhere warm in the Old Town or on Cockburn Street, two minutes up from the station.", off:true},
-    {t:"10:30", n:"Edinburgh Castle", p:"Crown Jewels, the One O'Clock Gun battery, views over the New Town. Allow 1.5 h.", fee:["~£23.50","paid"], book:true, ll:[55.9486,-3.1999], q:"Edinburgh Castle"},
-    {t:"12:00", n:"Royal Mile → Victoria Street", p:"Downhill along the curved, colourful street to the Grassmarket.", fee:["Free","free"], ll:[55.9488,-3.1935], q:"Victoria Street, Edinburgh"},
+    {t:"10:30", n:"Edinburgh Castle", k:"fixed", chk:"castle", p:"Crown Jewels, the One O'Clock Gun battery, views over the New Town. Allow 1.5 h.", fee:["~£23.50","paid"], book:true, ll:[55.9486,-3.1999], q:"Edinburgh Castle"},
+    {t:"12:00", n:"Royal Mile → Victoria Street", k:"opt", p:"Downhill along the curved, colourful street to the Grassmarket.", fee:["Free","free"], ll:[55.9488,-3.1935], q:"Victoria Street, Edinburgh"},
     {t:"12:45", n:"Pub lunch in the Grassmarket", p:"Old market square under the castle rock, lined with pubs. No rush: Johnnie Walker isn't until 15:20.", ll:[55.9474,-3.1962], q:"Grassmarket, Edinburgh"},
-    {t:"14:15", n:"Calton Hill while it's light", p:"The castle, Old Town and Arthur's Seat from the monuments; the light goes golden ahead of sunset ~15:50. 20 min walk from the Grassmarket. Leave by 14:55.", fee:["Free","free"], ll:[55.9553,-3.1827], q:"Calton Hill, Edinburgh"},
-    {t:"15:20", n:"Johnnie Walker Princes Street: Journey of Flavour", p:"90 minutes, three cocktails made to match a flavour quiz, then the rooftop bar with the castle lit up after dark.", fee:["£30","paid"], booked:true, ll:[55.9502,-3.2068], q:"Johnnie Walker Princes Street, 145 Princes Street, Edinburgh",
+    {t:"14:15", n:"Calton Hill while it's light", k:"opt", go:{m:"walk",min:20,leave:"13:55",txt:"from the Grassmarket"}, p:"The castle, Old Town and Arthur's Seat from the monuments; the light goes golden ahead of sunset ~15:50. 20 min walk from the Grassmarket. Leave by 14:55.", fee:["Free","free"], ll:[55.9553,-3.1827], q:"Calton Hill, Edinburgh"},
+    {t:"15:20", n:"Johnnie Walker Princes Street: Journey of Flavour", k:"fixed", chk:"jw", go:{m:"walk",min:20,leave:"14:55",txt:"along Princes Street"}, p:"90 minutes, three cocktails made to match a flavour quiz, then the rooftop bar with the castle lit up after dark.", fee:["£30","paid"], booked:true, ll:[55.9502,-3.2068], q:"Johnnie Walker Princes Street, 145 Princes Street, Edinburgh",
       more:"<p>Use the entrance on Hope Street and show the ticket in the lobby. 20 min walk along Princes Street from Calton Hill.</p>"},
-    {t:"17:10", n:"Christmas market, East Princes Street Gardens", p:"Mulled wine among the lit-up stalls under the Scott Monument; open 10:00–22:00. Waverley is right below.", fee:["Free","free"], ll:[55.9519,-3.1925], q:"Edinburgh Christmas Market, East Princes Street Gardens"},
-    {t:"17:50", n:"Train back to Glasgow Queen Street", p:"~50 min; trains every 15 min. The Maldron is ~8 min walk from Queen Street.", off:true},
-    {t:"18:50", n:"Maldron Hotel Glasgow City: check in, shower", p:"First shower since London. Rooms have power showers.", booked:true, off:true, q:"Maldron Hotel Glasgow City, 50 Renfrew Street, Glasgow"},
-    {t:"19:45", n:"Casual dinner in Glasgow: pick one", p:"Local and unfussy rather than posh. All walk-in or easy to book.", off:true,
+    {t:"17:10", n:"Christmas market, East Princes Street Gardens", k:"opt", p:"Mulled wine among the lit-up stalls under the Scott Monument; open 10:00–22:00. Waverley is right below.", fee:["Free","free"], ll:[55.9519,-3.1925], q:"Edinburgh Christmas Market, East Princes Street Gardens"},
+    {t:"17:50", n:"Train back to Glasgow Queen Street", tr:"train", p:"~50 min; trains every 15 min. The Maldron is ~8 min walk from Queen Street.", off:true},
+    {t:"18:50", n:"Maldron Hotel Glasgow City: check in, shower", chk:"hotel", go:{m:"walk",min:8,txt:"from Queen Street"}, p:"First shower since London. Rooms have power showers.", booked:true, off:true, q:"Maldron Hotel Glasgow City, 50 Renfrew Street, Glasgow"},
+    {t:"19:45", n:"Casual dinner in Glasgow: pick one", pick:"satdinner", p:"Local and unfussy rather than posh. All walk-in or easy to book.", off:true,
       subs:[
         ["El Perro Negro","Argyle St, Finnieston. Started as a pop-up and now on the World's 101 Best Burgers 2026 (No. 56); walk-ins welcome. Get the Top Dog. Taxi to the bar after, ~10 min.","El Perro Negro, Argyle Street, Glasgow"],
         ["Mother India's Cafe","Argyle St, Finnieston. Glasgow is a curry city, and this is the tapas-style sibling of its best-loved curry house: lots of small plates, cheap.","Mother India's Cafe, Argyle Street, Glasgow"],
         ["Paesano Pizza","94 Miller St, Merchant City. Wood-fired Neapolitan pizza, cheap and excellent; walk-ins only, so expect a queue. 5 min from the bar.","Paesano Pizza, 94 Miller Street, Glasgow"],
         ["Café Gandolfi","64 Albion St, Merchant City. A local institution since 1979: Cullen skink, Stornoway black pudding, wooden booths. 5 min from the bar.","Cafe Gandolfi, 64 Albion Street, Glasgow"]
       ]},
-    {t:"22:00", n:"Daddy Marmalades, 25 Parnie St, Glasgow", p:"Hidden cocktail bar in the Merchant City: No. 22 in the UK's Top 50 Cocktail Bars 2026 and Glasgow's only entry. Casual and walk-in friendly.", fee:["~£10–14 a cocktail","paid"], off:true, q:"Daddy Marmalades, 25 Parnie Street, Glasgow",
+    {t:"22:00", n:"Daddy Marmalades, 25 Parnie St, Glasgow", k:"opt", p:"Hidden cocktail bar in the Merchant City: No. 22 in the UK's Top 50 Cocktail Bars 2026 and Glasgow's only entry. Casual and walk-in friendly.", fee:["~£10–14 a cocktail","paid"], off:true, q:"Daddy Marmalades, 25 Parnie Street, Glasgow",
       more:"<p>Then, if there's energy: <b>The Gate</b> (Gallowgate), a whisky pub that's been on the Top 50 list too, or just follow Glasgow's Saturday night.</p>"}
    ]},
- { id:"sun", tab:"Sun 22", place:"Glasgow → home", date:"Sunday 22 November", city:"glasgow",
+ { id:"sun", iso:"2026-11-22", cities:["glasgow"], tab:"Sun 22", place:"Glasgow → home", date:"Sunday 22 November", city:"glasgow",
    title:"Glasgow: necropolis, brewery, home",
+   rain:["Wet morning: linger over breakfast, skip the Necropolis hill (slippery when wet) and take a taxi straight to Tennent's for 12:00.","The brewery tour and lunch at Drygate are both indoors."],
    intro:"A slow Glasgow morning in the East End: the Necropolis and the cathedral, a pint from the Tennent's tanks, lunch next door at Drygate, then the coach straight to Edinburgh Airport.",
    off:"<b>15:30</b> Citylink Air, Buchanan Bus Station → Edinburgh Airport, ~1 h. Flight <b>19:00</b>.",
    stops:[
-    {t:"09:30", n:"Breakfast and check-out at the Maldron", p:"Buffet breakfast at the hotel; check-out by 11:00. Leave the bags at the desk until ~15:00.", booked:true, ll:[55.8661,-4.2553], q:"Maldron Hotel Glasgow City, 50 Renfrew Street, Glasgow"},
-    {t:"10:30", n:"The Necropolis", p:"Victorian hilltop cemetery with the best view over the city. Always open.", fee:["Free","free"], ll:[55.8622,-4.2312], q:"Glasgow Necropolis"},
-    {t:"11:15", n:"Glasgow Cathedral", p:"Medieval cathedral that survived the Reformation almost intact. Sunday hours are short and may be afternoon only, so this may be from outside.", fee:["Free","free"], ll:[55.8630,-4.2346], q:"Glasgow Cathedral"},
-    {t:"12:00", n:"Tennent's Wellpark Brewery tour, 161 Duke St", p:"Behind the scenes at Scotland's oldest brewery, ~1.5 h, ending with a pint of unpasteurised tank lager straight from the copper tanks.", fee:["£17–21","paid"], book:true, ll:[55.8598,-4.2298], q:"Tennent's Wellpark Brewery, 161 Duke Street, Glasgow",
+    {t:"09:30", n:"Breakfast and check-out at the Maldron", chk:"hotel", p:"Buffet breakfast at the hotel; check-out by 11:00. Leave the bags at the desk until ~15:00.", booked:true, ll:[55.8661,-4.2553], q:"Maldron Hotel Glasgow City, 50 Renfrew Street, Glasgow"},
+    {t:"10:30", n:"The Necropolis", k:"opt", p:"Victorian hilltop cemetery with the best view over the city. Always open.", fee:["Free","free"], ll:[55.8622,-4.2312], q:"Glasgow Necropolis"},
+    {t:"11:15", n:"Glasgow Cathedral", k:"opt", p:"Medieval cathedral that survived the Reformation almost intact. Sunday hours are short and may be afternoon only, so this may be from outside.", fee:["Free","free"], ll:[55.8630,-4.2346], q:"Glasgow Cathedral"},
+    {t:"12:00", n:"Tennent's Wellpark Brewery tour, 161 Duke St", k:"fixed", chk:"tennents", p:"Behind the scenes at Scotland's oldest brewery, ~1.5 h, ending with a pint of unpasteurised tank lager straight from the copper tanks.", fee:["£17–21","paid"], book:true, ll:[55.8598,-4.2298], q:"Tennent's Wellpark Brewery, 161 Duke Street, Glasgow",
       more:"<p>Sunday tours appear to start at noon; confirm the slot when booking. Ages 18+. Enter at the Tennent's Visitor Centre.</p>"},
     {t:"13:45", n:"Lunch at Drygate, next door", p:"Craft brewery with a bar and restaurant beside Wellpark: the easiest lunch after the tour.", ll:[55.8616,-4.2318], q:"Drygate Brewing Co, 85 Drygate, Glasgow"},
-    {t:"15:00", n:"Collect bags, walk to Buchanan Bus Station", p:"Taxi from Drygate to the Maldron ~8 min; the bus station is ~5 min walk from the hotel.", ll:[55.8660,-4.2508], q:"Buchanan Bus Station, Glasgow"},
-    {t:"15:30", n:"Citylink Air to Edinburgh Airport", p:"Direct, non-stop, about an hour; bags go in the hold. Book on citylink.co.uk. Backup: train to Edinburgh Gateway, then the tram.", fee:["~£15","paid"], book:true, off:true},
-    {t:"16:30", n:"At the airport", p:"Two and a half hours before the 19:00 flight; there's room for a later coach if lunch runs long.", off:true}
+    {t:"15:00", n:"Collect bags, walk to Buchanan Bus Station", k:"fixed", go:{m:"taxi",min:8,txt:"Drygate to the Maldron; the bus station is then a 5-min walk"}, p:"Taxi from Drygate to the Maldron ~8 min; the bus station is ~5 min walk from the hotel.", ll:[55.8660,-4.2508], q:"Buchanan Bus Station, Glasgow"},
+    {t:"15:30", n:"Citylink Air to Edinburgh Airport", k:"fixed", chk:"citylink", tr:"bus", p:"Direct, non-stop, about an hour; bags go in the hold. Book on citylink.co.uk. Backup: train to Edinburgh Gateway, then the tram.", fee:["~£15","paid"], book:true, off:true},
+    {t:"16:30", n:"At the airport", k:"fixed", p:"Two and a half hours before the 19:00 flight; there's room for a later coach if lunch runs long.", off:true}
    ]}
 ];
 
+/* Trip-wide settings. utcOffsetMin is the destination's offset from UTC on the trip dates (UK in November = 0). */
+var TRIP = { key:"uktrip", name:"London, Glasgow & Edinburgh", tz:"Europe/London", utcOffsetMin:0, people:["Kirill","Dima"] };
+
+/* Spare-time and rain ideas: [name, city, where, what, indoor?, minutes, [lat,lon], maps query] */
+var SPARE = [
+  ["London Mithraeum","london","the City","Roman temple under the Bloomberg building. Free.",true,45,[51.5126,-0.0907],"London Mithraeum Bloomberg SPACE"],
+  ["St Dunstan in the East","london","the City","Bombed church turned garden. Free.",false,30,[51.5097,-0.0826],"St Dunstan in the East, London"],
+  ["Horizon 22","london","Bishopsgate","Free 58th-floor viewing deck, timed booking.",true,45,[51.5155,-0.0826],"Horizon 22, 22 Bishopsgate, London"],
+  ["Sir John Soane's Museum","london","Lincoln's Inn Fields","Free, crammed and strange.",true,60,[51.5170,-0.1175],"Sir John Soane's Museum, London"],
+  ["Wellcome Collection","london","Euston","Free: medicine and the human body.",true,60,[51.5258,-0.1339],"Wellcome Collection, 183 Euston Road, London"],
+  ["The Bayeux Tapestry","london","British Museum","This autumn's big one-off loan.",true,90,[51.5194,-0.1270],"British Museum, London"],
+  ["Somerset House ice rink","london","Strand","Timed skating sessions.",false,60,[51.5110,-0.1171],"Somerset House, Strand, London"],
+  ["Leake Street Tunnel","london","Waterloo","Legal graffiti tunnel by Waterloo station.",true,30,[51.5016,-0.1150],"Leake Street Arches, London"],
+  ["Constantinople to Istanbul","london","V&A South Kensington","Exhibition, from 7 Nov, £25–27.",true,90,[51.4966,-0.1722],"Victoria and Albert Museum, London"],
+  ["Beyond the Streets","london","Saatchi Gallery","Graffiti and street art, from 11 Nov, £25.",true,75,[51.4907,-0.1589],"Saatchi Gallery, London"],
+  ["Other workouts","london","various","Kobox (boxing HIIT), 1Rebel (Reshape, Ride), Psycle or SoulCycle (cycling).",true,60,null,"1Rebel London"],
+  ["National Museum of Scotland","edinburgh","Chambers Street","Free, open daily 10:00–17:00. The rain plan for Calton Hill.",true,75,[55.9470,-3.1892],"National Museum of Scotland, Chambers Street, Edinburgh"],
+  ["Holyrood Distillery","edinburgh","foot of Arthur's Seat","~90 min tour, £20–25.",true,90,[55.9432,-3.1773],"Holyrood Distillery, Edinburgh"],
+  ["Arthur's Seat","edinburgh","Holyrood Park","The hike up from Holyrood is ~1.5 h return; swap it for the Grassmarket lunch and Victoria Street if you'd rather climb.",false,90,[55.9441,-3.1618],"Arthur's Seat, Edinburgh"],
+  ["Port of Leith Distillery","edinburgh","Leith","Nine-storey vertical distillery with a bar on top.",true,90,[55.9790,-3.1690],"Port of Leith Distillery, Edinburgh"],
+  ["Barnton nuclear bunker tours","edinburgh","Barnton","Saturdays and Sundays.",true,90,[55.9590,-3.2890],"Barnton Quarry nuclear bunker, Edinburgh"],
+  ["Kelvingrove Art Gallery and the West End","glasgow","West End","Kelvingrove opens 11:00 on Sundays if you swap it for Tennent's.",true,90,[55.8686,-4.2906],"Kelvingrove Art Gallery and Museum, Glasgow"],
+  ["Clydeside Distillery","glasgow","near Finnieston","On the river; the tour ends with three drams.",true,75,[55.8617,-4.2990],"The Clydeside Distillery, Glasgow"]
+];
+
+/* Planned spend per person in GBP, mapped to the expense categories: [label, [expense categories], low, high] */
+var BUDGET = [
+  ["Transport",["transport"],215,245],
+  ["Activities",["tickets"],100,155],
+  ["Food & drink",["food","drinks"],260,315],
+  ["Stay",["stay"],85,85]
+];
+
 var CHECK = [
+  ["doubletree","DoubleTree by Hilton Tower of London, Thu night","7 Pepys St; check-in from 15:00, check-out by 12:00","Done",true],
   ["sleeper","Caledonian Sleeper, Fri ~23:45 Euston → Glasgow","Booked; room for two","Done",true],
   ["hotel","Maldron Hotel Glasgow City, Sat night","50 Renfrew St; check-in from 15:00, bag drop at 07:30","Done",true],
   ["heard","Heard Covent Garden, Fri 17:15 for 2","Booked; ask for the Soda Room on arrival","Done",true],
@@ -630,11 +822,12 @@ var CHECK = [
   ["tennents","Tennent's brewery tour, Sun 12:00 for 2","tennents.com; check Sunday slots","Now"],
   ["citylink","Citylink Air, Sun 15:30 Glasgow → Edinburgh Airport","citylink.co.uk","This week"],
   ["mail","Postal Museum + Mail Rail, Fri 10:15","Kirill only","This week"],
-  ["barrys","Barry's Central, Fri morning","Kirill only; opens about a week ahead","~Fri 13 Nov"]
+  ["barrys","Barry's Central, Fri morning","Kirill only; opens about a week ahead","Now"],
+  ["shower","Ask the Maldron about early check-in or a shower, Sat 07:30","Email or call the hotel","This week"]
 ];
 
 var CENTERS = {london:[51.512,-0.105], glasgow:[55.864,-4.26], edinburgh:[55.951,-3.19]};
-var START = new Date("2026-11-19T00:00:00Z"), END = new Date("2026-11-22T23:59:00Z");
+
 var ICON_GO = '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 11 11 5M6 5h5v5"/></svg>';
 var ICON_ROUTE = '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="4" cy="12" r="2"/><circle cx="12" cy="4" r="2"/><path d="M6 12h3.5a2.5 2.5 0 0 0 0-5h-3a2.5 2.5 0 0 1 0-5H10"/></svg>';
 var ICON_CAL = '<svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" aria-hidden="true"><rect x="2.5" y="3.5" width="13" height="12" rx="2"/><path d="M2.5 7.5h13M6 2v3M12 2v3"/></svg>';
@@ -645,15 +838,42 @@ var vb = {x:0,y:0,w:4,h:3}, proj = null, focusIdx = -1;
 function store(k,v){ try{ if(v===undefined) return localStorage.getItem(k); localStorage.setItem(k,v);}catch(e){ return null; } }
 function esc(s){ return String(s).replace(/[&<>"]/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;"}[c];}); }
 function makeProj(lat0, lon0){ var kx = 111.320*Math.cos(lat0*Math.PI/180); return function(ll){ return [ (ll[1]-lon0)*kx, -(ll[0]-lat0)*KM_LAT ]; }; }
+function distKm(a,b){ var kx = 111.320*Math.cos(a[0]*Math.PI/180); return Math.hypot((a[1]-b[1])*kx, (a[0]-b[0])*KM_LAT); }
+
+/* ---------- saved on this phone: ticks, picks, tickets, view choices ---------- */
+var SKEY = TRIP.key+"-state";
+var S = (function(){ var o=null; try{ o=JSON.parse(store(SKEY)||"null"); }catch(e){} if(!o||typeof o!=="object") o={}; o.picks=o.picks||{}; o.ticks=o.ticks||{}; o.tickets=o.tickets||[]; return o; })();
+CHECK.forEach(function(c){ if(S.ticks[c[0]]==null){ var v=store(TRIP.key+"-"+c[0]); if(v!=null) S.ticks[c[0]] = v==="1"?1:0; } });
+function save(){ store(SKEY, JSON.stringify(S)); }
+function isDone(id){ var v=S.ticks[id]; if(v!=null) return !!v; var c=CHECK.find(function(x){return x[0]===id;}); return !!(c&&c[4]); }
+var toastT = 0;
+function toast(msg){ var t=document.getElementById("toast"); t.textContent=msg; t.hidden=false; clearTimeout(toastT); toastT=setTimeout(function(){ t.hidden=true; },4200); }
+
+/* ---------- time, in the destination's time zone ---------- */
+function tmin(t){ var m=/(\d{1,2}):(\d{2})/.exec(t||""); return m ? (+m[1])*60+(+m[2]) : null; }
+function hhmm(n){ n=((n%1440)+1440)%1440; return String(Math.floor(n/60)).padStart(2,"0")+":"+String(n%60).padStart(2,"0"); }
+function dur(n){ if(n<60) return n+" min"; var h=Math.floor(n/60), m=n%60; return h+" h"+(m?" "+m+" min":""); }
+/* Add ?now=2026-11-20T13:10 to the address to preview how the page looks at that moment of the trip. */
+function nowTrip(){
+  var q=new URLSearchParams(location.search).get("now"), m=q&&/^(\d{4}-\d{2}-\d{2})T(\d{2}):(\d{2})/.exec(q);
+  if(m) return {iso:m[1], min:(+m[2])*60+(+m[3])};
+  try{
+    var p={}; new Intl.DateTimeFormat("en-GB",{timeZone:TRIP.tz,year:"numeric",month:"2-digit",day:"2-digit",hour:"2-digit",minute:"2-digit",hour12:false}).formatToParts(new Date()).forEach(function(x){ p[x.type]=x.value; });
+    return {iso:p.year+"-"+p.month+"-"+p.day, min:((+p.hour)%24)*60+(+p.minute)};
+  }catch(e){ var d=new Date(); return {iso:d.toISOString().slice(0,10), min:d.getUTCHours()*60+d.getUTCMinutes()}; }
+}
+function todayIndex(){ var n=nowTrip(); return DAYS.findIndex(function(d){ return d.iso===n.iso; }); }
+function phase(){ var n=nowTrip(); return n.iso<DAYS[0].iso ? "before" : n.iso>DAYS[DAYS.length-1].iso ? "after" : "during"; }
+function daysTo(){ return Math.round((Date.parse(DAYS[0].iso)-Date.parse(nowTrip().iso))/864e5); }
 
 /* countdown */
-(function(){
-  var now = new Date(), el = document.getElementById("count"), d = Math.ceil((START-now)/864e5), txt;
-  if(now < START) txt = d<=1 ? "Starts tomorrow" : "Starts in "+d+" days";
-  else if(now <= END) txt = "Day "+(Math.floor((now-START)/864e5)+1)+" of 4";
+function drawCount(){
+  var el = document.getElementById("count"), ph = phase(), d = daysTo(), txt;
+  if(ph==="before") txt = d<=1 ? "Starts tomorrow" : "Starts in "+d+" days";
+  else if(ph==="during") txt = "Day "+(todayIndex()+1)+" of "+DAYS.length;
   else txt = "Trip complete";
   el.innerHTML = ICON_CAL + "<span>"+txt+"</span>";
-})();
+}
 
 /* stamps */
 var tabs = document.getElementById("tabs");
@@ -667,53 +887,199 @@ DAYS.forEach(function(d,i){
 });
 
 function postmark(d){
-  var city = {london:"LONDON", glasgow:"GLASGOW", edinburgh:"EDINBURGH"}[d.city];
-  if(d.id==="fri") city="LONDON · EUSTON";
+  var city = d.mark || d.city.toUpperCase();
   var num = d.date.match(/\d+/)[0];
   return '<svg class="postmark thump" viewBox="0 0 120 120" aria-hidden="true">'+
     '<defs><path id="pm-top" d="M20 60a40 40 0 0 1 80 0"/><path id="pm-bot" d="M26 62a34 34 0 0 0 68 0"/></defs>'+
     '<circle cx="60" cy="60" r="52" fill="none" stroke="currentColor" stroke-width="2.6"/>'+
     '<path d="M34 80h52M38 85h44" stroke="currentColor" stroke-width="1.4"/>'+
     '<text><textPath href="#pm-top" startOffset="50%" text-anchor="middle">'+city+'</textPath></text>'+
-    '<text><textPath href="#pm-bot" startOffset="50%" text-anchor="middle" dominant-baseline="hanging">· 2026 ·</textPath></text>'+
+    '<text><textPath href="#pm-bot" startOffset="50%" text-anchor="middle" dominant-baseline="hanging">· '+d.iso.slice(0,4)+' ·</textPath></text>'+
     '<text class="big" x="60" y="61" text-anchor="middle">'+num+'</text>'+
     '<text x="60" y="75" text-anchor="middle">NOV · '+d.tab.split(" ")[0].toUpperCase()+'</text>'+
     '</svg>';
 }
 
+/* ---------- stops: type, booking state, travel legs ---------- */
+var narrowMQ = window.matchMedia("(max-width:960px)");
+var compact = S.compact!=null ? !!S.compact : narrowMQ.matches;
+var openStops = {};
+var MODES = {walk:["🚶","walk"], tube:["🚇","by Tube"], train:["🚆","by train"], bus:["🚌","by coach"], taxi:["🚕","by taxi"]};
+var TRICON = {train:"🚆", bus:"🚌", plane:"✈️"};
+function kindOf(s){ return s.k||"core"; }
+function stopBooked(s){ return s.chk ? isDone(s.chk) : !!s.booked; }
+function shortName(x){ return String(x).replace(/^\d+\.\s*/,""); }
+/* A leg is how you get to a stop from the one before. Written legs come from the plan;
+   if there is none and both stops are on the map and close, a walking time is estimated. */
+function legFor(d,i){
+  var s=d.stops[i]; if(s.go) return s.go;
+  var p=d.stops[i-1];
+  if(p && p.ll && s.ll){ var km=distKm(p.ll,s.ll); if(km>0.05 && km<1.7) return {m:"walk", min:Math.max(2,Math.round(km*1.3/4.8*60)), auto:true}; }
+  return null;
+}
+function legLine(d,i){
+  var s=d.stops[i], g=legFor(d,i); if(!g) return null;
+  var m=MODES[g.m]||MODES.walk, t=tmin(s.t);
+  var lv = g.leave || (t!=null && (g.min>=8 || kindOf(s)==="fixed") ? hhmm(t-g.min) : null);
+  return {icon:m[0], text:(g.auto||g.est?"~":"")+g.min+" min "+m[1], leave:lv, note:g.txt||""};
+}
+function legHtml(d,i){
+  var L=legLine(d,i); if(!L) return "";
+  return '<li class="leg"><span></span><span class="legdot" aria-hidden="true"></span><div class="legtx"><span class="legm">'+L.icon+' '+esc(L.text)+'</span>'+
+    (L.leave?'<span class="legl">leave by '+L.leave+'</span>':'')+(L.note?'<span class="legd">'+esc(L.note)+'</span>':'')+'</div></li>';
+}
+function stopHtml(d,s,i,autoOpen){
+  var mapped = !s.off && s.ll, k = kindOf(s), key = d.id+":"+i;
+  var open = !compact || (openStops[key]!=null ? openStops[key] : !!autoOpen[i]);
+  var pin = mapped ? '<button type="button" class="pin" data-i="'+i+'" aria-label="Show stop '+s._n+' on the map">'+s._n+'</button>'
+                   : '<span class="pin off'+(s.tr?" tr":"")+'" aria-hidden="true">'+(s.tr?(TRICON[s.tr]||""):"")+'</span>';
+  var meta = "", pi = s.pick ? S.picks[s.pick] : null;
+  if(k==="fixed") meta += '<span class="tag fixed">Fixed time</span>';
+  if(k==="opt") meta += '<span class="tag opt">Optional</span>';
+  if(s.who) meta += '<span class="tag solo">'+esc(s.who)+' solo</span>';
+  if(s.pick) meta += (pi!=null && s.subs[pi]) ? '<span class="tag picked">Picked: '+esc(shortName(s.subs[pi][0]))+'</span>' : '<span class="tag book">Pick one</span>';
+  if(s.fee) meta += '<span class="tag '+(s.fee[1]==="free"?"free":"fee")+'">'+esc(s.fee[0])+'</span>';
+  if(stopBooked(s)) meta += '<span class="tag booked">Booked ✓</span>';
+  else if(s.chk||s.book) meta += '<a class="tag book" href="#tips" data-goto="tips">Book ahead</a>';
+  var subs = "";
+  if(s.subs) subs = '<ul class="subs">'+s.subs.map(function(x,xi){
+    var cls = s.pick ? (pi===xi ? "chosen" : pi!=null ? "dim" : "") : "";
+    return '<li class="'+cls+'"><div><b>'+esc(x[0])+'</b> <span>'+esc(x[1])+'</span> <a class="dir" href="'+gq(x[2])+'" target="_blank" rel="noopener">Map'+ICON_GO+'</a>'+
+      (s.pick?'<button type="button" class="choose" data-pick="'+esc(s.pick)+'" data-x="'+xi+'" aria-pressed="'+(pi===xi)+'">'+(pi===xi?"Picked ✓":"Pick this")+'</button>':'')+'</div></li>';
+  }).join("")+'</ul>';
+  return '<li class="stop k-'+k+(s.who?" solo":"")+(open?" open":"")+'" id="s-'+i+'" data-key="'+key+'"><span class="t">'+esc(s.t)+'</span>'+pin+
+    '<div class="what"><button type="button" class="hd" aria-expanded="'+open+'"><strong>'+esc(s.n)+'</strong><i class="chev" aria-hidden="true"></i></button>'+
+    '<p>'+esc(s.p)+'</p>'+subs+
+    (meta?'<div class="meta">'+meta+'</div>':'')+
+    (s.q?'<div class="links"><a class="dir" href="'+gq(s.q)+'" target="_blank" rel="noopener">Google Maps'+ICON_GO+'</a></div>':'')+
+    (s.more?'<details class="more"><summary>More</summary><div class="txt">'+s.more+'</div></details>':'')+'</div></li>';
+}
+
+/* ---------- spare time and rain ideas ---------- */
+var CITYNAME = {}; DAYS.forEach(function(d){ (d.cities||[d.city]).forEach(function(c){ CITYNAME[c]=c.charAt(0).toUpperCase()+c.slice(1); }); });
+var spareF = {indoor:false, quick:false};
+function refPoint(d){
+  var n=nowTrip(), pts=d.stops.filter(function(s){ return s.ll; });
+  if(d.iso===n.iso){ var nx=d.stops.filter(function(s){ return s.ll && tmin(s.t)!=null && tmin(s.t)>=n.min-45; })[0]; if(nx) return {ll:nx.ll, name:nx.n}; }
+  if(!pts.length) return null;
+  return {ll:[pts.reduce(function(a,s){return a+s.ll[0];},0)/pts.length, pts.reduce(function(a,s){return a+s.ll[1];},0)/pts.length], name:null};
+}
+function spareItem(x, km){
+  return '<li><div class="sp-tx"><b>'+esc(x[0])+'</b> <span>'+esc(x[2])+'. '+esc(x[3])+'</span></div><div class="meta">'+
+    '<span class="tag '+(x[4]?"picked":"free")+'">'+(x[4]?"Indoors":"Outdoors")+'</span><span class="tag fee">allow ~'+dur(x[5])+'</span>'+
+    (km!=null?'<span class="tag fee">'+(km<15?"~"+(km<1?Math.round(km*10)*100+" m":km.toFixed(1)+" km")+" away":esc(CITYNAME[x[1]]||x[1]))+'</span>':'')+
+    '<a class="dir" href="'+gq(x[7])+'" target="_blank" rel="noopener">Map'+ICON_GO+'</a></div></li>';
+}
+function spareHtml(d){
+  var cities = d.cities||[d.city], ref = refPoint(d);
+  var items = SPARE.filter(function(x){ return cities.indexOf(x[1])>=0 && (!spareF.indoor||x[4]) && (!spareF.quick||x[5]<=60); })
+    .map(function(x){ return {x:x, km:(ref&&x[6])?distKm(ref.ll,x[6]):null}; })
+    .sort(function(a,b){ return (a.km==null?1e9:a.km)-(b.km==null?1e9:b.km); });
+  return '<section class="spare"><h3>Spare time or a change of plan</h3>'+
+    '<p class="sub">Nearest first'+(ref&&ref.name?', measured from '+esc(ref.name):ref?", measured from today's stops":"")+'.</p>'+
+    '<div class="pick"><button type="button" data-sf="indoor" aria-pressed="'+spareF.indoor+'">Indoors only</button><button type="button" data-sf="quick" aria-pressed="'+spareF.quick+'">An hour or less</button></div>'+
+    (items.length?'<ul class="sparelist">'+items.map(function(o){ return spareItem(o.x,o.km); }).join("")+'</ul>':'<p class="empty">Nothing matches those filters.</p>')+'</section>';
+}
+
+/* ---------- the day ---------- */
 function renderDay(){
-  var d = DAYS[cur];
-  document.getElementById("dayhead").innerHTML = '<div><div class="date">'+d.date+' · '+esc(d.place)+'</div><h2>'+esc(d.title)+'</h2><p>'+esc(d.intro)+'</p></div>'+postmark(d);
-  var h = '<ol class="stops">', k = 0, off = [];
-  d.stops.forEach(function(s,i){
-    var mapped = !s.off && s.ll;
-    s._n = mapped ? ++k : null;
-    if(!mapped) off.push(s);
-    var pin = mapped ? '<button type="button" class="pin" data-i="'+i+'" aria-label="Show stop '+s._n+' on the map">'+s._n+'</button>' : '<span class="pin off" aria-hidden="true"></span>';
-    var meta = "";
-    if(s.who) meta += '<span class="tag solo">'+s.who+' solo</span>';
-    if(s.fee) meta += '<span class="tag '+(s.fee[1]==="free"?"free":"fee")+'">'+esc(s.fee[0])+'</span>';
-    if(s.booked) meta += '<span class="tag booked">Booked ✓</span>';
-    else if(s.book) meta += '<span class="tag book">Book ahead</span>';
-    if(s.q) meta += '<a class="dir" href="'+gq(s.q)+'" target="_blank" rel="noopener">Google Maps'+ICON_GO+'</a>';
-    h += '<li class="stop'+(s.who?" solo":"")+'" id="s-'+i+'"><span class="t">'+s.t+'</span>'+pin+
-      '<div class="what"><strong>'+esc(s.n)+'</strong><p>'+esc(s.p)+'</p>'+
-      (s.subs?'<ul class="subs">'+s.subs.map(function(x){ return '<li><div><b>'+esc(x[0])+'</b> <span>'+esc(x[1])+'</span> <a class="dir" href="'+gq(x[2])+'" target="_blank" rel="noopener">Map'+ICON_GO+'</a></div></li>'; }).join("")+'</ul>':'')+
-      (meta?'<div class="meta">'+meta+'</div>':'')+
-      (s.more?'<details class="more"><summary>More</summary><div class="txt">'+s.more+'</div></details>':'')+'</div></li>';
-  });
-  h += '</ol>';
-  var list = document.getElementById("list"); list.innerHTML = h;
-  list.querySelectorAll(".pin[data-i]").forEach(function(b){ b.addEventListener("click", function(){ focusStop(+b.dataset.i, true); }); });
+  var d = DAYS[cur], n = nowTrip(), autoOpen = {};
+  if(d.iso===n.iso){ var f=findNow(); if(f){ if(f.curI>=0) autoOpen[f.curI]=1; if(f.nextI>=0) autoOpen[f.nextI]=1; } }
+  document.getElementById("dayhead").innerHTML = '<div><div class="date">'+d.date+' · '+esc(d.place)+'</div><h2>'+esc(d.title)+'</h2>'+
+    '<p class="intro" id="intro">'+esc(d.intro)+'</p>'+
+    (d.rain&&d.rain.length?'<details class="more rain"><summary>If it rains</summary><div class="txt">'+d.rain.map(function(r){ return '<p>'+esc(r)+'</p>'; }).join("")+'</div></details>':'')+
+    '</div>'+postmark(d);
+  var k = 0;
+  d.stops.forEach(function(s){ s._n = (!s.off && s.ll) ? ++k : null; });
+  var h = '<ol class="stops">', cb = document.getElementById("cmpBtn");
+  cb.textContent = compact ? "Show all details" : "Compact view";
+  d.stops.forEach(function(s,i){ h += legHtml(d,i) + stopHtml(d,s,i,autoOpen); });
+  h += '</ol><p class="legend"><span class="tag fixed">Fixed time</span> can\'t move. <span class="tag opt">Optional</span> drop first if you are running late.</p>' + spareHtml(d);
+  var list = document.getElementById("list"); list.innerHTML = h; list.classList.toggle("compact", compact);
   var pts = d.stops.filter(function(s){ return s.ll && !s.off; });
   var row = document.getElementById("maprow");
   if(pts.length>1){
     var o = pts[0], de = pts[pts.length-1], w = pts.slice(1,-1).slice(0,8);
     var url = "https://www.google.com/maps/dir/?api=1&travelmode=walking&origin="+o.ll.join(",")+"&destination="+de.ll.join(",")+(w.length?"&waypoints="+w.map(function(s){return s.ll.join(",");}).join("%7C"):"");
-    row.innerHTML = '<a class="routebtn" href="'+url+'" target="_blank" rel="noopener">'+ICON_ROUTE+'Open the route in Google Maps</a><span class="progress">'+pts.length+' stops on the map</span>';
+    row.innerHTML = '<a class="routebtn" href="'+url+'" target="_blank" rel="noopener">'+ICON_ROUTE+'Open the route in Google Maps</a>';
   } else row.innerHTML = "";
-  document.getElementById("offlist").innerHTML = off.length ? off.map(function(s){ return '<li><b>'+s.t+'</b>'+esc(s.n)+'</li>'; }).join("") : "";
+  drawMapToggle();
 }
+document.getElementById("list").addEventListener("click", function(e){
+  var b = e.target.closest(".pin[data-i]"); if(b){ focusStop(+b.dataset.i, true); return; }
+  b = e.target.closest(".choose"); if(b){ var id=b.dataset.pick, x=+b.dataset.x; if(S.picks[id]===x) delete S.picks[id]; else S.picks[id]=x; save(); renderDay(); return; }
+  b = e.target.closest("[data-goto]"); if(b){ e.preventDefault(); go(b.dataset.goto); window.scrollTo(0,0); return; }
+  b = e.target.closest("[data-sf]"); if(b){ spareF[b.dataset.sf]=!spareF[b.dataset.sf]; var y=window.scrollY; renderDay(); window.scrollTo(0,y); return; }
+  b = e.target.closest(".hd"); if(b){ var li=b.closest(".stop"), on=!li.classList.contains("open"); openStops[li.dataset.key]=on; li.classList.toggle("open",on); b.setAttribute("aria-expanded",on); }
+});
+document.getElementById("cmpBtn").addEventListener("click", function(){ compact=!compact; S.compact=compact; openStops={}; save(); renderDay(); });
+document.getElementById("dayhead").addEventListener("click", function(e){ var p=e.target.closest(".intro"); if(p) p.classList.toggle("all"); });
+
+/* ---------- now and next ---------- */
+function findNow(){
+  var n=nowTrip(), di=DAYS.findIndex(function(d){ return d.iso===n.iso; }); if(di<0) return null;
+  var st=DAYS[di].stops, curI=-1, nextI=-1, fixI=-1;
+  st.forEach(function(s,i){ var t=tmin(s.t); if(t==null) return; if(t<=n.min) curI=i; else if(nextI<0) nextI=i; });
+  if(nextI>=0) for(var i=nextI;i<st.length;i++){ if(kindOf(st[i])==="fixed"){ fixI=i; break; } }
+  return {n:n, di:di, curI:curI, nextI:nextI, fixI:fixI};
+}
+function jumpTo(di,i){
+  openStops[DAYS[di].id+":"+i] = true;
+  if(view!=="plan" || cur!==di) go(DAYS[di].id); else renderDay();
+  setTimeout(function(){ var li=document.getElementById("s-"+i); if(li){ li.classList.add("focus"); li.scrollIntoView({block:"center",behavior:"smooth"}); } }, 80);
+}
+function updateNow(){
+  drawCount();
+  var el=document.getElementById("nowcard"), ph=phase(), h="";
+  if(ph==="before"){
+    var todo=CHECK.filter(function(c){ return !isDone(c[0]); }), d=daysTo();
+    h = '<div class="now-top"><span>'+(d<=1?"Starts tomorrow":"Starts in "+d+" days")+'</span></div>'+
+      (todo.length ? '<div class="now-main"><small>Still to sort out</small><b>'+todo.length+(todo.length===1?" thing":" things")+' before you go</b><span>'+esc(todo.slice(0,4).map(function(c){ return c[1].split(",")[0]; }).join(" · "))+(todo.length>4?" · and "+(todo.length-4)+" more":"")+'</span></div><div class="now-act"><a class="routebtn" href="#tips" data-goto="tips">Open the list</a></div>'
+                   : '<div class="now-main"><small>Ready</small><b>Everything is booked</b><span>Check the tickets and add the fixed times to your calendar.</span></div><div class="now-act"><a class="routebtn" href="#tips" data-goto="tips">Tickets and calendar</a></div>');
+  } else if(ph==="after"){
+    h = '<div class="now-top"><span>Trip complete</span></div><div class="now-main"><small>One last thing</small><b>Settle up</b><span>See who owes whom.</span></div><div class="now-act"><a class="routebtn" href="#money" data-goto="money">Open expenses</a></div>';
+  } else {
+    var f=findNow(), dd=DAYS[f.di], st=dd.stops;
+    h = '<div class="now-top"><span>'+esc(dd.tab)+' · '+hhmm(f.n.min)+' local time</span><span>Day '+(f.di+1)+' of '+DAYS.length+'</span></div>';
+    h += '<div class="now-rows">';
+    if(f.curI>=0) h += '<button type="button" class="now-row" data-d="'+f.di+'" data-i="'+f.curI+'"><small>Now · since '+esc(st[f.curI].t)+'</small><b>'+esc(st[f.curI].n)+'</b></button>';
+    if(f.nextI>=0){
+      var s=st[f.nextI], L=legLine(dd,f.nextI), wait=tmin(s.t)-f.n.min;
+      h += '<button type="button" class="now-row next" data-d="'+f.di+'" data-i="'+f.nextI+'"><small>Next · '+esc(s.t)+' · in '+dur(wait)+(kindOf(s)==="fixed"?" · fixed time":kindOf(s)==="opt"?" · optional":"")+'</small><b>'+esc(s.n)+'</b>'+
+        (L?'<span>'+L.icon+' '+esc(L.text)+(L.leave?' · leave by '+L.leave:'')+'</span>':'')+'</button>';
+      if(f.fixI>=0 && f.fixI!==f.nextI){ var fx=st[f.fixI]; h += '<button type="button" class="now-row fix" data-d="'+f.di+'" data-i="'+f.fixI+'"><small>Next fixed time · in '+dur(tmin(fx.t)-f.n.min)+'</small><b>'+esc(fx.t)+' '+esc(fx.n)+'</b></button>'; }
+      h += '</div>';
+      if(s.q) h += '<div class="now-act"><a class="routebtn" href="'+gq(s.q)+'" target="_blank" rel="noopener">'+ICON_ROUTE+'Directions to the next stop</a></div>';
+    } else {
+      var nd=DAYS[f.di+1];
+      h += '<div class="now-main"><small>Next</small><b>That\'s today done</b>'+(nd?'<span>Tomorrow starts at '+esc(nd.stops[0].t)+': '+esc(nd.stops[0].n)+'</span>':'')+'</div></div>';
+    }
+  }
+  el.innerHTML = h;
+}
+document.getElementById("nowcard").addEventListener("click", function(e){
+  var b=e.target.closest(".now-row"); if(b){ jumpTo(+b.dataset.d, +b.dataset.i); return; }
+  b=e.target.closest("[data-goto]"); if(b){ e.preventDefault(); go(b.dataset.goto); window.scrollTo(0,0); }
+});
+setInterval(function(){ if(!document.hidden) updateNow(); }, 60000);
+document.addEventListener("visibilitychange", function(){ if(!document.hidden) updateNow(); });
+
+/* ---------- map: folded away on phones, and it never steals a scroll ---------- */
+var mapWrap = document.getElementById("mapwrap"), mapToggle = document.getElementById("mapToggle"), lockBtn = document.getElementById("mapLock"), doneBtn = document.getElementById("mapDone");
+var mapOpen = S.mapOpen!=null ? !!S.mapOpen : false;
+var coarse = window.matchMedia("(pointer:coarse)").matches;
+function mapShown(){ return !narrowMQ.matches || mapOpen; }
+function drawMapToggle(){
+  var n = DAYS[cur].stops.filter(function(s){ return s.ll && !s.off; }).length;
+  mapWrap.hidden = !mapShown();
+  mapToggle.textContent = (mapOpen?"Hide the map":"Show the map")+" · "+n+" stops";
+  mapToggle.setAttribute("aria-expanded", mapOpen);
+}
+function lockMap(on){ if(!coarse) return; mapEl.classList.toggle("locked",on); lockBtn.hidden=!on; doneBtn.hidden=on; }
+mapToggle.addEventListener("click", function(){ mapOpen=!mapOpen; S.mapOpen=mapOpen; save(); drawMapToggle(); if(mapOpen) requestAnimationFrame(fit); });
+lockBtn.addEventListener("click", function(){ lockMap(false); });
+doneBtn.addEventListener("click", function(){ lockMap(true); });
+if(coarse){ lockMap(true); if("IntersectionObserver" in window) new IntersectionObserver(function(en){ if(!en[0].isIntersecting) lockMap(true); },{threshold:0.2}).observe(mapEl); }
 
 /* ---------- map ---------- */
 var NS = "http://www.w3.org/2000/svg";
@@ -791,13 +1157,15 @@ function draw(){
 }
 function focusStop(i, fromList){
   focusIdx = i;
-  document.querySelectorAll(".stop.focus").forEach(function(e){ e.classList.remove("focus"); });
-  var li = document.getElementById("s-"+i); if(li){ li.classList.add("focus"); if(!fromList) li.scrollIntoView({block:"nearest",behavior:"smooth"}); }
+  document.querySelectorAll(".stop.focus").forEach(function(x){ x.classList.remove("focus"); });
+  var li = document.getElementById("s-"+i);
+  if(li){ li.classList.add("focus"); if(!fromList){ openStops[li.dataset.key]=true; li.classList.add("open"); li.scrollIntoView({block:"nearest",behavior:"smooth"}); } }
   var s = DAYS[cur].stops[i];
   if(fromList && s.ll){
+    if(!mapShown()){ mapOpen=true; S.mapOpen=true; save(); drawMapToggle(); fit(); }
     var p = proj(s.ll), inside = p[0]>vb.x+vb.w*0.1 && p[0]<vb.x+vb.w*0.8 && p[1]>vb.y+vb.h*0.12 && p[1]<vb.y+vb.h*0.9;
     if(!inside){ vb.x = p[0]-vb.w/2; vb.y = p[1]-vb.h/2; }
-    if(window.matchMedia("(max-width:960px)").matches) mapEl.scrollIntoView({block:"center",behavior:"smooth"});
+    if(narrowMQ.matches) mapEl.scrollIntoView({block:"center",behavior:"smooth"});
   }
   draw();
 }
@@ -836,25 +1204,107 @@ svg.addEventListener("pointermove",function(e){
 function up(e){ delete ptrs[e.pointerId]; if(!Object.keys(ptrs).length){ svg.classList.remove("dragging"); last=null; pinch0=null; draw(); } }
 svg.addEventListener("pointerup",up); svg.addEventListener("pointercancel",up);
 
-/* ---------- checklist ---------- */
+/* ---------- bookings ---------- */
 var cl = document.getElementById("checklist");
-cl.innerHTML = CHECK.map(function(c){
-  return '<div class="chk"><input type="checkbox" id="c-'+c[0]+'"'+((function(v){return v==null?!!c[4]:v==="1";})(store("uktrip-"+c[0]))?" checked":"")+'><label for="c-'+c[0]+'">'+esc(c[1])+(c[2]?'<small>'+esc(c[2])+'</small>':'')+'</label><span class="when">'+c[3]+'</span></div>';
-}).join("");
-function progress(){
-  var all = cl.querySelectorAll("input"), done = cl.querySelectorAll("input:checked").length;
-  document.getElementById("progress").textContent = done+" of "+all.length+" booked";
-  document.getElementById("bar").style.width = (100*done/all.length)+"%";
+function drawChecks(){
+  cl.innerHTML = CHECK.map(function(c){
+    var on = isDone(c[0]);
+    return '<div class="chk'+(on?" done":"")+'"><input type="checkbox" id="c-'+c[0]+'"'+(on?" checked":"")+'><label for="c-'+c[0]+'">'+esc(c[1])+(c[2]?'<small>'+esc(c[2])+'</small>':'')+'</label><span class="when">'+(on?"Done ✓":esc(c[3]))+'</span></div>';
+  }).join("");
+  var todo = CHECK.filter(function(c){ return !isDone(c[0]); });
+  document.getElementById("progress").textContent = (CHECK.length-todo.length)+" of "+CHECK.length+" done";
+  document.getElementById("bar").style.width = (100*(CHECK.length-todo.length)/CHECK.length)+"%";
+  document.getElementById("nextup").textContent = todo.length ? "Still to do: "+todo.map(function(c){ return c[1].split(",")[0]; }).join("; ")+"." : "Everything is booked.";
 }
-cl.querySelectorAll("input").forEach(function(i){ i.addEventListener("change",function(){ store("uktrip-"+i.id.slice(2), i.checked?"1":"0"); progress(); }); });
-progress();
+cl.addEventListener("change", function(e){
+  var i=e.target; if(i.type!=="checkbox") return;
+  S.ticks[i.id.slice(2)] = i.checked?1:0; save(); drawChecks(); updateNow();
+});
+
+/* ---------- calendar file with the fixed times ---------- */
+function icsText(t){ return String(t||"").replace(/\\/g,"\\\\").replace(/;/g,"\\;").replace(/,/g,"\\,").replace(/\r?\n/g,"\\n"); }
+function icsTime(iso,min){ var d=new Date(iso+"T00:00:00Z"); d.setUTCMinutes(min-TRIP.utcOffsetMin); return d.toISOString().replace(/[-:]/g,"").slice(0,15)+"Z"; }
+function icsFold(l){ var out=[]; while(l.length>72){ out.push(l.slice(0,72)); l=" "+l.slice(72); } out.push(l); return out.join("\r\n"); }
+function buildIcs(){
+  var L=["BEGIN:VCALENDAR","VERSION:2.0","PRODID:-//"+TRIP.key+"//trip plan//EN","CALSCALE:GREGORIAN"], stamp=new Date().toISOString().replace(/[-:]/g,"").slice(0,15)+"Z";
+  DAYS.forEach(function(d){ d.stops.forEach(function(s,i){
+    if(kindOf(s)!=="fixed") return; var t=tmin(s.t); if(t==null) return;
+    var nx=d.stops[i+1], e = nx && tmin(nx.t)!=null ? Math.min(tmin(nx.t), t+120) : t+60; if(e<=t) e=t+30;
+    L.push("BEGIN:VEVENT","UID:"+TRIP.key+"-"+d.id+"-"+i+"@trip","DTSTAMP:"+stamp,"DTSTART:"+icsTime(d.iso,t),"DTEND:"+icsTime(d.iso,e),"SUMMARY:"+icsText(s.n),"DESCRIPTION:"+icsText(s.p));
+    if(s.q) L.push("LOCATION:"+icsText(s.q));
+    L.push("END:VEVENT");
+  }); });
+  L.push("END:VCALENDAR");
+  return L.map(icsFold).join("\r\n")+"\r\n";
+}
+document.getElementById("icsBtn").addEventListener("click", function(){
+  var a=document.createElement("a"), url=URL.createObjectURL(new Blob([buildIcs()],{type:"text/calendar"}));
+  a.href=url; a.download=TRIP.key+"-fixed-times.ics"; document.body.appendChild(a); a.click(); a.remove(); setTimeout(function(){ URL.revokeObjectURL(url); },4000);
+});
+
+/* ---------- tickets and references: kept on this phone, never in the page ---------- */
+function safeUrl(u){ u=String(u||"").trim(); if(!u) return ""; if(!/^https?:\/\//i.test(u)){ if(/^[\w-]+(\.[\w-]+)+(\/|$)/.test(u)) u="https://"+u; else return ""; } return u.slice(0,400); }
+function drawTix(){
+  var list=document.getElementById("tixList");
+  document.getElementById("tixCount").textContent = S.tickets.length ? S.tickets.length+" saved on this phone" : "";
+  list.innerHTML = S.tickets.length ? S.tickets.map(function(t){
+    return '<div class="tix"><div class="tix-tx"><b>'+esc(t.title)+'</b>'+(t.ref?'<span class="ref">'+esc(t.ref)+'</span>':'')+(t.note?'<small>'+esc(t.note)+'</small>':'')+'</div><div class="tix-act">'+
+      (t.ref?'<button type="button" class="btn ghost" data-copy="'+esc(t.id)+'">Copy</button>':'')+
+      (t.url?'<a class="btn ghost" href="'+esc(t.url)+'" target="_blank" rel="noopener">Open</a>':'')+
+      '<button type="button" class="btn ghost del" data-del="'+esc(t.id)+'">Remove</button></div></div>';
+  }).join("") : '<p class="empty">Nothing saved yet. Add the sleeper, the hotels and anything with a code.</p>';
+}
+document.getElementById("tixNames").innerHTML = CHECK.map(function(c){ return '<option value="'+esc(c[1].split(",")[0])+'">'; }).join("");
+document.getElementById("tixForm").addEventListener("submit", function(e){
+  e.preventDefault();
+  var g=function(id){ return document.getElementById(id).value.trim(); }, title=g("tixTitle"); if(!title) return;
+  S.tickets.push({id:Date.now().toString(36)+Math.random().toString(36).slice(2,6), title:title.slice(0,80), ref:g("tixRef").slice(0,80), url:safeUrl(g("tixUrl")), note:g("tixNote").slice(0,160)});
+  save(); drawTix(); e.target.reset(); toast("Saved on this phone.");
+});
+document.getElementById("tixList").addEventListener("click", function(e){
+  var b=e.target.closest("[data-copy]");
+  if(b){ var t=S.tickets.find(function(x){ return x.id===b.dataset.copy; }); if(t&&navigator.clipboard) navigator.clipboard.writeText(t.ref).then(function(){ toast("Copied."); },function(){}); return; }
+  b=e.target.closest("[data-del]");
+  if(b){ if(!b.classList.contains("armed")){ b.classList.add("armed"); b.textContent="Tap to confirm"; setTimeout(function(){ b.classList.remove("armed"); b.textContent="Remove"; },3500); return; }
+    S.tickets=S.tickets.filter(function(x){ return x.id!==b.dataset.del; }); save(); drawTix(); }
+});
+
+/* ---------- send ticks, picks and tickets to the other phone (in the link itself, not on a server) ---------- */
+function b64e(str){ return btoa(unescape(encodeURIComponent(str))).replace(/\+/g,"-").replace(/\//g,"_").replace(/=+$/,""); }
+function b64d(s){ s=s.replace(/-/g,"+").replace(/_/g,"/"); while(s.length%4) s+="="; return decodeURIComponent(escape(atob(s))); }
+function shareLink(){ return location.origin+location.pathname+"#sync="+b64e(JSON.stringify({v:1,p:S.picks,t:S.ticks,x:S.tickets})); }
+document.getElementById("shareBtn").addEventListener("click", function(){
+  var url=shareLink(), msg=document.getElementById("shareMsg");
+  if(navigator.share){ navigator.share({title:TRIP.name, text:"Trip plan: my ticks, picks and tickets", url:url}).catch(function(){}); return; }
+  (navigator.clipboard?navigator.clipboard.writeText(url):Promise.reject()).then(function(){ msg.textContent="Link copied. Send it to the other phone in a private message."; },function(){ msg.textContent=url; });
+});
+function applySync(str){
+  var o=null; try{ o=JSON.parse(b64d(str)); }catch(e){}
+  if(!o||typeof o!=="object"){ toast("That shared link didn't work."); return; }
+  if(!window.confirm("Copy the shared ticks, picks and tickets onto this phone?")) return;
+  var str80=function(v,n){ return String(v==null?"":v).slice(0,n||80); };
+  Object.keys(o.p||{}).forEach(function(k){ if(typeof o.p[k]==="number") S.picks[str80(k,40)]=o.p[k]; });
+  Object.keys(o.t||{}).forEach(function(k){ S.ticks[str80(k,40)]=o.t[k]?1:0; });
+  (Array.isArray(o.x)?o.x:[]).slice(0,60).forEach(function(t){
+    if(!t||!t.id) return;
+    var c={id:str80(t.id,40), title:str80(t.title), ref:str80(t.ref), url:safeUrl(t.url), note:str80(t.note,160)}, i=S.tickets.findIndex(function(x){ return x.id===c.id; });
+    if(i>=0) S.tickets[i]=c; else S.tickets.push(c);
+  });
+  save(); toast("Updated from the shared link.");
+}
+
+/* ---------- every spare-time idea, by city ---------- */
+(function(){
+  var by={}; SPARE.forEach(function(x){ (by[x[1]]=by[x[1]]||[]).push(x); });
+  document.getElementById("spareAll").innerHTML = Object.keys(by).map(function(c){ return '<h3>'+esc(CITYNAME[c]||c)+'</h3><ul class="sparelist">'+by[c].map(function(x){ return spareItem(x,null); }).join("")+'</ul>'; }).join("");
+})();
 
 
 /* ---------- shared expenses (Supabase RPC, trip-code protected) ---------- */
 var SB = "https://iggxntoqfywensvwulod.supabase.co/rest/v1/rpc/", SBK = "sb_publishable_1RdETP5Xyo5HaVqGJAwidw_5jjMPuYO";
 var CATS = [["food","🍔","Food"],["drinks","🍺","Drinks"],["transport","🚆","Transport"],["tickets","🎟️","Tickets"],["stay","🛏️","Stay"],["shopping","🛍️","Shopping"],["other","•","Other"]];
-var TRIPDAYS = [["2026-11-19","Thu 19"],["2026-11-20","Fri 20"],["2026-11-21","Sat 21"],["2026-11-22","Sun 22"]];
-var M = {code:store("uktrip-code")||"", names:["Kirill","Dima"], items:[], payer:0, split:0.5, cat:"food", day:null, timer:null, busy:false};
+var TRIPDAYS = DAYS.map(function(d){ return [d.iso, d.tab]; });
+var M = {code:store(TRIP.key+"-code")||"", names:TRIP.people.slice(), items:[], payer:0, split:0.5, cat:"food", day:null, timer:null, busy:false};
 function rpc(fn, body){
   return fetch(SB+fn,{method:"POST",headers:{"apikey":SBK,"Content-Type":"application/json"},body:JSON.stringify(body)}).then(function(r){
     return r.text().then(function(tx){ var j=null; try{ j=tx?JSON.parse(tx):null; }catch(e){} if(!r.ok){ var m=(j&&j.message)||("Error "+r.status); throw new Error(m); } return j; });
@@ -862,7 +1312,7 @@ function rpc(fn, body){
 }
 function gbp(n){ return "£"+(Math.round(n*100)/100).toFixed(2).replace(/\.00$/,""); }
 function todayISO(){ var d=new Date(); return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0"); }
-function defaultDay(){ var t=todayISO(); return TRIPDAYS.some(function(d){return d[0]===t;}) ? t : "2026-11-19"; }
+function defaultDay(){ var t=todayISO(); return TRIPDAYS.some(function(d){return d[0]===t;}) ? t : DAYS[0].iso; }
 function dayLabel(iso){ var f=TRIPDAYS.find(function(d){return d[0]===iso;}); if(f) return f[1]; var d=new Date(iso+"T12:00:00"); return d.toLocaleDateString("en-GB",{weekday:"short",day:"numeric",month:"short"}); }
 function pick(el, opts, val, on){
   el.innerHTML = opts.map(function(o){ return '<button type="button" data-v="'+esc(o[0])+'" aria-pressed="'+(String(o[0])===String(val))+'">'+o[1]+'</button>'; }).join("");
@@ -894,17 +1344,34 @@ function drawMoney(){
     if(!b.classList.contains("armed")){ b.classList.add("armed"); b.textContent="Tap to confirm"; setTimeout(function(){ b.classList.remove("armed"); b.textContent="Delete"; },3500); return; }
     b.disabled=true; rpc("uktrip_delete",{p_code:M.code,p_id:+b.dataset.id}).then(load).catch(showErr);
   }); });
+  drawBudget();
   drawPickers();
+}
+/* planned against spent, per person, from the shares in the expense list */
+function drawBudget(){
+  var n=M.names, by={}, known={};
+  M.items.forEach(function(e){ var a=+e.amount, o=a*(+e.other_share), p=e.paid_by, c=e.category; by[c]=by[c]||[0,0]; by[c][1-p]+=o; by[c][p]+=a-o; });
+  var rows = BUDGET.map(function(b){
+    var v=[0,0]; b[1].forEach(function(c){ known[c]=1; if(by[c]){ v[0]+=by[c][0]; v[1]+=by[c][1]; } });
+    var plan = b[2]===b[3] ? "~"+gbp(b[3]) : gbp(b[2])+"–"+b[3];
+    return '<div class="bud"><div class="bud-h"><b>'+esc(b[0])+'</b><span>planned '+plan+' each</span></div>'+[0,1].map(function(i){
+      var pct=Math.min(100,Math.round(100*v[i]/b[3])), over=v[i]>b[3];
+      return '<div class="bud-r'+(over?" over":"")+'"><span>'+esc(n[i])+'</span><i><u style="width:'+pct+'%"></u></i><b>'+gbp(v[i])+'</b></div>';
+    }).join("")+'</div>';
+  }).join("");
+  var extra=[0,0]; Object.keys(by).forEach(function(c){ if(!known[c]){ extra[0]+=by[c][0]; extra[1]+=by[c][1]; } });
+  document.getElementById("mBudget").innerHTML = '<h2>Plan against spent</h2><p class="sub">Each person\'s share so far. Add pre-paid bookings (sleeper, hotels) as expenses to see the full picture.</p>'+rows+
+    (extra[0]+extra[1]>0?'<p class="sub">Outside the plan (shopping, other): '+esc(n[0])+' '+gbp(extra[0])+' · '+esc(n[1])+' '+gbp(extra[1])+'</p>':'');
 }
 function showErr(e){ var el=document.getElementById("mErr"); el.textContent=e.message||String(e); el.hidden=false; }
 function stamp(){ var d=new Date(); document.getElementById("mSync").textContent="Synced "+d.toLocaleTimeString("en-GB",{hour:"2-digit",minute:"2-digit"}); }
 function load(){
   if(!M.code) return Promise.resolve();
   return rpc("uktrip_list",{p_code:M.code}).then(function(j){
-    M.names=j.names||M.names; M.items=j.expenses||[]; store("uktrip-code",M.code);
+    M.names=j.names||M.names; M.items=j.expenses||[]; store(TRIP.key+"-code",M.code);
     document.getElementById("mLock").hidden=true; document.getElementById("mApp").hidden=false; drawMoney(); stamp();
   }).catch(function(e){
-    if(/wrong trip code/.test(e.message)){ M.code=""; store("uktrip-code",""); document.getElementById("mApp").hidden=true; document.getElementById("mLock").hidden=false; var le=document.getElementById("mLockErr"); le.textContent="That code didn't work. Check it and try again."; le.hidden=false; }
+    if(/wrong trip code/.test(e.message)){ M.code=""; store(TRIP.key+"-code",""); document.getElementById("mApp").hidden=true; document.getElementById("mLock").hidden=false; var le=document.getElementById("mLockErr"); le.textContent="That code didn't work. Check it and try again."; le.hidden=false; }
     else { document.getElementById("mSync").textContent="Offline: showing the last list"; }
   });
 }
@@ -937,7 +1404,7 @@ document.getElementById("mShare").addEventListener("click",function(){
   var url=location.origin+location.pathname+"?code="+encodeURIComponent(M.code)+"#money", b=this;
   (navigator.clipboard?navigator.clipboard.writeText(url):Promise.reject()).then(function(){ b.textContent="Link copied"; },function(){ b.textContent=url; }).then(function(){ setTimeout(function(){ b.textContent="Copy invite link"; },4000); });
 });
-(function(){ var q=new URLSearchParams(location.search).get("code"); if(q){ M.code=q.trim().toUpperCase(); store("uktrip-code",M.code); history.replaceState(null,"",location.pathname+location.hash); } })();
+(function(){ var q=new URLSearchParams(location.search).get("code"); if(q){ M.code=q.trim().toUpperCase(); store(TRIP.key+"-code",M.code); history.replaceState(null,"",location.pathname+location.hash); } })();
 document.addEventListener("visibilitychange",function(){ if(!document.hidden && view==="money") load(); });
 
 /* ---------- routing ---------- */
@@ -945,11 +1412,12 @@ function go(id){ if(location.hash!=="#"+id) location.hash = id; else route(); }
 var lastCity = null;
 function route(){
   var h = (location.hash||"").slice(1);
-  if(h==="tips"){ view="tips"; }
+  if(h.indexOf("sync=")===0){ applySync(h.slice(5)); history.replaceState(null,"",location.pathname+location.search+"#tips"); h="tips"; }
+  if(h==="tips"){ view="tips"; drawChecks(); drawTix(); }
   else if(h==="money"){ view="money"; }
   else {
     view="plan"; var i = DAYS.findIndex(function(d){return d.id===h;});
-    if(i<0 && !h){ var now=new Date(); if(now>=START && now<=END) i=Math.min(3,Math.floor((now-START)/864e5)); }
+    if(i<0 && !h){ var ti=todayIndex(); if(ti>=0) i=ti; }
     cur = i<0 ? cur : i;
   }
   document.getElementById("planView").style.display = view==="plan"?"flex":"none";
@@ -959,6 +1427,7 @@ function route(){
   if(view==="money") openMoney(); else clearInterval(M.timer);
   document.getElementById("vPlan").setAttribute("aria-pressed", view==="plan");
   document.getElementById("vTips").setAttribute("aria-pressed", view==="tips");
+  updateNow();
   if(view==="plan"){
     DAYS.forEach(function(d,i){ var t=document.getElementById("tab-"+d.id); t.setAttribute("aria-selected", i===cur); t.tabIndex = i===cur?0:-1; });
     var st = document.getElementById("tab-"+DAYS[cur].id); if(tabs.scrollWidth>tabs.clientWidth) tabs.scrollTo({left:st.offsetLeft-18,behavior:"smooth"});
@@ -971,15 +1440,22 @@ function route(){
 }
 tabs.addEventListener("keydown",function(e){
   if(e.key!=="ArrowRight" && e.key!=="ArrowLeft") return;
-  var n = (cur + (e.key==="ArrowRight"?1:3))%4; go(DAYS[n].id); document.getElementById("tab-"+DAYS[n].id).focus();
+  var n = (cur + (e.key==="ArrowRight"?1:DAYS.length-1))%DAYS.length; go(DAYS[n].id); document.getElementById("tab-"+DAYS[n].id).focus();
 });
 document.getElementById("vPlan").addEventListener("click",function(){ go(DAYS[cur].id); });
 document.getElementById("vTips").addEventListener("click",function(){ go("tips"); });
 document.getElementById("vMoney").addEventListener("click",function(){ go("money"); });
-document.querySelectorAll("[data-goto]").forEach(function(a){ a.addEventListener("click",function(e){ e.preventDefault(); go(a.dataset.goto); window.scrollTo(0,0); }); });
+document.querySelectorAll("#tipsView [data-goto]").forEach(function(a){ a.addEventListener("click",function(e){ e.preventDefault(); go(a.dataset.goto); window.scrollTo(0,0); }); });
 window.addEventListener("hashchange", route);
-var rt; window.addEventListener("resize",function(){ clearTimeout(rt); rt=setTimeout(function(){ if(view==="plan") fit(); },150); });
+var rt; window.addEventListener("resize",function(){ clearTimeout(rt); rt=setTimeout(function(){ if(view==="plan"){ drawMapToggle(); fit(); } },150); });
+drawChecks(); drawTix();
 route();
+
+/* ---------- works without signal once it has been opened ---------- */
+if("serviceWorker" in navigator && (location.protocol==="https:" || location.hostname==="localhost")){
+  navigator.serviceWorker.register("sw.js").then(function(){ var o=document.getElementById("offline"); if(o) o.textContent="Saved on this phone: the plan opens without signal."; }).catch(function(){});
+}
+
 })();
 </script>
 </body>
