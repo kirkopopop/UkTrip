@@ -657,7 +657,7 @@ details.spare[open] > summary::after{transform:rotate(-135deg)}
           <tr><th>What</th><th>Day</th><th>Price</th></tr>
           <tr><td>Guinness at Simmons, happy hour 15:00–20:00</td><td><a href="#thu" data-goto="thu">Thu</a></td><td class="num">£4 a pint</td></tr>
           <tr><td>Cocktails at Swift and Waltz</td><td><a href="#thu" data-goto="thu">Thu</a></td><td class="num">£14–18 each</td></tr>
-          <tr><td>Barry's Central, one class (Kirill)</td><td><a href="#fri" data-goto="fri">Fri</a></td><td class="num">~£30</td></tr>
+          <tr><td>Barry's St Paul's, one class (Kirill)</td><td><a href="#fri" data-goto="fri">Fri</a></td><td class="num">~£30</td></tr>
           <tr><td>Postal Museum + Mail Rail (Kirill)</td><td><a href="#fri" data-goto="fri">Fri</a></td><td class="num">~£18–20</td></tr>
           <tr><td>Interactive experience (karts, Crystal Maze, Escape Arcade, Prison Island)</td><td><a href="#fri" data-goto="fri">Fri</a></td><td class="num">~£25–79</td></tr>
           <tr><td>Heard Covent Garden, burger and a drink</td><td><a href="#fri" data-goto="fri">Fri</a></td><td class="num">~£25–40</td></tr>
@@ -711,7 +711,7 @@ details.spare[open] > summary::after{transform:rotate(-135deg)}
         <h2>Sources</h2>
         <p class="src">Checked 10 Nov 2026; times and prices can change.
           <a href="https://www.timeout.com/london/restaurants/tatar-bunar" target="_blank" rel="noopener">Tatar Bunar</a> ·
-          <a href="https://www.barrys.com/studio/london-central/" target="_blank" rel="noopener">Barry's Central</a> ·
+          <a href="https://thatsup.co.uk/london/gym/barrys-london-st-pauls/" target="_blank" rel="noopener">Barry's St Paul's</a> ·
           <a href="https://www.timeout.com/london/museums/british-postal-museum-and-archive" target="_blank" rel="noopener">Postal Museum</a> ·
           <a href="https://www.timeout.com/london/news/arcade-arena-london-southbank-games-080926" target="_blank" rel="noopener">Arcade Arena</a> ·
           <a href="https://www.simmonsbar.co.uk/?p=264" target="_blank" rel="noopener">Simmons Greek Street</a> ·
@@ -792,9 +792,9 @@ var DAYS = [
    intro:"Kirill does Barry's at 08:00, packs and checks out at the DoubleTree, then rides the old Post Office railway while Dima finishes his short day. Then lunch, an interactive game, a bag run to Euston and a quick Uniqlo stop before an early Covent Garden evening: Michelin-chef burgers at 17:15, an old pub, cocktails above London's oldest restaurant, and the night train to Glasgow.",
    off:"<b>~23:45</b> Caledonian Sleeper Euston → Glasgow Central, arrive <b>~07:30</b> Saturday.",
    stops:[
-    {t:"08:00", n:"Barry's Central, 163 Euston Rd", k:"fixed", chk:"barrys", go:{m:"tube",min:25,leave:"07:25",txt:"From the DoubleTree: Circle line Tower Hill → Euston Square (~18 min), then 2 minutes on foot. Take just the gym kit and a change of clothes; the bag stays in the room (check-out is noon). First class at this studio, so arrive ~10 minutes early."}, p:"Booked for 08:00. The original London studio: treadmill and floor HIIT in the red room, about 50 minutes. Showers and towels on site.", who:"Kirill", fee:["~£30","paid"], ll:[51.5266,-0.1338], q:"Barry's London Central 163 Euston Road",
+    {t:"08:00", n:"Barry's St Paul's, 33 Gutter Lane", k:"fixed", chk:"barrys", go:{m:"tube",min:20,leave:"07:35",txt:"From the DoubleTree: District or Circle line Tower Hill → Mansion House (2 stops), then 8 minutes on foot up to Gutter Lane, off Cheapside. Or walk it in ~25 minutes. Take just the gym kit and a change of clothes; the bag stays in the room (check-out is noon). First class at this studio, so arrive ~10 minutes early."}, p:"Booked for 08:00. Barry's City studio, 100 m from St Paul's station: treadmill and floor HIIT in the red room, about 50 minutes. Showers and towels on site.", who:"Kirill", fee:["~£30","paid"], ll:[51.5149,-0.0952], q:"Barry's London St Paul's, 33 Gutter Lane",
       more:"<p>Shower at the studio and leave by ~09:15.</p>"},
-    {t:"09:40", n:"DoubleTree: pack, check out, leave the bag", chk:"doubletree", go:{m:"tube",min:25,leave:"09:15",txt:"Euston Square → Tower Hill on the Circle line (~18 min), then 3 minutes on foot"}, p:"Swap the gym kit into the bag, check out (by 12:00) and leave the bag at the front desk until the afternoon bag run.", who:"Kirill", ll:[51.5106,-0.0780], q:"DoubleTree by Hilton London Tower of London, 7 Pepys Street"},
+    {t:"09:40", n:"DoubleTree: pack, check out, leave the bag", chk:"doubletree", go:{m:"tube",min:20,leave:"09:15",txt:"8 minutes on foot to Mansion House, then the District or Circle line to Tower Hill (2 stops), then 3 minutes on foot"}, p:"Swap the gym kit into the bag, check out (by 12:00) and leave the bag at the front desk until the afternoon bag run.", who:"Kirill", ll:[51.5106,-0.0780], q:"DoubleTree by Hilton London Tower of London, 7 Pepys Street"},
     {t:"10:45", n:"Postal Museum + Mail Rail, Clerkenwell", chk:"mail", go:{m:"tube",min:25,leave:"10:15",txt:"Circle line Tower Hill → Farringdon (~10 min), then a 12-minute walk up Farringdon Road"}, p:"A 15-minute ride through the tunnels of the Post Office's driverless underground railway (1927–2003), then the museum.", who:"Kirill", fee:["~£18–20","paid"], book:true, ll:[51.5246,-0.1134], q:"The Postal Museum, Phoenix Place, London"},
     {t:"12:30", n:"Light lunch together: place TBD", p:"Keep it small: dinner is at 17:15. Something quick near whichever experience you choose.", off:true},
     {t:"14:00", n:"Interactive experience: pick one", pick:"game", chk:"karts", p:"Four game-style options, all about an hour. Choose together over lunch, then book a slot for two.", book:true, off:true,
@@ -908,7 +908,7 @@ var CHECK = [
   ["tennents","Tennent's brewery tour, Sun 12:00 for 2","tennents.com; check Sunday slots","Now"],
   ["citylink","Citylink Air, Sun 15:30 Glasgow → Edinburgh Airport","citylink.co.uk","This week"],
   ["mail","Postal Museum + Mail Rail, Fri ~10:45","Kirill only; any slot from ~10:45","This week"],
-  ["barrys","Barry's Central, Fri 08:00","Booked; Kirill only","Done",true],
+  ["barrys","Barry's St Paul's, Fri 08:00","Booked; Kirill only","Done",true],
   ["shower","Ask the Maldron about early check-in or a shower, Sat 07:30","Email or call the hotel","This week"]
 ];
 
