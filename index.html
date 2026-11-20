@@ -623,8 +623,8 @@ details.spare[open] > summary::after{transform:rotate(-135deg)}
         <ul>
           <li>Tap in and out with a contactless card or phone on trains, Tube and buses. Daily fares cap automatically.</li>
           <li><b>Gatwick → London Bridge:</b> Thameslink, about 30–40 min, same contactless tap.</li>
-          <li><b>Euston → Glasgow:</b> the Caledonian Sleeper leaves Euston (not King's Cross) at ~23:45 and reaches Glasgow Central ~07:30. Rooms are priced per room, so the twin is shared.</li>
-          <li><b>Bags on Friday:</b> both stay at the DoubleTree front desk after check-out at 12:00. Pick them up at ~21:30 after Covent Garden, then Tube or Uber to Euston (~30 min).</li>
+          <li><b>London → Edinburgh:</b> the Caledonian Sleeper on Friday night was cancelled (police incident at Edinburgh Waverley) and is being refunded. Instead: the 06:30 LNER from King's Cross on Saturday, free on the cancelled sleeper ticket (backups 07:03, 07:30). No seat reservations, so board early.</li>
+          <li><b>Bags on Friday:</b> out of the DoubleTree at 12:45 and into the Kings Cross Inn (9–11 Euston Rd, opposite the station) by about 13:45. They stay there overnight.</li>
         </ul>
         <h3>Glasgow</h3>
         <ul>
@@ -636,7 +636,7 @@ details.spare[open] > summary::after{transform:rotate(-135deg)}
         <h3>Edinburgh</h3>
         <ul>
           <li>The centre is walkable: Waverley, the Old Town and the New Town are 10–15 min apart.</li>
-          <li><b>Bags on Saturday:</b> they stay at the Glasgow hotel, so nothing to carry around Edinburgh.</li>
+          <li><b>Bags on Saturday:</b> into left luggage at Edinburgh Waverley (platform 2, 07:00–23:00, ~£12.50 a bag), collected about 17:40 before the train to Glasgow.</li>
         </ul>
       </section>
 
@@ -661,7 +661,8 @@ details.spare[open] > summary::after{transform:rotate(-135deg)}
           <tr><td>Postal Museum + Mail Rail (Kirill)</td><td><a href="#fri" data-goto="fri">Fri</a></td><td class="num">~£18–20</td></tr>
           <tr><td>Interactive experience (karts, Crystal Maze, Escape Arcade, Prison Island)</td><td><a href="#fri" data-goto="fri">Fri</a></td><td class="num">~£25–79</td></tr>
           <tr><td>Heard Covent Garden, burger and a drink</td><td><a href="#fri" data-goto="fri">Fri</a></td><td class="num">~£25–40</td></tr>
-          <tr><td>Caledonian Sleeper, room for two (current fare)</td><td><a href="#fri" data-goto="fri">Fri</a></td><td class="num">~£158 each</td></tr>
+          <tr><td>Caledonian Sleeper (cancelled, full refund); LNER on the same ticket</td><td><a href="#sat" data-goto="sat">Sat</a></td><td class="num">£0</td></tr>
+          <tr><td>Kings Cross Inn Hotel, 1 night</td><td><a href="#fri" data-goto="fri">Fri</a></td><td class="num">tbc</td></tr>
           <tr><td>Maldron Hotel Glasgow City, 1 night (~1,500 DKK a room)</td><td><a href="#sat" data-goto="sat">Sat</a></td><td class="num">~£85 each</td></tr>
           <tr><td>Calton Hill, Royal Mile, Christmas market</td><td><a href="#sat" data-goto="sat">Sat</a></td><td class="num">Free</td></tr>
           <tr><td>Glasgow Cathedral, Necropolis</td><td><a href="#sun" data-goto="sun">Sun</a></td><td class="num">Free</td></tr>
@@ -680,7 +681,7 @@ details.spare[open] > summary::after{transform:rotate(-135deg)}
         <p>Per person, flights excluded.</p>
         <table>
           <tr><th>Category</th><th>GBP</th></tr>
-          <tr><td>Transport (Gatwick, Tube, sleeper share, Glasgow ⇄ Edinburgh, airport coach)</td><td class="num">215–245</td></tr>
+          <tr><td>Transport (Gatwick, Tube, Edinburgh → Glasgow, airport coach; sleeper refunded)</td><td class="num">60–90</td></tr>
           <tr><td>Activities (Friday game, Tennent's, Johnnie Walker, castle; Barry's and Mail Rail for Kirill)</td><td class="num">100–155</td></tr>
           <tr><td>Food &amp; drink (Tatar Bunar, Heard, Glasgow dinner, lunches, pints, cocktails at £11–18)</td><td class="num">260–315</td></tr>
           <tr><td>Glasgow hotel, 1 night, room split two ways</td><td class="num">~85</td></tr>
@@ -785,49 +786,49 @@ var DAYS = [
       more:"<p>Bar seats are walk-in; a few tables can be booked at waltzbar.uk.</p><p>Plan B, also 5 minutes away: <b>Happiness Forgets</b> (8–9 Hoxton Square), a candlelit basement that's a favourite of London bartenders, open till late.</p>"},
     {t:"~23:30", n:"Back to the DoubleTree", go:{m:"walk",min:25,txt:"or an Uber, ~£10–15"}, p:"25 min on foot from Shoreditch, or an Uber (~£10–15). Early start tomorrow for Barry's.", off:true}
    ]},
- { id:"fri", iso:"2026-11-20", cities:["london"], mark:"LONDON · EUSTON", tab:"Fri 20", place:"London → Glasgow", date:"Friday 20 November", city:"london",
-   title:"Barry's, games, Heard, sleeper north",
-   rain:["Every stop today is indoors, and the Covent Garden hops are about 5 minutes each.","The Tube hops (the game, the bag pick-up, Euston) keep you dry; the walk from Oxford Street to Covent Garden is the only longer stretch outside."],
-   intro:"Kirill does Barry's at 08:00 and rests at the DoubleTree while Dima finishes his calls. Both check out at noon and leave the bags at the front desk. Then fish and chips at the Fryer's Delight, the Escape Room Arcade, the new Harry Potter shop and a quick Uniqlo stop before an early Covent Garden evening: Michelin-chef burgers at 17:15, an old pub, cocktails above London's oldest restaurant. Back to the hotel for the bags at 21:30, then the night train to Glasgow.",
-   off:"<b>~23:45</b> Caledonian Sleeper Euston → Glasgow Central, arrive <b>~07:30</b> Saturday.",
+ { id:"fri", iso:"2026-11-20", cities:["london"], mark:"LONDON · KING'S CROSS", tab:"Fri 20", place:"London", date:"Friday 20 November", city:"london",
+   title:"Barry's, games, Heard, early night",
+   rain:["Every stop today is indoors, and the Covent Garden hops are about 5 minutes each.","The walk from the hotel to the Fryer's Delight is the longest stretch outside (15 min); take the Piccadilly line one stop to Russell Square if it pours."],
+   intro:"The sleeper is cancelled (police incident at Edinburgh Waverley), so tonight is a hotel by King's Cross and the 06:30 LNER to Edinburgh tomorrow. Kirill did Barry's; both check out of the DoubleTree and drop the bags at the Kings Cross Inn. Then fish and chips at the Fryer's Delight, the Escape Room Arcade, the new Harry Potter shop and the Covent Garden evening: Heard at 17:15, Uniqlo, an old pub, cocktails above London's oldest restaurant. Bed by 23:00: alarm at 05:40.",
+   off:"Sleeper cancelled. Night at the Kings Cross Inn Hotel, then the <b>06:30</b> LNER King's Cross → Edinburgh Waverley on Saturday.",
    stops:[
     {t:"08:00", n:"Barry's St Paul's, 33 Gutter Lane", k:"fixed", chk:"barrys", go:{m:"tube",min:20,leave:"07:35",txt:"From the DoubleTree: District or Circle line Tower Hill → Mansion House (2 stops), then 8 minutes on foot up to Gutter Lane, off Cheapside. Or walk it in ~25 minutes. Take just the gym kit and a change of clothes; the bag stays in the room (check-out is noon). First class at this studio, so arrive ~10 minutes early."}, p:"Booked for 08:00. Barry's City studio, 100 m from St Paul's station: treadmill and floor HIIT in the red room, about 50 minutes. Showers and towels on site.", who:"Kirill", fee:["~£30","paid"], ll:[51.5149,-0.0952], q:"Barry's London St Paul's, 33 Gutter Lane",
       more:"<p>Shower at the studio and leave by ~09:15.</p>"},
     {t:"09:45", n:"Back at the DoubleTree: rest", go:{m:"tube",min:20,txt:"8 minutes on foot to Mansion House, then the District or Circle line to Tower Hill (2 stops), then 3 minutes on foot"}, p:"Rest in the room while Dima finishes his calls. Check-out is at noon.", who:"Kirill", ll:[51.5106,-0.0780], q:"DoubleTree by Hilton London Tower of London, 7 Pepys Street"},
-    {t:"12:00", n:"DoubleTree: check out, bags to the front desk", chk:"doubletree", p:"Both check out by 12:00 and leave both bags with the front desk until tonight. Keep the luggage tags, and take what you need for the evening (charger, layer for the sleeper). Then wait in the lobby until Dima finishes his calls; you leave together at about 12:45.", ll:[51.5106,-0.0780], q:"DoubleTree by Hilton London Tower of London, 7 Pepys Street"},
-    {t:"13:20", n:"Fish and chips at the Fryer's Delight, 19 Theobalds Rd", go:{m:"tube",min:35,leave:"12:45",est:true,txt:"Circle line Tower Hill → Liverpool Street, Central line to Chancery Lane (3 stops), then 7 minutes north up Gray's Inn Road"}, p:"Old-school Holborn chippy since 1958: Formica tables, shared booths, thick batter, cabbies at the counter, cheap. Time Out's best fish and chips in central London. Try the rockfish instead of cod, and keep it to one portion each: dinner at Heard is at 17:15.", fee:["~£12–16","paid"], ll:[51.5207,-0.1156], q:"The Fryer's Delight, 19 Theobalds Road, London",
+    {t:"12:45", n:"DoubleTree: check out, take the bags", chk:"doubletree", p:"Check out and take both bags: the sleeper is cancelled, so tonight is near King's Cross instead.", ll:[51.5106,-0.0780], q:"DoubleTree by Hilton London Tower of London, 7 Pepys Street"},
+    {t:"13:45", n:"Kings Cross Inn: drop the bags", chk:"kxinn", go:{m:"tube",min:25,leave:"13:15",txt:"Circle or Hammersmith & City line Tower Hill → King's Cross St Pancras (~20 min), then 3 minutes to the hotel opposite the station"}, p:"9–11 Euston Road, opposite King's Cross station. Check-in is from 14:00, so check in if the room is ready or leave the bags at reception.", ll:[51.5303,-0.1232], q:"Kings Cross Inn Hotel, 9-11 Euston Road, London"},
+    {t:"14:05", n:"Fish and chips at the Fryer's Delight, 19 Theobalds Rd", go:{m:"walk",min:15,txt:"From the hotel: straight down Gray's Inn Road, then left onto Theobalds Road"}, p:"Old-school Holborn chippy since 1958: Formica tables, shared booths, thick batter, cabbies at the counter, cheap. Time Out's best fish and chips in central London. Try the rockfish instead of cod, and keep it to one portion each: dinner at Heard is at 17:15.", fee:["~£12–16","paid"], ll:[51.5207,-0.1156], q:"The Fryer's Delight, 19 Theobalds Road, London",
       more:"<p>Eat in or take away. 10 minutes' walk to the Escape Room Arcade. If it's shut or rammed: <b>Golden Union</b>, Poland St, Soho (a tube hop away) or a pub lunch on Fetter Lane.</p>"},
-    {t:"14:30", n:"Escape Room Arcade, Enigma Quests, 86 Fetter Lane", chk:"karts", book:true, go:{m:"walk",min:10,txt:"Down Gray's Inn Road and along High Holborn to Fetter Lane"}, p:"30 mini-game rooms in an underground lab: play and replay as many as you can in an hour for leaderboard scores. Teams of 2–4. Book the 14:30 slot (or the nearest one); arrive about 10 minutes early for the briefing.", fee:["~£25","paid"], ll:[51.5163,-0.1093], q:"Enigma Quests, 86 Fetter Lane, London"},
-    {t:"16:00", n:"Harry Potter Shop, 134–140 Oxford St", k:"opt", go:{m:"tube",min:20,txt:"5 minutes to Chancery Lane, Central line to Tottenham Court Road (2 stops), then 5 minutes west along Oxford Street"}, p:"The UK's biggest official Harry Potter shop, opened 4 Nov 2026: two floors themed on Diagon Alley, a full-size Knight Bus inside, Oxford Street-only wands and Funko Pops, and the Leaky Cauldron bar for Butterbeer. Expect a queue at the door so soon after opening; skip it if the line is long or the game ran late.", ll:[51.5162,-0.1356], q:"Harry Potter Shop, 134-140 Oxford Street, London"},
-    {t:"16:40", n:"Uniqlo Covent Garden, Long Acre / Floral St", k:"opt", go:{m:"walk",min:12,txt:"Down Charing Cross Road and along Long Acre, ~12 min from the Harry Potter shop"}, p:"Three floors in a listed Victorian carriage hall, with London-only UTme! prints you can customise in store. About 25 minutes before dinner; skip it if the game runs late. Five minutes from Heard.", ll:[51.5124,-0.1255], q:"Uniqlo Covent Garden, Long Acre, London"},
-    {t:"17:15", n:"Dinner at Heard Covent Garden, 33–35 Wellington St", k:"fixed", chk:"heard", go:{m:"walk",min:5,txt:"from Uniqlo"}, p:"Burgers from two-Michelin-starred chef Jordan Bailey. This is his biggest site, opened 5 Nov 2026. Order The Heard: a double smash patty with jalapeño hot honey and Ogleshield cheese. Each burger comes with a beer or wine pairing.", fee:["~£25–40","paid"], booked:true, ll:[51.5119,-0.1208], q:"Heard Covent Garden, 33-35 Wellington Street, London",
+    {t:"15:00", n:"Escape Room Arcade, Enigma Quests, 86 Fetter Lane", chk:"karts", book:true, go:{m:"walk",min:10,txt:"Down Gray's Inn Road and along High Holborn to Fetter Lane"}, p:"30 mini-game rooms in an underground lab: play and replay as many as you can in an hour for leaderboard scores. Teams of 2–4. Book the 15:00 slot (or the nearest one); arrive about 10 minutes early for the briefing.", fee:["~£25","paid"], ll:[51.5163,-0.1093], q:"Enigma Quests, 86 Fetter Lane, London"},
+    {t:"16:30", n:"Harry Potter Shop, 134–140 Oxford St", k:"opt", go:{m:"tube",min:20,txt:"5 minutes to Chancery Lane, Central line to Tottenham Court Road (2 stops), then 5 minutes west along Oxford Street"}, p:"The UK's biggest official Harry Potter shop, opened 4 Nov 2026: two floors themed on Diagon Alley, a full-size Knight Bus inside, Oxford Street-only wands and Funko Pops, and the Leaky Cauldron bar for Butterbeer. Expect a queue at the door so soon after opening; skip it if the line is long or the game ran late: Heard is at 17:15.", ll:[51.5162,-0.1356], q:"Harry Potter Shop, 134-140 Oxford Street, London"},
+    {t:"17:15", n:"Dinner at Heard Covent Garden, 33–35 Wellington St", k:"fixed", chk:"heard", go:{m:"tube",min:20,est:true,txt:"From the Harry Potter shop: walk to Tottenham Court Road, Northern line to Leicester Square (1 stop), then 7 minutes on foot; or walk it in ~15 minutes"}, p:"Burgers from two-Michelin-starred chef Jordan Bailey. This is his biggest site, opened 5 Nov 2026. Order The Heard: a double smash patty with jalapeño hot honey and Ogleshield cheese. Each burger comes with a beer or wine pairing.", fee:["~£25–40","paid"], booked:true, ll:[51.5119,-0.1208], q:"Heard Covent Garden, 33-35 Wellington Street, London",
       more:"<p>Booked for 17:15. <b>Dessert in the Soda Room downstairs:</b> a speakeasy dessert and cocktail bar with hot apple pie, brûlée cheesecake and milk soft serve. It's for diners only, subject to space, so ask on arrival.</p>"},
-    {t:"18:45", n:"Pint at the Lamb & Flag, 33 Rose St", k:"opt", p:"A tiny, creaky 18th-century pub down an alley off Garrick Street, with low ceilings and wood panelling. On a Friday the crowd spills out into the lane.", fee:["~£7 a pint","paid"], ll:[51.5116,-0.1265], q:"Lamb and Flag, 33 Rose Street, London",
+    {t:"18:35", n:"Uniqlo Covent Garden, Long Acre / Floral St", k:"opt", go:{m:"walk",min:5,txt:"from Heard, up to Long Acre"}, p:"Three floors in a listed Victorian carriage hall, with London-only UTme! prints you can customise in store. Straight after dinner: open until 20:00 on Fridays, so about 25 minutes before the pub.", ll:[51.5124,-0.1255], q:"Uniqlo Covent Garden, Long Acre, London"},
+    {t:"19:15", n:"Pint at the Lamb & Flag, 33 Rose St", k:"opt", go:{m:"walk",min:5,txt:"from Uniqlo, via Garrick Street"}, p:"A tiny, creaky 18th-century pub down an alley off Garrick Street, with low ceilings and wood panelling. On a Friday the crowd spills out into the lane.", fee:["~£7 a pint","paid"], ll:[51.5116,-0.1265], q:"Lamb and Flag, 33 Rose Street, London",
       more:"<p>If it's rammed: <b>The Harp</b> (47 Chandos Place), a narrow, award-winning real-ale pub 5 minutes away.</p>"},
-    {t:"20:00", n:"Cocktails upstairs at Rules, 35 Maiden Lane", k:"opt", go:{m:"walk",min:5}, p:"The bar above London's oldest restaurant (1798): game trophies, red velvet and serious classic cocktails. 5 minutes' walk from the Lamb & Flag.", fee:["~£16–19 a cocktail","paid"], ll:[51.5106,-0.1232], q:"Upstairs at Rules, 35 Maiden Lane, London",
+    {t:"20:15", n:"Cocktails upstairs at Rules, 35 Maiden Lane", k:"opt", go:{m:"walk",min:5}, p:"The bar above London's oldest restaurant (1798): game trophies, red velvet and serious classic cocktails. 5 minutes' walk from the Lamb & Flag.", fee:["~£16–19 a cocktail","paid"], ll:[51.5106,-0.1232], q:"Upstairs at Rules, 35 Maiden Lane, London",
       more:"<p>Time for a second round elsewhere? <b>Eve Bar</b> (34 Southampton St), Adam Handling's basement cocktail bar under his restaurant Frog, is 2 minutes away.</p>"},
-    {t:"21:30", n:"DoubleTree: pick up the bags", k:"fixed", go:{m:"tube",min:25,leave:"21:00",txt:"6 minutes on foot from Maiden Lane to Embankment, District or Circle line to Tower Hill (~12 min), then 3 minutes to the hotel"}, p:"Collect both bags from the front desk with the luggage tags.", ll:[51.5106,-0.0780], q:"DoubleTree by Hilton London Tower of London, 7 Pepys Street"},
-    {t:"22:15", n:"One for the road at the Euston Tap", go:{m:"tube",min:30,leave:"21:45",txt:"With the bags: Circle line Tower Hill → King's Cross St Pancras (~20 min), then 7 minutes west along Euston Road. Or an Uber from the hotel door, ~25 min."}, p:"Craft beer in the two stone lodges at the station gates, the last bits of the old Euston. Skip it and go straight to the train if you are running late.", fee:["~£6–8","paid"], ll:[51.5268,-0.1329], q:"Euston Tap, 190 Euston Road, London"},
-    {t:"23:15", n:"Board the Caledonian Sleeper", k:"fixed", chk:"sleeper", tr:"train", p:"To Glasgow Central (the Edinburgh portion is sold out). The train splits at Carstairs during the night, so expect a jolt. Boarding opens around 22:30 and the train leaves ~23:45; the exact time is on the ticket.", fee:["£315 for 2","paid"], booked:true, off:true}
+    {t:"21:45", n:"One for the road at the Euston Tap", k:"opt", go:{m:"tube",min:20,txt:"Walk to Leicester Square, Northern line (Charing Cross branch) to Euston, ~6 min"}, p:"Craft beer in the two stone lodges at the Euston station gates, 10 minutes' walk from the hotel. One round only: the alarm is at 05:40.", fee:["~£6–8","paid"], ll:[51.5268,-0.1329], q:"Euston Tap, 190 Euston Road, London"},
+    {t:"22:45", n:"Kings Cross Inn: bed", chk:"kxinn", go:{m:"walk",min:10,txt:"East along Euston Road"}, p:"Pack tonight and set an alarm for 05:40. Leave the room by 06:05; King's Cross is across the road.", ll:[51.5303,-0.1232], q:"Kings Cross Inn Hotel, 9-11 Euston Road, London"}
    ]},
- { id:"sat", iso:"2026-11-21", cities:["edinburgh","glasgow"], tab:"Sat 21", place:"Glasgow ⇄ Edinburgh", date:"Saturday 21 November", city:"edinburgh",
-   title:"Edinburgh by day, Glasgow by night",
+ { id:"sat", iso:"2026-11-21", cities:["edinburgh","glasgow"], tab:"Sat 21", place:"London → Edinburgh → Glasgow", date:"Saturday 21 November", city:"edinburgh",
+   title:"Early train, Edinburgh by day, Glasgow by night",
    rain:["The castle is mostly outdoors between buildings and runs rain or shine: jacket on.","Swap Calton Hill for the National Museum of Scotland on Chambers Street: free, open daily 10:00–17:00, about 5 minutes from the Grassmarket.","Johnnie Walker is indoors. If the market is a washout, take an earlier train back: they run every 15 minutes."],
-   intro:"Off the sleeper in Glasgow, bags at the hotel, and a 50-minute train to Edinburgh. Daylight goes to the castle, the Old Town and Calton Hill; after dark, Johnnie Walker and the Christmas market lights. Back in Glasgow, a casual local dinner and the city's best cocktail bar. We sleep in Glasgow.",
-   off:"<b>~07:30</b> Sleeper arrives at Glasgow Central; bags to the Maldron Hotel Glasgow City (50 Renfrew St), ~12 min walk.<br><b>~08:30</b> ScotRail Glasgow Queen Street → Edinburgh Waverley, ~50 min.<br><b>~17:50</b> Back to Glasgow; dinner and drinks below, not on this map.",
+   intro:"The 06:30 LNER from King's Cross on the cancelled sleeper ticket, breakfast on board, and Edinburgh by 10:40. Bags into left luggage at Waverley; daylight goes to the castle, the Old Town and Calton Hill; after dark, Johnnie Walker and the Christmas market lights. Then the train to Glasgow with the bags, a casual local dinner and the city's best cocktail bar. We sleep in Glasgow.",
+   off:"<b>06:30</b> LNER King's Cross → Edinburgh Waverley, arrive <b>~10:40</b>.<br><b>~18:00</b> ScotRail Edinburgh Waverley → Glasgow Queen Street, ~50 min; dinner and drinks below, not on this map.",
    stops:[
-    {t:"07:30", n:"Glasgow: off the sleeper, bags at the Maldron", chk:"hotel", p:"Maldron Hotel Glasgow City, 50 Renfrew St, by the Theatre Royal: ~12 min walk from Central. Check-in is from 15:00, so ask them to hold the bags. Queen Street station is ~8 min walk from the hotel. Ask about early check-in or somewhere to shower: it is a long day otherwise.", booked:true, off:true, q:"Maldron Hotel Glasgow City, 50 Renfrew Street, Glasgow"},
-    {t:"08:30", n:"Train: Glasgow Queen Street → Edinburgh Waverley", tr:"train", go:{m:"walk",min:8,txt:"hotel to Queen Street"}, p:"Fast route via Falkirk High, ~50 min, every 15 min on Saturdays. Buy a return on the day.", fee:["~£17–20 return","paid"], off:true},
-    {t:"09:30", n:"Big breakfast near Waverley", p:"Somewhere warm in the Old Town or on Cockburn Street, two minutes up from the station.", off:true},
-    {t:"10:30", n:"Edinburgh Castle", k:"fixed", chk:"castle", p:"Crown Jewels, the One O'Clock Gun battery, views over the New Town. Allow 1.5 h.", fee:["~£23.50","paid"], book:true, ll:[55.9486,-3.1999], q:"Edinburgh Castle"},
-    {t:"12:00", n:"Royal Mile → Victoria Street", k:"opt", p:"Downhill along the curved, colourful street to the Grassmarket.", fee:["Free","free"], ll:[55.9488,-3.1935], q:"Victoria Street, Edinburgh"},
-    {t:"12:45", n:"Pub lunch in the Grassmarket", p:"Old market square under the castle rock, lined with pubs. No rush: Johnnie Walker isn't until 15:20.", ll:[55.9474,-3.1962], q:"Grassmarket, Edinburgh"},
-    {t:"14:15", n:"Calton Hill while it's light", k:"opt", go:{m:"walk",min:20,leave:"13:55",txt:"from the Grassmarket"}, p:"The castle, Old Town and Arthur's Seat from the monuments; the light goes golden ahead of sunset ~15:50. 20 min walk from the Grassmarket. Leave by 14:55.", fee:["Free","free"], ll:[55.9553,-3.1827], q:"Calton Hill, Edinburgh"},
+    {t:"06:30", n:"LNER King's Cross → Edinburgh Waverley", k:"fixed", chk:"lner", tr:"train", go:{m:"walk",min:5,leave:"06:05",txt:"Kings Cross Inn across Euston Road to the King's Cross concourse"}, p:"Free on the cancelled Caledonian Sleeper ticket: show it and the cancellation email to the guard. No seat reservations, and other sleeper passengers will be on it, so be at the platform by 06:10 and look for unreserved seats. Breakfast from the café bar on board. Backups: 07:03 or 07:30.", fee:["£0 (sleeper refunded)","free"], off:true},
+    {t:"10:40", n:"Waverley: bags into left luggage", go:{m:"train",min:250,txt:"~4 h 10 min"}, p:"Staffed left-luggage office on platform 2, by the Calton Road entrance. Open 07:00–23:00, ~£12.50 a bag for the day; walk-ins fine.", fee:["~£12.50 a bag","paid"], ll:[55.9520,-3.1880], q:"Left Luggage, Edinburgh Waverley station"},
+    {t:"11:15", n:"Edinburgh Castle", k:"fixed", chk:"castle", go:{m:"walk",min:15,txt:"Up Cockburn Street and the Royal Mile from Waverley"}, p:"Book a timed slot for 11:15 or later. Crown Jewels, the One O'Clock Gun battery, views over the New Town. Allow 1.5 h.", fee:["~£23.50","paid"], book:true, ll:[55.9486,-3.1999], q:"Edinburgh Castle"},
+    {t:"12:45", n:"Royal Mile → Victoria Street", k:"opt", p:"Downhill along the curved, colourful street to the Grassmarket.", fee:["Free","free"], ll:[55.9488,-3.1935], q:"Victoria Street, Edinburgh"},
+    {t:"13:15", n:"Pub lunch in the Grassmarket", p:"Old market square under the castle rock, lined with pubs. No rush: Johnnie Walker isn't until 15:20.", ll:[55.9474,-3.1962], q:"Grassmarket, Edinburgh"},
+    {t:"14:30", n:"Calton Hill while it's light", k:"opt", go:{m:"walk",min:20,leave:"14:10",txt:"from the Grassmarket"}, p:"The castle, Old Town and Arthur's Seat from the monuments; the light goes golden ahead of sunset ~15:50. 20 min walk from the Grassmarket. Leave by 14:55.", fee:["Free","free"], ll:[55.9553,-3.1827], q:"Calton Hill, Edinburgh"},
     {t:"15:20", n:"Johnnie Walker Princes Street: Journey of Flavour", k:"fixed", chk:"jw", go:{m:"walk",min:20,leave:"14:55",txt:"along Princes Street"}, p:"90 minutes, three cocktails made to match a flavour quiz, then the rooftop bar with the castle lit up after dark.", fee:["£30","paid"], booked:true, ll:[55.9502,-3.2068], q:"Johnnie Walker Princes Street, 145 Princes Street, Edinburgh",
       more:"<p>Use the entrance on Hope Street and show the ticket in the lobby. 20 min walk along Princes Street from Calton Hill.</p>"},
     {t:"17:10", n:"Christmas market, East Princes Street Gardens", k:"opt", p:"Mulled wine among the lit-up stalls under the Scott Monument; open 10:00–22:00. Waverley is right below.", fee:["Free","free"], ll:[55.9519,-3.1925], q:"Edinburgh Christmas Market, East Princes Street Gardens"},
-    {t:"17:50", n:"Train back to Glasgow Queen Street", tr:"train", p:"~50 min; trains every 15 min. The Maldron is ~8 min walk from Queen Street.", off:true},
-    {t:"18:50", n:"Maldron Hotel Glasgow City: check in, shower", chk:"hotel", go:{m:"walk",min:8,txt:"from Queen Street"}, p:"First shower since London. Rooms have power showers.", booked:true, off:true, q:"Maldron Hotel Glasgow City, 50 Renfrew Street, Glasgow"},
+    {t:"17:40", n:"Waverley: collect the bags", go:{m:"walk",min:5,txt:"down the steps from the gardens"}, p:"Left luggage closes at 23:00, so there's slack if the market is fun.", ll:[55.9520,-3.1880], q:"Left Luggage, Edinburgh Waverley station"},
+    {t:"18:00", n:"Train back to Glasgow Queen Street", tr:"train", p:"~50 min; trains every 15 min, take whichever comes after the bags. The Maldron is ~8 min walk from Queen Street.", off:true},
+    {t:"19:00", n:"Maldron Hotel Glasgow City: check in, shower", chk:"hotel", go:{m:"walk",min:8,txt:"from Queen Street"}, p:"Check in with the bags. Rooms have power showers.", booked:true, off:true, q:"Maldron Hotel Glasgow City, 50 Renfrew Street, Glasgow"},
     {t:"19:45", n:"Casual dinner in Glasgow: pick one", pick:"satdinner", p:"Local and unfussy rather than posh. All walk-in or easy to book.", off:true,
       subs:[
         ["El Perro Negro","Argyle St, Finnieston. Started as a pop-up and now on the World's 101 Best Burgers 2026 (No. 56); walk-ins welcome. Get the Top Dog. Taxi to the bar after, ~10 min.","El Perro Negro, Argyle Street, Glasgow"],
@@ -883,7 +884,7 @@ var SPARE = [
 
 /* Planned spend per person in GBP, mapped to the expense categories: [label, [expense categories], low, high] */
 var BUDGET = [
-  ["Transport",["transport"],215,245],
+  ["Transport",["transport"],60,90],
   ["Activities",["tickets"],100,155],
   ["Food & drink",["food","drinks"],260,315],
   ["Stay",["stay"],85,85]
@@ -891,18 +892,18 @@ var BUDGET = [
 
 var CHECK = [
   ["doubletree","DoubleTree by Hilton Tower of London, Thu night","7 Pepys St; check-in from 15:00, check-out by 12:00","Done",true],
-  ["sleeper","Caledonian Sleeper, Fri ~23:45 Euston → Glasgow","Booked; room for two","Done",true],
-  ["hotel","Maldron Hotel Glasgow City, Sat night","50 Renfrew St; check-in from 15:00, bag drop at 07:30","Done",true],
+  ["lner","LNER 06:30 King's Cross → Edinburgh, Sat","Sleeper cancelled and refunded; free on the cancelled ticket, no reservations","Done",true],
+  ["kxinn","Kings Cross Inn Hotel, Fri night","9–11 Euston Rd; check-in from 14:00, check-out by 11:00","Done",true],
+  ["hotel","Maldron Hotel Glasgow City, Sat night","50 Renfrew St; check-in from 15:00","Done",true],
   ["heard","Heard Covent Garden, Fri 17:15 for 2","Booked; ask for the Soda Room on arrival","Done",true],
   ["tatar","Tatar Bunar, Thu 19:30 for 2","Booked; 07771 013190 if running late","Done",true],
-  ["karts","Escape Room Arcade (Enigma Quests), Fri 14:30 for 2","Book a slot online","Now"],
-  ["castle","Edinburgh Castle, Sat 10:30","Timed entry, online","Now"],
+  ["karts","Escape Room Arcade (Enigma Quests), Fri 15:00 for 2","Book a slot online","Now"],
+  ["castle","Edinburgh Castle, Sat 11:15 or later","Timed entry, online","Now"],
   ["jw","Johnnie Walker Journey of Flavour, Sat 15:20 for 2","Booked; Hope Street entrance","Done",true],
   ["tennents","Tennent's brewery tour, Sun 12:00 for 2","tennents.com; check Sunday slots","Now"],
   ["citylink","Citylink Air, Sun 15:30 Glasgow → Edinburgh Airport","citylink.co.uk","This week"],
   ["mail","Postal Museum + Mail Rail, Thu 15:00–15:30","Done on Thursday","Done",true],
-  ["barrys","Barry's St Paul's, Fri 08:00","Booked; Kirill only","Done",true],
-  ["shower","Ask the Maldron about early check-in or a shower, Sat 07:30","Email or call the hotel","This week"]
+  ["barrys","Barry's St Paul's, Fri 08:00","Booked; Kirill only","Done",true]
 ];
 
 var CENTERS = {london:[51.512,-0.105], glasgow:[55.864,-4.26], edinburgh:[55.951,-3.19]};
