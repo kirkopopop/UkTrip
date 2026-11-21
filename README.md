@@ -76,8 +76,8 @@ destination), `utcOffsetMin` (its offset from UTC on the trip dates), `people`.
 - Compact/full view and map open/closed: on each phone only.
 - Expenses: the same Supabase backend behind the trip code (`uktrip_*` functions). The code is checked by
   `uktrip.check_code`, which compares a SHA-256 hash, so the code itself is never stored. A new trip needs its own code.
-- Trip summary (Expenses tab): totals per category and per day, split by person, with a Spent/Paid switch
-  (each person's share vs whose card paid). Built from the expense list in `drawSummary()` in `src/engine.js`; no extra backend.
+- Spending card (Expenses tab): totals per category and per day for the group, or one person's share via the
+  Group / name filter, against the planned total from `BUDGET`. Built in `drawSummary()` in `src/engine.js`; no extra backend.
 - Add `?now=2026-11-20T13:10` to the address to preview the page at that moment of the trip.
 
 ## Starting a new trip
