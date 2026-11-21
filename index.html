@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#c8102e">
+<meta name="theme-color" content="#f2f5f9" media="(prefers-color-scheme: light)"><meta name="theme-color" content="#0c1424" media="(prefers-color-scheme: dark)">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon-180.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -580,23 +580,142 @@ details.spare[open] > summary::after{transform:rotate(-135deg)}
 .pv .chipbtn:disabled{opacity:.35}
 .pv .del-ph.armed{background:var(--red);border-color:var(--red)}
 
+/* ================= v12: minimal. Neutral chrome, one accent, detail behind a tap ================= */
+/* masthead: quiet, no stripes */
+.mast{background:var(--paper);color:var(--ink);border-bottom:1px solid var(--line)}
+.mast h1{font-stretch:85%;font-size:clamp(20px,2.4vw,28px);text-transform:none;letter-spacing:0;line-height:1.1}
+.mast h1 span{font-size:14px;color:var(--muted);opacity:1;margin-top:4px}
+.count{color:var(--muted)}
+.nowcard::after,.bal::after{display:none}
+/* view switch: neutral segmented control */
+.seg{background:var(--soft)}
+.seg button,:root .seg button{color:var(--muted);opacity:1}
+.seg button[aria-pressed="true"],:root[data-theme="dark"] .seg button[aria-pressed="true"]{background:var(--surface);color:var(--ink);box-shadow:0 1px 2px rgba(10,20,40,.12)}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]) .seg button[aria-pressed="true"]{color:var(--ink)} }
+.seg button:focus-visible{outline-color:var(--red)}
+
+/* day tabs: plain segmented, all four visible */
+.stamps{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:4px;background:var(--soft);border-radius:12px;padding:4px}
+.stamp,.stamp:hover{--perf:none;-webkit-mask:none;mask:none;transform:none;background:transparent;color:var(--muted);border:0;border-radius:9px;padding:7px 4px;display:flex;flex-direction:column;align-items:center;gap:1px;cursor:pointer;font:inherit;flex:none;min-width:0}
+.stamp b{font-weight:700;font-stretch:90%;font-size:15px;line-height:1.1;letter-spacing:0;grid-row:auto}
+.stamp span{font-size:11.5px;font-weight:500;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+.stamp[aria-selected="true"]{background:var(--surface);color:var(--ink);box-shadow:0 1px 2px rgba(10,20,40,.12)}
+.stamp[aria-selected="true"] span{color:var(--muted)}
+.stamp:focus-visible{outline:2.5px solid var(--red);outline-offset:1px}
+
+/* now card: light, three short lines */
+.nowcard{background:var(--surface);color:var(--ink);padding:6px 6px 6px 14px;gap:0;border:1px solid var(--line);box-shadow:none}
+.nowcard .now-row{background:none;border-radius:8px;padding:7px 0;flex-direction:row;align-items:baseline;gap:10px}
+.nowcard small{flex:none;width:42px;font-size:11px;letter-spacing:.06em;opacity:1;color:var(--muted)}
+.nowcard b{font-size:15px;font-weight:600;font-stretch:100%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+.nowcard span{opacity:1}
+.now-cur b,.now-fix b{color:var(--muted);font-weight:500}
+.now-next{display:flex;align-items:center;gap:8px;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.now-next .now-row.next{flex-direction:column;align-items:flex-start;gap:1px;padding:9px 0;min-width:0;flex:1}
+.now-next .now-row.next small{width:auto;color:var(--red-ink)}
+.now-row.next b,.nowcard .now-row.next b{font-size:18px;font-weight:700;font-stretch:90%;max-width:100%}
+.now-next .lv{font-size:13px;color:var(--red-ink);font-weight:600}
+.now-cur:only-child,.now-next:last-child{border-bottom:0}
+.now-cur + .now-next:last-child{border-bottom:0}
+.now-go{flex:none;width:44px;height:44px;border-radius:50%;display:grid;place-items:center;color:var(--blue);background:var(--blue-soft)}
+.now-go svg{width:20px;height:20px}
+.nowcard.slim{border:1px solid var(--line);padding:0}
+@media (max-width:620px){
+  .nowcard{padding:4px 4px 4px 12px;gap:0}
+  .now-row:not(.next){padding:6px 0}
+  .now-row:not(.next) b{font-size:14.5px;font-weight:500}
+  .nowcard b{font-size:14.5px}
+  .now-row.next b,.nowcard .now-row.next b{font-size:17px}
+}
+@media (min-width:961px){ .nowcard{flex-direction:column} }
+
+/* day head + tools: text buttons, no pills */
+.daytools{justify-content:flex-start;gap:4px 16px}
+.daytools .chipbtn,.daytools .chipbtn:hover{background:none;box-shadow:none;color:var(--blue);padding:6px 0;min-height:36px;font-size:14px}
+details.rain summary{font-size:14px}
+#maprow .dir{font-size:14px}
+
+/* stops: no badges, quieter pins, now row marked by a bar */
+.pin{width:22px;height:22px;border:0;background:var(--soft);color:var(--muted);font-size:11.5px;font-weight:700}
+.stop.solo .pin{background:var(--blue-soft);color:var(--blue)}
+.stop.k-opt .pin:not(.off){background:transparent;color:var(--muted);border:1.5px dashed var(--line)}
+.stop.k-opt.solo .pin:not(.off){color:var(--blue);border-color:var(--blue)}
+.stop .pin.off.tr{background:transparent;font-size:15px}
+.ok{color:var(--free);font-weight:700;margin-left:6px;font-size:14px}
+.compact .stop.is-now,.compact .stop.is-next{background:none;box-shadow:none}
+.compact .stop.is-now::before,.compact .stop.is-next::before{content:"";position:absolute;left:-10px;top:10px;bottom:10px;width:3px;border-radius:2px;background:var(--red)}
+.compact .stop.is-next::before{background:var(--line)}
+.compact .legtx{opacity:.75}
+
+/* bottom bar on phones: flat, neutral */
+@media (max-width:620px){
+  .mast h1{font-size:17px}
+  .seg{left:0;right:0;bottom:0;border-radius:0;padding:4px 8px calc(4px + env(safe-area-inset-bottom,0px));background:color-mix(in srgb,var(--surface) 92%,transparent);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);border-top:1px solid var(--line);box-shadow:none;gap:4px}
+  .seg button{padding:12px 6px;font-size:14px;border-radius:10px}
+  .seg button[aria-pressed="true"]{background:var(--soft);box-shadow:none;color:var(--ink);font-weight:700}
+  .wrap{padding-bottom:calc(80px + env(safe-area-inset-bottom,0px))}
+  .toast{bottom:calc(72px + env(safe-area-inset-bottom,0px))}
+  .stamps{margin:0;padding:4px;top:6px}
+  .stamp{flex:none;padding:6px 2px}
+}
+
+/* spare + postcard: plain cards */
+.spare{box-shadow:none;border:1px solid var(--line);margin-top:16px}
+.spare h3{font-size:16px;font-weight:700;font-stretch:100%}
+.pc{border:1px solid var(--line)}
+
+/* info tab: everything collapsible */
+.tips{gap:10px}
+.tips section{box-shadow:none;border:1px solid var(--line);padding:16px 18px;gap:8px}
+.tips h2,.mcard h2{font-size:19px;font-weight:700;font-stretch:90%}
+.bookings .checks{grid-template-columns:minmax(0,1fr)}
+.chk{padding:9px 0}
+.chk.done{font-size:14px}
+.donechk > summary,.addtix > summary{cursor:pointer;color:var(--blue);font-weight:600;font-size:14px;padding:8px 0;list-style:none}
+.donechk > summary::-webkit-details-marker,.addtix > summary::-webkit-details-marker{display:none}
+.donechk[open] > summary,.addtix[open] > summary{color:var(--muted)}
+.addtix .tixform{margin-top:4px}
+.addtix .sub{font-size:13px;color:var(--muted);margin-top:6px}
+.toolrow{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:4px 14px;border-top:1px solid var(--line);padding-top:8px}
+.toolrow .sub{font-size:13px;color:var(--muted)}
+.tix-tx .ref{font-size:17px}
+details.info{grid-column:1/-1;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:0 18px}
+details.info > summary{list-style:none;cursor:pointer;display:flex;align-items:baseline;gap:10px;padding:14px 0;min-height:48px}
+details.info > summary::-webkit-details-marker{display:none}
+details.info > summary h2{margin:0;font-size:16px;font-weight:700;font-stretch:100%;flex:none}
+details.info > summary span{flex:1;min-width:0;font-size:13.5px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+details.info > summary::after{content:"";flex:none;align-self:center;width:7px;height:7px;border-right:2px solid var(--muted);border-bottom:2px solid var(--muted);transform:rotate(45deg);transition:transform .2s}
+details.info[open] > summary::after{transform:rotate(-135deg)}
+details.info > :not(summary){margin-bottom:16px}
+details.info ul{margin:0 0 16px;padding-left:18px;display:flex;flex-direction:column;gap:6px;font-size:14.5px}
+details.info li::marker{color:var(--muted)}
+details.info td{padding:7px 8px 7px 0;border-top:1px solid var(--line);font-size:14px}
+details.info tr:first-child td{border-top:0}
+details.info h3{margin:6px 0 2px;font-size:14px}
+.tips .src{line-height:1.8}
+.foot{font-size:12px}
+#tixList .empty,.bookings .empty{text-align:left;font-size:14px;color:var(--muted);margin:2px 0;padding:0}
+details.spare{padding:10px 16px;gap:8px}
+details.spare:not([open]){gap:0}
+.dayhead .postmark{display:none}
+.dayhead .date{color:var(--muted);font-size:12px}
+
 </style>
 </head>
 <body>
 <header class="mast">
   <div class="mast-in">
-    <h1>London, Glasgow &amp; Edinburgh<span>Thu 19 – Sun 22 November 2026 · Gatwick 08:00 Thursday, home from Edinburgh 19:00 Sunday</span></h1>
+    <h1>London, Glasgow &amp; Edinburgh<span>19–22 Nov · home from Edinburgh 19:00 Sun</span></h1>
     <div class="mast-side">
       <div class="count" id="count"></div>
       <div class="seg" role="group" aria-label="View">
-        <button type="button" id="vPlan" aria-pressed="true">Day plan</button>
-        <button type="button" id="vTips" aria-pressed="false">Before you go</button>
+        <button type="button" id="vPlan" aria-pressed="true">Plan</button>
+        <button type="button" id="vTips" aria-pressed="false">Info</button>
         <button type="button" id="vMoney" aria-pressed="false">Expenses</button>
       </div>
     </div>
   </div>
 </header>
-<div class="airmail" aria-hidden="true"></div>
 
 <main class="wrap">
   <div id="planView" style="display:flex;flex-direction:column;gap:24px">
@@ -611,8 +730,8 @@ details.spare[open] > summary::after{transform:rotate(-135deg)}
           <svg id="svg" role="img" aria-label="Street map of the day's stops"></svg>
           <div class="ctrls">
             <div class="zoom"><button type="button" id="zin" aria-label="Zoom in">+</button><button type="button" id="zout" aria-label="Zoom out">−</button></div>
-            <button class="chipbtn" id="fit" type="button">Show all stops</button>
-            <button class="chipbtn" id="mapDone" type="button" hidden>Done with the map</button>
+            <button class="chipbtn" id="fit" type="button">Fit</button>
+            <button class="chipbtn" id="mapDone" type="button" hidden>Done</button>
           </div>
           <div class="scale" id="scale"></div>
           <div class="attr">© OpenStreetMap contributors</div>
@@ -628,7 +747,7 @@ details.spare[open] > summary::after{transform:rotate(-135deg)}
   <div id="moneyView" hidden>
     <div class="mcard lock" id="mLock">
       <h2>Shared expenses</h2>
-      <p class="sub">Log what each of us pays and see who owes whom, on both phones. Enter the trip code once; this phone remembers it.</p>
+      <p class="sub">Trip code syncs expenses, ticks and photos between phones.</p>
       <form id="mLockForm" autocomplete="off"><input class="fld" id="mCode" placeholder="Trip code" autocapitalize="characters" spellcheck="false" aria-label="Trip code"><button class="btn" type="submit">Open</button></form>
       <p class="err" id="mLockErr" hidden></p>
     </div>
@@ -661,125 +780,95 @@ details.spare[open] > summary::after{transform:rotate(-135deg)}
   <div id="tipsView" hidden>
     <div class="tips">
       <section class="wide bookings">
-        <div class="bk-head"><h2>Bookings</h2><span class="progress" id="progress"></span></div>
-        <div class="bar" aria-hidden="true"><i id="bar"></i></div>
-        <p id="nextup"></p>
-        <p class="syncline"></p>
+        <div class="bk-head"><h2>To book</h2><span class="progress" id="progress"></span></div>
         <div class="checks" id="checklist"></div>
-        <div class="sharebox"><button type="button" class="btn" id="icsBtn">Add the fixed times to my calendar</button><span class="sub">Downloads a calendar file with every fixed time: trains, bookings and the coach to the airport.</span></div>
+        <details class="donechk"><summary id="doneSum"></summary><div class="checks" id="doneList"></div></details>
+        <div class="toolrow"><p class="syncline"></p><button type="button" class="btn ghost" id="icsBtn">Add fixed times to calendar</button></div>
       </section>
 
       <section class="wide" id="tix">
-        <div class="bk-head"><h2>Tickets and references</h2><span class="progress" id="tixCount"></span></div>
-        <p class="sub">Booking references, ticket links, coach and room numbers. <span id="tixPrivacy"></span></p>
+        <div class="bk-head"><h2>Tickets</h2><span class="progress" id="tixCount"></span></div>
         <div id="tixList"></div>
+        <details class="addtix"><summary>+ Add a ticket or reference</summary>
         <form id="tixForm" class="tixform" autocomplete="off">
-          <input class="fld" id="tixTitle" placeholder="What is it? e.g. Caledonian Sleeper" maxlength="80" list="tixNames" required aria-label="Ticket name">
+          <input class="fld" id="tixTitle" placeholder="Name, e.g. Maldron Hotel" maxlength="80" list="tixNames" required aria-label="Ticket name">
           <datalist id="tixNames"></datalist>
           <input class="fld" id="tixRef" placeholder="Reference or code" maxlength="80" aria-label="Reference or code">
-          <input class="fld" id="tixUrl" placeholder="Link to the ticket (optional)" inputmode="url" maxlength="400" aria-label="Link to the ticket">
-          <input class="fld" id="tixNote" placeholder="Note, e.g. coach and room (optional)" maxlength="160" aria-label="Note">
-          <button class="btn" type="submit">Save ticket</button>
+          <input class="fld" id="tixUrl" placeholder="Link (optional)" inputmode="url" maxlength="400" aria-label="Link to the ticket">
+          <input class="fld" id="tixNote" placeholder="Note (optional)" maxlength="160" aria-label="Note">
+          <button class="btn" type="submit">Save</button>
         </form>
-        <div class="sharebox" id="shareBox"><button type="button" class="btn" id="shareBtn">Send to the other phone</button><span class="sub" id="shareMsg">Makes a private link holding your ticks, picks and tickets. Opening it on the other phone copies them across.</span></div>
+        <p class="sub">Private: never on the public page.</p>
+        </details>
+        <div class="toolrow" id="shareBox"><button type="button" class="btn ghost" id="shareBtn">Send ticks and tickets to the other phone</button><span class="sub" id="shareMsg"></span></div>
       </section>
 
-
-      <section>
-        <h2>Getting around</h2>
-        <h3>London</h3>
+      <details class="info wide">
+        <summary><h2>Getting around</h2><span>Trains, bags, airport</span></summary>
         <ul>
-          <li>Tap in and out with a contactless card or phone on trains, Tube and buses. Daily fares cap automatically.</li>
-          <li><b>Gatwick → London Bridge:</b> Thameslink, about 30–40 min, same contactless tap.</li>
-          <li><b>London → Edinburgh:</b> the Caledonian Sleeper on Friday night was cancelled (police incident at Edinburgh Waverley) and is being refunded. Instead: the 06:30 LNER from King's Cross on Saturday, free on the cancelled sleeper ticket (backups 07:03, 07:30). No seat reservations, so board early.</li>
-          <li><b>Bags on Friday:</b> out of the DoubleTree at 12:45 and into the Kings Cross Inn (9–11 Euston Rd, opposite the station) by about 13:45. They stay there overnight.</li>
+          <li><b>Glasgow ⇄ Edinburgh:</b> ScotRail via Falkirk High, ~45–50 min, every 15 min. Sort by journey time; buy a return on the day.</li>
+          <li><b>Edinburgh bags:</b> Waverley left luggage, platform 2, 07:00–23:00, ~£12.50 a bag.</li>
+          <li><b>Glasgow Central → Queen Street:</b> 5-min walk.</li>
+          <li><b>Subway:</b> one loop; Buchanan St ⇄ Kelvinhall / Hillhead for the West End.</li>
+          <li><b>To the airport (Sun):</b> Citylink Air, Buchanan Bus Station → Edinburgh Airport, ~1 h.</li>
+          <li><b>Edinburgh centre:</b> Waverley, Old Town and New Town are 10–15 min apart on foot.</li>
+          <li><b>London:</b> contactless on Tube, trains and buses; daily cap.</li>
         </ul>
-        <h3>Glasgow</h3>
-        <ul>
-          <li><b>Saturday, Glasgow ⇄ Edinburgh:</b> ScotRail Queen Street ⇄ Waverley via Falkirk High is the fast route (~45–50 min), every 15 min on Saturdays. Sort the app by journey time: other routes are much slower. Buy a return on the day.</li>
-          <li><b>Glasgow Central → Queen Street:</b> about a 5-minute walk.</li>
-          <li><b>Sunday to the airport:</b> Citylink Air runs direct from Buchanan Bus Station to Edinburgh Airport in about an hour; bags go in the hold.</li>
-          <li>Glasgow's subway is one small loop: Buchanan Street ⇄ Kelvinhall / Hillhead for the West End.</li>
-        </ul>
-        <h3>Edinburgh</h3>
-        <ul>
-          <li>The centre is walkable: Waverley, the Old Town and the New Town are 10–15 min apart.</li>
-          <li><b>Bags on Saturday:</b> into left luggage at Edinburgh Waverley (platform 2, 07:00–23:00, ~£12.50 a bag), collected about 17:40 before the train to Glasgow.</li>
-        </ul>
-      </section>
+      </details>
 
-      <section>
-        <h2>Apps to have</h2>
-        <div class="app"><b>Citymapper</b><span>Best for London: Tube, buses and walking in one plan.</span></div>
-                <div class="app"><b>ScotRail</b><span>Saturday's Glasgow ⇄ Edinburgh return; filter by journey time.</span></div>
-        <div class="app"><b>Citylink</b><span>Sunday's coach from Glasgow to Edinburgh Airport.</span></div>
-        <div class="app"><b>Uber</b><span>Works in all three cities; handy for Duke Street → Finnieston in Glasgow.</span></div>
-        <div class="app"><b>Barry's</b><span>Book Friday morning's class here as soon as the slot opens.</span></div>
-              </section>
+      <details class="info wide">
+        <summary><h2>Apps</h2><span>ScotRail, Citylink, Uber, Citymapper</span></summary>
+        <ul>
+          <li><b>ScotRail</b> · Glasgow ⇄ Edinburgh return</li>
+          <li><b>Citylink</b> · Sunday coach to the airport</li>
+          <li><b>Uber</b> · all three cities</li>
+          <li><b>Citymapper</b> · London</li>
+        </ul>
+      </details>
 
-      <section class="wide">
-        <h2>Prices</h2>
-        <p>Per person, approximate, checked 10 Nov 2026.</p>
+      <details class="info wide">
+        <summary><h2>Prices</h2><span>Per person, checked 10 Nov</span></summary>
         <div style="overflow-x:auto">
         <table>
-          <tr><th>What</th><th>Day</th><th>Price</th></tr>
-          <tr><td>Guinness at Simmons, happy hour 15:00–20:00</td><td><a href="#thu" data-goto="thu">Thu</a></td><td class="num">£4 a pint</td></tr>
-          <tr><td>Cocktails at Swift and Waltz</td><td><a href="#thu" data-goto="thu">Thu</a></td><td class="num">£14–18 each</td></tr>
-          <tr><td>Barry's St Paul's, one class (Kirill)</td><td><a href="#fri" data-goto="fri">Fri</a></td><td class="num">~£30</td></tr>
+          <tr><td>Guinness at Simmons, 15:00–20:00</td><td><a href="#thu" data-goto="thu">Thu</a></td><td class="num">£4</td></tr>
+          <tr><td>Cocktails, Swift and Waltz</td><td><a href="#thu" data-goto="thu">Thu</a></td><td class="num">£14–18</td></tr>
+          <tr><td>Barry's St Paul's (Kirill)</td><td><a href="#fri" data-goto="fri">Fri</a></td><td class="num">~£30</td></tr>
           <tr><td>Postal Museum + Mail Rail (Kirill)</td><td><a href="#fri" data-goto="fri">Fri</a></td><td class="num">~£18–20</td></tr>
-          <tr><td>Top Secret Comedy Club, Friday late show (booked)</td><td><a href="#fri" data-goto="fri">Fri</a></td><td class="num">~£15</td></tr>
-          <tr><td>Heard Covent Garden, burger and a drink</td><td><a href="#fri" data-goto="fri">Fri</a></td><td class="num">~£25–40</td></tr>
-          <tr><td>Caledonian Sleeper (cancelled, full refund); LNER on the same ticket</td><td><a href="#sat" data-goto="sat">Sat</a></td><td class="num">£0</td></tr>
-          <tr><td>Kings Cross Inn Hotel, 1 night</td><td><a href="#fri" data-goto="fri">Fri</a></td><td class="num">tbc</td></tr>
-          <tr><td>Maldron Hotel Glasgow City, 1 night (~1,500 DKK a room)</td><td><a href="#sat" data-goto="sat">Sat</a></td><td class="num">~£85 each</td></tr>
-          <tr><td>Calton Hill, Royal Mile, Christmas market</td><td><a href="#sat" data-goto="sat">Sat</a></td><td class="num">Free</td></tr>
-          <tr><td>Glasgow Cathedral, Necropolis</td><td><a href="#sun" data-goto="sun">Sun</a></td><td class="num">Free</td></tr>
+          <tr><td>Top Secret Comedy Club</td><td><a href="#fri" data-goto="fri">Fri</a></td><td class="num">~£15</td></tr>
+          <tr><td>Heard, burger and a drink</td><td><a href="#fri" data-goto="fri">Fri</a></td><td class="num">~£25–40</td></tr>
+          <tr><td>Kings Cross Inn, 1 night</td><td><a href="#fri" data-goto="fri">Fri</a></td><td class="num">tbc</td></tr>
+          <tr><td>LNER (on the refunded sleeper ticket)</td><td><a href="#sat" data-goto="sat">Sat</a></td><td class="num">£0</td></tr>
           <tr><td>ScotRail Glasgow ⇄ Edinburgh return</td><td><a href="#sat" data-goto="sat">Sat</a></td><td class="num">~£17–20</td></tr>
           <tr><td>Edinburgh Castle, online</td><td><a href="#sat" data-goto="sat">Sat</a></td><td class="num">~£23.50</td></tr>
-          <tr><td>Johnnie Walker Journey of Flavour, 3 cocktails</td><td><a href="#sat" data-goto="sat">Sat</a></td><td class="num">£30</td></tr>
-          <tr><td>Casual dinner in Glasgow (burgers, curry or pizza)</td><td><a href="#sat" data-goto="sat">Sat</a></td><td class="num">~£15–35</td></tr>
-          <tr><td>Tennent's Wellpark Brewery tour, pint included</td><td><a href="#sun" data-goto="sun">Sun</a></td><td class="num">£17–21</td></tr>
-          <tr><td>Citylink Air to Edinburgh Airport</td><td><a href="#sun" data-goto="sun">Sun</a></td><td class="num">~£15</td></tr>
+          <tr><td>Johnnie Walker, 3 cocktails</td><td><a href="#sat" data-goto="sat">Sat</a></td><td class="num">£30</td></tr>
+          <tr><td>Calton Hill, Royal Mile, market</td><td><a href="#sat" data-goto="sat">Sat</a></td><td class="num">Free</td></tr>
+          <tr><td>Glasgow dinner</td><td><a href="#sat" data-goto="sat">Sat</a></td><td class="num">~£15–35</td></tr>
+          <tr><td>Maldron Glasgow, room split</td><td><a href="#sat" data-goto="sat">Sat</a></td><td class="num">~£85</td></tr>
+          <tr><td>Tennent's tour, pint included</td><td><a href="#sun" data-goto="sun">Sun</a></td><td class="num">£17–21</td></tr>
+          <tr><td>Cathedral, Necropolis</td><td><a href="#sun" data-goto="sun">Sun</a></td><td class="num">Free</td></tr>
+          <tr><td>Citylink Air</td><td><a href="#sun" data-goto="sun">Sun</a></td><td class="num">~£15</td></tr>
         </table>
         </div>
-      </section>
+      </details>
 
-      <section>
-        <h2>Rough budget</h2>
-        <p>Per person, flights excluded.</p>
-        <table>
-          <tr><th>Category</th><th>GBP</th></tr>
-          <tr><td>Transport (Gatwick, Tube, Edinburgh → Glasgow, airport coach; sleeper refunded)</td><td class="num">60–90</td></tr>
-          <tr><td>Activities (Friday game, Tennent's, Johnnie Walker, castle; Barry's and Mail Rail for Kirill)</td><td class="num">100–155</td></tr>
-          <tr><td>Food &amp; drink (Tatar Bunar, Heard, Glasgow dinner, lunches, pints, cocktails at £11–18)</td><td class="num">260–315</td></tr>
-          <tr><td>Glasgow hotel, 1 night, room split two ways</td><td class="num">~85</td></tr>
-          <tr class="total"><td>Total</td><td class="num">660–800</td></tr>
-        </table>
-      </section>
-
-      <section>
-        <h2>Good to know</h2>
+      <details class="info wide">
+        <summary><h2>Good to know</h2><span>Dark by 16:00, pubs, plugs</span></summary>
         <ul>
-          <li><b>Dark early:</b> sunset is around 16:00 in London and 15:45 in Scotland. Daylight things go first.</li>
-          <li><b>Weather:</b> late November is cold and often wet. Bring a proper jacket and shoes for the Necropolis hill and Edinburgh's wet cobbles.</li>
-          <li><b>Pubs:</b> order and pay at the bar; no table service, no tipping for drinks.</li>
-          <li><b>Restaurants:</b> a 12.5% service charge is often already on the bill in London.</li>
-          <li><b>Plugs:</b> UK type G (three flat pins).</li>
-          <li><b>Emergency:</b> 999 or 112.</li>
-          <li><b>Time:</b> UK is 1 h behind Copenhagen.</li>
+          <li>Sunset ~16:00 London, ~15:45 Scotland: daylight things first.</li>
+          <li>Cold and wet: proper jacket, grippy shoes for cobbles and the Necropolis hill.</li>
+          <li>Pubs: order at the bar, no tipping for drinks. London bills often include 12.5% service.</li>
+          <li>Plugs type G · Emergency 999 or 112 · UK is 1 h behind Copenhagen.</li>
         </ul>
-      </section>
+      </details>
 
-      <section class="wide">
-        <h2>If there's spare time</h2>
-        <p class="sub">Each day's plan lists these nearest first, with an indoor filter for wet weather.</p>
+      <details class="info wide">
+        <summary><h2>Spare time ideas</h2><span>All cities, indoor and out</span></summary>
         <div id="spareAll"></div>
-      </section>
+      </details>
 
-      <section class="wide">
-        <h2>Sources</h2>
-        <p class="src">Checked 10 Nov 2026; times and prices can change.
-          <a href="https://www.timeout.com/london/restaurants/tatar-bunar" target="_blank" rel="noopener">Tatar Bunar</a> ·
+      <details class="info wide">
+        <summary><h2>Sources</h2><span>Checked 10 Nov 2026</span></summary>
+        <p class="src"><a href="https://www.timeout.com/london/restaurants/tatar-bunar" target="_blank" rel="noopener">Tatar Bunar</a> ·
           <a href="https://thatsup.co.uk/london/gym/barrys-london-st-pauls/" target="_blank" rel="noopener">Barry's St Paul's</a> ·
           <a href="https://www.timeout.com/london/museums/british-postal-museum-and-archive" target="_blank" rel="noopener">Postal Museum</a> ·
           <a href="https://thetopsecretcomedyclub.co.uk/" target="_blank" rel="noopener">Top Secret Comedy Club</a> ·
@@ -797,9 +886,8 @@ details.spare[open] > summary::after{transform:rotate(-135deg)}
           <a href="https://tennents.com/uk/experience/tours" target="_blank" rel="noopener">Tennent's tours</a> ·
           <a href="https://www.johnniewalker.com/en-gb/visit-us-princes-street/book-whisky-tasting/johnnie-walker-s-journey-of-flavour" target="_blank" rel="noopener">Johnnie Walker Journey of Flavour</a> ·
           <a href="https://www.edinburghtourism.org/airport-to-city-centre/" target="_blank" rel="noopener">Edinburgh airport transport</a> ·
-          
           <a href="https://londonist.com/london/art-and-photography/the-top-exhibitions-to-see-in-london-november-and-december-2026" target="_blank" rel="noopener">London exhibitions</a></p>
-      </section>
+      </details>
     </div>
   </div>
   <p class="foot" id="offline"></p>
@@ -1027,7 +1115,7 @@ DAYS.forEach(function(d,i){
   var b = document.createElement("button");
   var num = d.date.match(/\d+/)[0], wd = d.tab.split(" ")[0];
   b.type="button"; b.className="stamp"; b.setAttribute("role","tab"); b.id="tab-"+d.id;
-  b.innerHTML = '<span class="stamp-in"><b>'+num+'</b><em>'+wd+' · Nov</em><span>'+esc(d.place)+'</span></span>';
+  b.innerHTML = '<b>'+esc(d.tab)+'</b><span>'+esc(d.city.charAt(0).toUpperCase()+d.city.slice(1))+'</span>';
   b.addEventListener("click", function(){ go(d.id); });
   tabs.appendChild(b);
 });
@@ -1104,14 +1192,11 @@ function pinHtml(s,i){
 /* Compact view: one calm row per stop. Everything else lives in the detail sheet. */
 function rowHtml(d,s,i,mark){
   var k=kindOf(s), bits=[], pi = s.pick ? S.picks[s.pick] : null;
-  if(mark[i]) bits.push('<span class="s-now">'+mark[i]+'</span>');
-  if(k==="fixed") bits.push('<span class="s-fix">Fixed</span>');
-  if(k==="opt") bits.push('Optional');
   if(s.pick) bits.push((pi!=null && s.subs[pi]) ? esc(shortName(s.subs[pi][0])) : '<span class="s-do">Pick one</span>');
-  if(stopBooked(s)) bits.push('<span class="s-ok">Booked ✓</span>');
-  else if(s.chk||s.book) bits.push('<span class="s-do">To book</span>');
+  if(!stopBooked(s) && (s.chk||s.book)) bits.push('<span class="s-do">To book</span>');
+  var ok = stopBooked(s) ? '<span class="ok" title="Booked" aria-label="Booked">✓</span>' : '';
   return '<li class="stop row k-'+k+(s.who?" solo":"")+(mark[i]?" is-"+mark[i].toLowerCase():"")+'" id="s-'+i+'"><span class="t">'+esc(s.t)+'</span>'+pinHtml(s,i)+
-    '<div class="what"><button type="button" class="hd" data-open="'+i+'" aria-haspopup="dialog"><span class="hd-tx"><strong>'+esc(s.n)+'</strong>'+
+    '<div class="what"><button type="button" class="hd" data-open="'+i+'" aria-haspopup="dialog"><span class="hd-tx"><strong>'+esc(s.n)+ok+'</strong>'+
     (bits.length?'<span class="sl">'+bits.join(" · ")+'</span>':'')+'</span><i class="chev" aria-hidden="true"></i></button></div></li>';
 }
 function stopHtml(d,s,i,mark){
@@ -1189,11 +1274,11 @@ function spareHtml(d){
     .map(function(x){ return {x:x, km:(ref&&x[6])?distKm(ref.ll,x[6]):null}; })
     .sort(function(a,b){ return (a.km==null?1e9:a.km)-(b.km==null?1e9:b.km); });
   var body = 
-    '<p class="sub">Nearest first'+(ref&&ref.name?', measured from '+esc(ref.name):ref?", measured from today's stops":"")+'.</p>'+
-    '<div class="pick"><button type="button" data-sf="indoor" aria-pressed="'+spareF.indoor+'">Indoors only</button><button type="button" data-sf="quick" aria-pressed="'+spareF.quick+'">An hour or less</button></div>'+
+    
+    '<div class="pick"><button type="button" data-sf="indoor" aria-pressed="'+spareF.indoor+'">Indoors</button><button type="button" data-sf="quick" aria-pressed="'+spareF.quick+'">≤ 1 h</button></div>'+
     (items.length?'<ul class="sparelist">'+items.map(function(o){ return spareItem(o.x,o.km); }).join("")+'</ul>':'<p class="empty">Nothing matches those filters.</p>');
-  return compact ? '<details class="spare"'+(spareOpen?" open":"")+'><summary><h3>Spare time or a change of plan</h3></summary>'+body+'</details>'
-                 : '<section class="spare"><h3>Spare time or a change of plan</h3>'+body+'</section>';
+  return compact ? '<details class="spare"'+(spareOpen?" open":"")+'><summary><h3>Spare time ideas</h3></summary>'+body+'</details>'
+                 : '<section class="spare"><h3>Spare time ideas</h3>'+body+'</section>';
 }
 
 /* ---------- the day ---------- */
@@ -1202,13 +1287,13 @@ function renderDay(){
   if(d.iso===n.iso){ var f=findNow(); if(f){ if(f.curI>=0) autoOpen[f.curI]="Now"; if(f.nextI>=0) autoOpen[f.nextI]="Next"; } }
   document.getElementById("dayhead").innerHTML = '<div><div class="date">'+d.date+' · '+esc(d.place)+'</div><h2>'+esc(d.title)+'</h2>'+
     '<p class="intro" id="intro">'+esc(d.intro)+'</p>'+
-    '<details class="more rain"><summary><span class="wide-only">If it rains</span><span class="phone-only">About the day and the rain plan</span></summary><div class="txt"><p class="phone-only">'+esc(d.intro)+'</p>'+
+    '<details class="more rain"><summary><span class="wide-only">If it rains</span><span class="phone-only">Notes · if it rains</span></summary><div class="txt"><p class="phone-only">'+esc(d.intro)+'</p>'+
     (d.rain||[]).map(function(r,ri){ return '<p>'+(ri===0?'<b>If it rains:</b> ':'')+esc(r)+'</p>'; }).join("")+'</div></details>'+
     '</div>'+postmark(d);
   var k = 0;
   d.stops.forEach(function(s){ s._n = (!s.off && s.ll) ? ++k : null; });
   var h = '<ol class="stops">', cb = document.getElementById("cmpBtn");
-  cb.textContent = compact ? "Show all details" : "Compact view";
+  cb.textContent = compact ? "Expand" : "Collapse";
   /* on the day itself, stops that are over fold away so the list starts at "now" */
   var pastN = 0; if(compact && d.iso===n.iso){ var fn=findNow(); if(fn && fn.curI>0) pastN = fn.curI; }
   if(pastN) h += '<li class="pastbar"><button type="button" data-past>'+(pastOpen?"Hide":"Show")+' '+pastN+' earlier '+(pastN===1?"stop":"stops")+'</button></li>';
@@ -1216,14 +1301,14 @@ function renderDay(){
     var part = legHtml(d,i) + stopHtml(d,s,i,autoOpen);
     h += i<pastN ? part.replace(/<li class="/g,'<li class="past ') : part;
   });
-  h += '</ol><p class="legend">'+(compact?"Tap a stop for the details. ":"")+'<span class="tag fixed">Fixed</span> times can\'t move. <span class="tag opt">Optional</span> stops go first if you are running late.</p>' + '<section class="pc" id="pcard" hidden></section>' + spareHtml(d);
+  h += '</ol>' + '<section class="pc" id="pcard" hidden></section>' + spareHtml(d);
   var list = document.getElementById("list"); list.innerHTML = h; list.classList.toggle("compact", compact); list.classList.toggle("hide-past", !!pastN && !pastOpen);
   var pts = d.stops.filter(function(s){ return s.ll && !s.off; });
   var row = document.getElementById("maprow");
   if(pts.length>1){
     var o = pts[0], de = pts[pts.length-1], w = pts.slice(1,-1).slice(0,8);
     var url = "https://www.google.com/maps/dir/?api=1&travelmode=walking&origin="+o.ll.join(",")+"&destination="+de.ll.join(",")+(w.length?"&waypoints="+w.map(function(s){return s.ll.join(",");}).join("%7C"):"");
-    row.innerHTML = '<a class="routebtn" href="'+url+'" target="_blank" rel="noopener">'+ICON_ROUTE+'Open the route in Google Maps</a>';
+    row.innerHTML = '<a class="dir" href="'+url+'" target="_blank" rel="noopener">Day route in Google Maps'+ICON_GO+'</a>';
   } else row.innerHTML = "";
   drawMapToggle();
   if(typeof refreshPostcard==="function") refreshPostcard(false);
@@ -1265,19 +1350,16 @@ function updateNow(){
     h = '<a class="now-strip" href="#money" data-goto="money"><b>Trip complete</b><span>settle up the expenses</span><i aria-hidden="true"></i></a>';
   } else {
     var f=findNow(), dd=DAYS[f.di], st=dd.stops;
-    h = '<div class="now-top"><span>'+esc(dd.tab)+' · '+hhmm(f.n.min)+' local time</span><span>Day '+(f.di+1)+' of '+DAYS.length+'</span></div>';
-    h += '<div class="now-rows">';
-    if(f.curI>=0) h += '<button type="button" class="now-row" data-d="'+f.di+'" data-i="'+f.curI+'"><small>Now · since '+esc(st[f.curI].t)+'</small><b>'+esc(st[f.curI].n)+'</b></button>';
+    if(f.curI>=0) h += '<button type="button" class="now-row now-cur" data-d="'+f.di+'" data-i="'+f.curI+'"><small>Now</small><b>'+esc(st[f.curI].n)+'</b></button>';
     if(f.nextI>=0){
-      var s=st[f.nextI], L=legLine(dd,f.nextI), wait=tmin(s.t)-f.n.min;
-      h += '<button type="button" class="now-row next" data-d="'+f.di+'" data-i="'+f.nextI+'"><small>Next · '+esc(s.t)+' · in '+dur(wait)+(kindOf(s)==="fixed"?" · fixed time":kindOf(s)==="opt"?" · optional":"")+'</small><b>'+esc(s.n)+'</b>'+
-        (L?'<span>'+L.icon+' '+esc(L.text)+(L.leave?' · leave by '+L.leave:'')+'</span>':'')+'</button>';
-      if(f.fixI>=0 && f.fixI!==f.nextI){ var fx=st[f.fixI]; h += '<button type="button" class="now-row fix" data-d="'+f.di+'" data-i="'+f.fixI+'"><small>Next fixed time · in '+dur(tmin(fx.t)-f.n.min)+'</small><b>'+esc(fx.t)+' '+esc(fx.n)+'</b></button>'; }
-      h += '</div>';
-      if(s.q) h += '<div class="now-act"><a class="routebtn" href="'+gq(s.q)+'" target="_blank" rel="noopener">'+ICON_ROUTE+'Directions to the next stop</a></div>';
+      var s=st[f.nextI], L=legLine(dd,f.nextI), wait=tmin(s.t)-f.n.min, lv = L && L.leave && tmin(L.leave)>=f.n.min ? L.leave : null;
+      h += '<div class="now-next"><button type="button" class="now-row next" data-d="'+f.di+'" data-i="'+f.nextI+'"><small>Next · '+esc(s.t)+' · in '+dur(wait)+'</small><b>'+esc(s.n)+'</b>'+
+        (lv?'<span class="lv">Leave by '+lv+'</span>':'')+'</button>'+
+        (s.q?'<a class="now-go" href="'+gq(s.q)+'" target="_blank" rel="noopener" aria-label="Directions to '+esc(s.n)+'">'+ICON_ROUTE+'</a>':'')+'</div>';
+      if(f.fixI>=0 && f.fixI!==f.nextI){ var fx=st[f.fixI]; h += '<button type="button" class="now-row now-fix" data-d="'+f.di+'" data-i="'+f.fixI+'"><small>Fixed</small><b>'+esc(fx.t)+' '+esc(fx.n)+'</b></button>'; }
     } else {
       var nd=DAYS[f.di+1];
-      h += '<div class="now-main"><small>Next</small><b>That\'s today done</b>'+(nd?'<span>Tomorrow starts at '+esc(nd.stops[0].t)+': '+esc(nd.stops[0].n)+'</span>':'')+'</div></div>';
+      h += '<div class="now-row now-cur"><small>Done</small><b>'+(nd?'Tomorrow '+esc(nd.stops[0].t)+' · '+esc(nd.stops[0].n):'That\'s the trip')+'</b></div>';
     }
   }
   el.innerHTML = h;
@@ -1297,7 +1379,7 @@ function mapShown(){ return !narrowMQ.matches || mapOpen; }
 function drawMapToggle(){
   var n = DAYS[cur].stops.filter(function(s){ return s.ll && !s.off; }).length;
   mapWrap.hidden = !mapShown();
-  mapToggle.textContent = (mapOpen?"Hide the map":"Show the map")+" · "+n+" stops";
+  mapToggle.textContent = mapOpen?"Hide map":"Map";
   mapToggle.setAttribute("aria-expanded", mapOpen);
 }
 function lockMap(on){ if(!coarse) return; mapEl.classList.toggle("locked",on); lockBtn.hidden=!on; doneBtn.hidden=on; }
@@ -1431,15 +1513,18 @@ svg.addEventListener("pointerup",up); svg.addEventListener("pointercancel",up);
 
 /* ---------- bookings ---------- */
 var cl = document.getElementById("checklist");
+document.getElementById("doneList").addEventListener("change", function(e){ var i=e.target; if(i.type!=="checkbox") return; S.ticks[i.id.slice(2)] = i.checked?1:0; save(); push("t:"+i.id.slice(2), S.ticks[i.id.slice(2)]); drawChecks(); updateNow(); });
 function drawChecks(){
-  cl.innerHTML = CHECK.map(function(c){
+  var row = function(c){
     var on = isDone(c[0]);
-    return '<div class="chk'+(on?" done":"")+'"><input type="checkbox" id="c-'+c[0]+'"'+(on?" checked":"")+'><label for="c-'+c[0]+'">'+esc(c[1])+(c[2]?'<small>'+esc(c[2])+'</small>':'')+'</label><span class="when">'+(on?"Done ✓":esc(c[3]))+'</span></div>';
-  }).join("");
-  var todo = CHECK.filter(function(c){ return !isDone(c[0]); });
-  document.getElementById("progress").textContent = (CHECK.length-todo.length)+" of "+CHECK.length+" done";
-  document.getElementById("bar").style.width = (100*(CHECK.length-todo.length)/CHECK.length)+"%";
-  document.getElementById("nextup").textContent = todo.length ? "Still to do: "+todo.map(function(c){ return c[1].split(",")[0]; }).join("; ")+"." : "Everything is booked.";
+    return '<div class="chk'+(on?" done":"")+'"><input type="checkbox" id="c-'+c[0]+'"'+(on?" checked":"")+'><label for="c-'+c[0]+'">'+esc(c[1])+(c[2]&&!on?'<small>'+esc(c[2])+'</small>':'')+'</label>'+(on?'':'<span class="when">'+esc(c[3])+'</span>')+'</div>';
+  };
+  var todo = CHECK.filter(function(c){ return !isDone(c[0]); }), done = CHECK.filter(function(c){ return isDone(c[0]); });
+  cl.innerHTML = todo.length ? todo.map(row).join("") : '<p class="empty">All booked.</p>';
+  document.getElementById("doneList").innerHTML = done.map(row).join("");
+  document.getElementById("doneSum").textContent = done.length+" booked";
+  document.querySelector(".donechk").hidden = !done.length;
+  document.getElementById("progress").textContent = todo.length ? todo.length+" left" : "";
 }
 cl.addEventListener("change", function(e){
   var i=e.target; if(i.type!=="checkbox") return;
@@ -1477,7 +1562,7 @@ function drawTix(){
       (t.ref?'<button type="button" class="btn ghost" data-copy="'+esc(t.id)+'">Copy</button>':'')+
       (t.url?'<a class="btn ghost" href="'+esc(t.url)+'" target="_blank" rel="noopener">Open</a>':'')+
       '<button type="button" class="btn ghost del" data-del="'+esc(t.id)+'">Remove</button></div></div>';
-  }).join("") : '<p class="empty">Nothing saved yet. Add the sleeper, the hotels and anything with a code.</p>';
+  }).join("") : '<p class="empty">None yet.</p>';
 }
 document.getElementById("tixNames").innerHTML = CHECK.map(function(c){ return '<option value="'+esc(c[1].split(",")[0])+'">'; }).join("");
 document.getElementById("tixForm").addEventListener("submit", function(e){
@@ -1501,7 +1586,7 @@ function shareLink(){ return location.origin+location.pathname+"#sync="+b64e(JSO
 document.getElementById("shareBtn").addEventListener("click", function(){
   var url=shareLink(), msg=document.getElementById("shareMsg");
   if(navigator.share){ navigator.share({title:TRIP.name, text:"Trip plan: my ticks, picks and tickets", url:url}).catch(function(){}); return; }
-  (navigator.clipboard?navigator.clipboard.writeText(url):Promise.reject()).then(function(){ msg.textContent="Link copied. Send it to the other phone in a private message."; },function(){ msg.textContent=url; });
+  (navigator.clipboard?navigator.clipboard.writeText(url):Promise.reject()).then(function(){ msg.textContent="Link copied."; },function(){ msg.textContent=url; });
 });
 function applySync(str){
   var o=null; try{ o=JSON.parse(b64d(str)); }catch(e){}
@@ -1750,16 +1835,15 @@ function drawPostcard(){
   el.hidden=false;
   var list=P.cache[d.iso]||[], sel=pcPick(list), names=M.names||TRIP.people;
   var h='<div class="pc-head"><h3>Postcard of the day</h3>'+(list.length?'<span>'+list.length+' photo'+(list.length===1?'':'s')+'</span>':'')+'</div>';
-  if(!M.code){ el.innerHTML=h+'<p class="sub">Open Expenses and enter the trip code once: photos are shared through it, so the page stays private.</p>'; return; }
+  if(!M.code){ el.innerHTML=""; el.hidden=true; return; }
   if(list.length){
     h+='<div class="pc-card">'+pcGrid(sel)+'<div class="pc-foot"><div><b>'+esc(d.title)+'</b><span>'+esc(d.date)+' · '+esc(names.join(" & "))+'</span></div>'+postmark(d).replace('class="postmark thump"','class="postmark pc-pm"')+'</div></div>';
     if(list.length>sel.length || list.length>1) h+='<div class="pc-strip">'+list.map(function(p){ return '<button type="button" data-ph="'+p.id+'" class="'+(p.star?"star":"")+(sel.indexOf(p)>=0?"":" out")+'"><img src="'+p.thumb+'" alt="" loading="lazy">'+(p.star?'<i>★</i>':'')+'</button>'; }).join("")+'</div>';
   } else {
-    h+='<p class="sub">'+(d.iso===n.iso?'Add your photos from today as you go; ':'Add your photos from this day; ')+'both phones add to the same postcard, and each photo lands on the stop it was taken at.</p>';
   }
   if(P.ask) h+='<div class="pc-ask"><span>Who\'s adding photos on this phone?</span><div class="pick"><button type="button" data-me="0">'+esc(names[0])+'</button><button type="button" data-me="1">'+esc(names[1])+'</button></div></div>';
   h+='<div class="pc-act"><button type="button" class="btn" data-addph'+(P.busy?' disabled':'')+'>'+(P.busy?esc(P.busy):'Add photos')+'</button>'+(list.length?'<button type="button" class="chipbtn" data-savepc>Save postcard</button>':'')+'</div>'+
-    (P.err?'<p class="err">'+esc(P.err)+'</p>':'')+(list.length>1?'<p class="sub pc-hint">Tap a photo to make it the big one or remove it.</p>':'');
+    (P.err?'<p class="err">'+esc(P.err)+'</p>':'');
   el.innerHTML=h;
 }
 function refreshPostcard(force){ var iso=DAYS[cur].iso; if(iso>nowTrip().iso) { drawPostcard(); return; } loadPhotos(iso,force).then(drawPostcard); drawPostcard(); }
@@ -1906,13 +1990,12 @@ function syncErr(e){
 }
 function drawSync(){
   var on = syncOn(), n = Object.keys(S.pending||{}).length, t;
-  if(!on) t = SYNC.err==="code" ? 'The trip code didn\'t work. <a href="#money" data-goto="money">Enter it again</a> to share with the other phone.'
-                                 : 'Only on this phone. <a href="#money" data-goto="money">Enter the trip code</a> to share ticks, picks and tickets with the other phone.';
-  else if(SYNC.err==="offline") t = "No connection. "+(n?n+(n===1?" change":" changes")+" will be shared when you're back online.":"Showing the last shared copy.");
-  else if(n) t = "Sharing "+n+(n===1?" change":" changes")+"…";
-  else t = "Shared with the other phone"+(SYNC.last?" · updated "+SYNC.last.toLocaleTimeString("en-GB",{hour:"2-digit",minute:"2-digit"}):"")+".";
+  if(!on) t = SYNC.err==="code" ? 'Wrong trip code. <a href="#money" data-goto="money">Re-enter</a>'
+                                 : 'This phone only. <a href="#money" data-goto="money">Add trip code</a>';
+  else if(SYNC.err==="offline") t = "Offline"+(n?" · "+n+" to sync":"");
+  else if(n) t = "Syncing…";
+  else t = "Synced"+(SYNC.last?" "+SYNC.last.toLocaleTimeString("en-GB",{hour:"2-digit",minute:"2-digit"}):"");
   document.querySelectorAll(".syncline").forEach(function(el){ el.innerHTML = t; el.classList.toggle("on", on && !SYNC.err); });
-  document.getElementById("tixPrivacy").textContent = on ? "Shared between both phones through the trip code. They never appear on the public page." : "Saved on this phone. They never appear on the public page.";
   document.getElementById("shareBox").hidden = on;
 }
 document.addEventListener("click", function(e){ var a = e.target.closest(".syncline [data-goto]"); if(a){ e.preventDefault(); go(a.dataset.goto); window.scrollTo(0,0); } });
@@ -1968,7 +2051,7 @@ pull();
 
 /* ---------- works without signal once it has been opened ---------- */
 if("serviceWorker" in navigator && (location.protocol==="https:" || location.hostname==="localhost")){
-  navigator.serviceWorker.register("sw.js").then(function(){ var o=document.getElementById("offline"); if(o) o.textContent="Saved on this phone: the plan opens without signal."; }).catch(function(){});
+  navigator.serviceWorker.register("sw.js").then(function(){ var o=document.getElementById("offline"); if(o) o.textContent="Works offline."; }).catch(function(){});
 }
 
 })();

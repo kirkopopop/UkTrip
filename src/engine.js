@@ -51,7 +51,7 @@ DAYS.forEach(function(d,i){
   var b = document.createElement("button");
   var num = d.date.match(/\d+/)[0], wd = d.tab.split(" ")[0];
   b.type="button"; b.className="stamp"; b.setAttribute("role","tab"); b.id="tab-"+d.id;
-  b.innerHTML = '<span class="stamp-in"><b>'+num+'</b><em>'+wd+' · Nov</em><span>'+esc(d.place)+'</span></span>';
+  b.innerHTML = '<b>'+esc(d.tab)+'</b><span>'+esc(d.city.charAt(0).toUpperCase()+d.city.slice(1))+'</span>';
   b.addEventListener("click", function(){ go(d.id); });
   tabs.appendChild(b);
 });
@@ -128,14 +128,11 @@ function pinHtml(s,i){
 /* Compact view: one calm row per stop. Everything else lives in the detail sheet. */
 function rowHtml(d,s,i,mark){
   var k=kindOf(s), bits=[], pi = s.pick ? S.picks[s.pick] : null;
-  if(mark[i]) bits.push('<span class="s-now">'+mark[i]+'</span>');
-  if(k==="fixed") bits.push('<span class="s-fix">Fixed</span>');
-  if(k==="opt") bits.push('Optional');
   if(s.pick) bits.push((pi!=null && s.subs[pi]) ? esc(shortName(s.subs[pi][0])) : '<span class="s-do">Pick one</span>');
-  if(stopBooked(s)) bits.push('<span class="s-ok">Booked ✓</span>');
-  else if(s.chk||s.book) bits.push('<span class="s-do">To book</span>');
+  if(!stopBooked(s) && (s.chk||s.book)) bits.push('<span class="s-do">To book</span>');
+  var ok = stopBooked(s) ? '<span class="ok" title="Booked" aria-label="Booked">✓</span>' : '';
   return '<li class="stop row k-'+k+(s.who?" solo":"")+(mark[i]?" is-"+mark[i].toLowerCase():"")+'" id="s-'+i+'"><span class="t">'+esc(s.t)+'</span>'+pinHtml(s,i)+
-    '<div class="what"><button type="button" class="hd" data-open="'+i+'" aria-haspopup="dialog"><span class="hd-tx"><strong>'+esc(s.n)+'</strong>'+
+    '<div class="what"><button type="button" class="hd" data-open="'+i+'" aria-haspopup="dialog"><span class="hd-tx"><strong>'+esc(s.n)+ok+'</strong>'+
     (bits.length?'<span class="sl">'+bits.join(" · ")+'</span>':'')+'</span><i class="chev" aria-hidden="true"></i></button></div></li>';
 }
 function stopHtml(d,s,i,mark){
@@ -213,11 +210,11 @@ function spareHtml(d){
     .map(function(x){ return {x:x, km:(ref&&x[6])?distKm(ref.ll,x[6]):null}; })
     .sort(function(a,b){ return (a.km==null?1e9:a.km)-(b.km==null?1e9:b.km); });
   var body = 
-    '<p class="sub">Nearest first'+(ref&&ref.name?', measured from '+esc(ref.name):ref?", measured from today's stops":"")+'.</p>'+
-    '<div class="pick"><button type="button" data-sf="indoor" aria-pressed="'+spareF.indoor+'">Indoors only</button><button type="button" data-sf="quick" aria-pressed="'+spareF.quick+'">An hour or less</button></div>'+
+    
+    '<div class="pick"><button type="button" data-sf="indoor" aria-pressed="'+spareF.indoor+'">Indoors</button><button type="button" data-sf="quick" aria-pressed="'+spareF.quick+'">≤ 1 h</button></div>'+
     (items.length?'<ul class="sparelist">'+items.map(function(o){ return spareItem(o.x,o.km); }).join("")+'</ul>':'<p class="empty">Nothing matches those filters.</p>');
-  return compact ? '<details class="spare"'+(spareOpen?" open":"")+'><summary><h3>Spare time or a change of plan</h3></summary>'+body+'</details>'
-                 : '<section class="spare"><h3>Spare time or a change of plan</h3>'+body+'</section>';
+  return compact ? '<details class="spare"'+(spareOpen?" open":"")+'><summary><h3>Spare time ideas</h3></summary>'+body+'</details>'
+                 : '<section class="spare"><h3>Spare time ideas</h3>'+body+'</section>';
 }
 
 /* ---------- the day ---------- */
@@ -226,13 +223,13 @@ function renderDay(){
   if(d.iso===n.iso){ var f=findNow(); if(f){ if(f.curI>=0) autoOpen[f.curI]="Now"; if(f.nextI>=0) autoOpen[f.nextI]="Next"; } }
   document.getElementById("dayhead").innerHTML = '<div><div class="date">'+d.date+' · '+esc(d.place)+'</div><h2>'+esc(d.title)+'</h2>'+
     '<p class="intro" id="intro">'+esc(d.intro)+'</p>'+
-    '<details class="more rain"><summary><span class="wide-only">If it rains</span><span class="phone-only">About the day and the rain plan</span></summary><div class="txt"><p class="phone-only">'+esc(d.intro)+'</p>'+
+    '<details class="more rain"><summary><span class="wide-only">If it rains</span><span class="phone-only">Notes · if it rains</span></summary><div class="txt"><p class="phone-only">'+esc(d.intro)+'</p>'+
     (d.rain||[]).map(function(r,ri){ return '<p>'+(ri===0?'<b>If it rains:</b> ':'')+esc(r)+'</p>'; }).join("")+'</div></details>'+
     '</div>'+postmark(d);
   var k = 0;
   d.stops.forEach(function(s){ s._n = (!s.off && s.ll) ? ++k : null; });
   var h = '<ol class="stops">', cb = document.getElementById("cmpBtn");
-  cb.textContent = compact ? "Show all details" : "Compact view";
+  cb.textContent = compact ? "Expand" : "Collapse";
   /* on the day itself, stops that are over fold away so the list starts at "now" */
   var pastN = 0; if(compact && d.iso===n.iso){ var fn=findNow(); if(fn && fn.curI>0) pastN = fn.curI; }
   if(pastN) h += '<li class="pastbar"><button type="button" data-past>'+(pastOpen?"Hide":"Show")+' '+pastN+' earlier '+(pastN===1?"stop":"stops")+'</button></li>';
@@ -240,14 +237,14 @@ function renderDay(){
     var part = legHtml(d,i) + stopHtml(d,s,i,autoOpen);
     h += i<pastN ? part.replace(/<li class="/g,'<li class="past ') : part;
   });
-  h += '</ol><p class="legend">'+(compact?"Tap a stop for the details. ":"")+'<span class="tag fixed">Fixed</span> times can\'t move. <span class="tag opt">Optional</span> stops go first if you are running late.</p>' + '<section class="pc" id="pcard" hidden></section>' + spareHtml(d);
+  h += '</ol>' + '<section class="pc" id="pcard" hidden></section>' + spareHtml(d);
   var list = document.getElementById("list"); list.innerHTML = h; list.classList.toggle("compact", compact); list.classList.toggle("hide-past", !!pastN && !pastOpen);
   var pts = d.stops.filter(function(s){ return s.ll && !s.off; });
   var row = document.getElementById("maprow");
   if(pts.length>1){
     var o = pts[0], de = pts[pts.length-1], w = pts.slice(1,-1).slice(0,8);
     var url = "https://www.google.com/maps/dir/?api=1&travelmode=walking&origin="+o.ll.join(",")+"&destination="+de.ll.join(",")+(w.length?"&waypoints="+w.map(function(s){return s.ll.join(",");}).join("%7C"):"");
-    row.innerHTML = '<a class="routebtn" href="'+url+'" target="_blank" rel="noopener">'+ICON_ROUTE+'Open the route in Google Maps</a>';
+    row.innerHTML = '<a class="dir" href="'+url+'" target="_blank" rel="noopener">Day route in Google Maps'+ICON_GO+'</a>';
   } else row.innerHTML = "";
   drawMapToggle();
   if(typeof refreshPostcard==="function") refreshPostcard(false);
@@ -289,19 +286,16 @@ function updateNow(){
     h = '<a class="now-strip" href="#money" data-goto="money"><b>Trip complete</b><span>settle up the expenses</span><i aria-hidden="true"></i></a>';
   } else {
     var f=findNow(), dd=DAYS[f.di], st=dd.stops;
-    h = '<div class="now-top"><span>'+esc(dd.tab)+' · '+hhmm(f.n.min)+' local time</span><span>Day '+(f.di+1)+' of '+DAYS.length+'</span></div>';
-    h += '<div class="now-rows">';
-    if(f.curI>=0) h += '<button type="button" class="now-row" data-d="'+f.di+'" data-i="'+f.curI+'"><small>Now · since '+esc(st[f.curI].t)+'</small><b>'+esc(st[f.curI].n)+'</b></button>';
+    if(f.curI>=0) h += '<button type="button" class="now-row now-cur" data-d="'+f.di+'" data-i="'+f.curI+'"><small>Now</small><b>'+esc(st[f.curI].n)+'</b></button>';
     if(f.nextI>=0){
-      var s=st[f.nextI], L=legLine(dd,f.nextI), wait=tmin(s.t)-f.n.min;
-      h += '<button type="button" class="now-row next" data-d="'+f.di+'" data-i="'+f.nextI+'"><small>Next · '+esc(s.t)+' · in '+dur(wait)+(kindOf(s)==="fixed"?" · fixed time":kindOf(s)==="opt"?" · optional":"")+'</small><b>'+esc(s.n)+'</b>'+
-        (L?'<span>'+L.icon+' '+esc(L.text)+(L.leave?' · leave by '+L.leave:'')+'</span>':'')+'</button>';
-      if(f.fixI>=0 && f.fixI!==f.nextI){ var fx=st[f.fixI]; h += '<button type="button" class="now-row fix" data-d="'+f.di+'" data-i="'+f.fixI+'"><small>Next fixed time · in '+dur(tmin(fx.t)-f.n.min)+'</small><b>'+esc(fx.t)+' '+esc(fx.n)+'</b></button>'; }
-      h += '</div>';
-      if(s.q) h += '<div class="now-act"><a class="routebtn" href="'+gq(s.q)+'" target="_blank" rel="noopener">'+ICON_ROUTE+'Directions to the next stop</a></div>';
+      var s=st[f.nextI], L=legLine(dd,f.nextI), wait=tmin(s.t)-f.n.min, lv = L && L.leave && tmin(L.leave)>=f.n.min ? L.leave : null;
+      h += '<div class="now-next"><button type="button" class="now-row next" data-d="'+f.di+'" data-i="'+f.nextI+'"><small>Next · '+esc(s.t)+' · in '+dur(wait)+'</small><b>'+esc(s.n)+'</b>'+
+        (lv?'<span class="lv">Leave by '+lv+'</span>':'')+'</button>'+
+        (s.q?'<a class="now-go" href="'+gq(s.q)+'" target="_blank" rel="noopener" aria-label="Directions to '+esc(s.n)+'">'+ICON_ROUTE+'</a>':'')+'</div>';
+      if(f.fixI>=0 && f.fixI!==f.nextI){ var fx=st[f.fixI]; h += '<button type="button" class="now-row now-fix" data-d="'+f.di+'" data-i="'+f.fixI+'"><small>Fixed</small><b>'+esc(fx.t)+' '+esc(fx.n)+'</b></button>'; }
     } else {
       var nd=DAYS[f.di+1];
-      h += '<div class="now-main"><small>Next</small><b>That\'s today done</b>'+(nd?'<span>Tomorrow starts at '+esc(nd.stops[0].t)+': '+esc(nd.stops[0].n)+'</span>':'')+'</div></div>';
+      h += '<div class="now-row now-cur"><small>Done</small><b>'+(nd?'Tomorrow '+esc(nd.stops[0].t)+' · '+esc(nd.stops[0].n):'That\'s the trip')+'</b></div>';
     }
   }
   el.innerHTML = h;
@@ -321,7 +315,7 @@ function mapShown(){ return !narrowMQ.matches || mapOpen; }
 function drawMapToggle(){
   var n = DAYS[cur].stops.filter(function(s){ return s.ll && !s.off; }).length;
   mapWrap.hidden = !mapShown();
-  mapToggle.textContent = (mapOpen?"Hide the map":"Show the map")+" · "+n+" stops";
+  mapToggle.textContent = mapOpen?"Hide map":"Map";
   mapToggle.setAttribute("aria-expanded", mapOpen);
 }
 function lockMap(on){ if(!coarse) return; mapEl.classList.toggle("locked",on); lockBtn.hidden=!on; doneBtn.hidden=on; }
@@ -455,15 +449,18 @@ svg.addEventListener("pointerup",up); svg.addEventListener("pointercancel",up);
 
 /* ---------- bookings ---------- */
 var cl = document.getElementById("checklist");
+document.getElementById("doneList").addEventListener("change", function(e){ var i=e.target; if(i.type!=="checkbox") return; S.ticks[i.id.slice(2)] = i.checked?1:0; save(); push("t:"+i.id.slice(2), S.ticks[i.id.slice(2)]); drawChecks(); updateNow(); });
 function drawChecks(){
-  cl.innerHTML = CHECK.map(function(c){
+  var row = function(c){
     var on = isDone(c[0]);
-    return '<div class="chk'+(on?" done":"")+'"><input type="checkbox" id="c-'+c[0]+'"'+(on?" checked":"")+'><label for="c-'+c[0]+'">'+esc(c[1])+(c[2]?'<small>'+esc(c[2])+'</small>':'')+'</label><span class="when">'+(on?"Done ✓":esc(c[3]))+'</span></div>';
-  }).join("");
-  var todo = CHECK.filter(function(c){ return !isDone(c[0]); });
-  document.getElementById("progress").textContent = (CHECK.length-todo.length)+" of "+CHECK.length+" done";
-  document.getElementById("bar").style.width = (100*(CHECK.length-todo.length)/CHECK.length)+"%";
-  document.getElementById("nextup").textContent = todo.length ? "Still to do: "+todo.map(function(c){ return c[1].split(",")[0]; }).join("; ")+"." : "Everything is booked.";
+    return '<div class="chk'+(on?" done":"")+'"><input type="checkbox" id="c-'+c[0]+'"'+(on?" checked":"")+'><label for="c-'+c[0]+'">'+esc(c[1])+(c[2]&&!on?'<small>'+esc(c[2])+'</small>':'')+'</label>'+(on?'':'<span class="when">'+esc(c[3])+'</span>')+'</div>';
+  };
+  var todo = CHECK.filter(function(c){ return !isDone(c[0]); }), done = CHECK.filter(function(c){ return isDone(c[0]); });
+  cl.innerHTML = todo.length ? todo.map(row).join("") : '<p class="empty">All booked.</p>';
+  document.getElementById("doneList").innerHTML = done.map(row).join("");
+  document.getElementById("doneSum").textContent = done.length+" booked";
+  document.querySelector(".donechk").hidden = !done.length;
+  document.getElementById("progress").textContent = todo.length ? todo.length+" left" : "";
 }
 cl.addEventListener("change", function(e){
   var i=e.target; if(i.type!=="checkbox") return;
@@ -501,7 +498,7 @@ function drawTix(){
       (t.ref?'<button type="button" class="btn ghost" data-copy="'+esc(t.id)+'">Copy</button>':'')+
       (t.url?'<a class="btn ghost" href="'+esc(t.url)+'" target="_blank" rel="noopener">Open</a>':'')+
       '<button type="button" class="btn ghost del" data-del="'+esc(t.id)+'">Remove</button></div></div>';
-  }).join("") : '<p class="empty">Nothing saved yet. Add the sleeper, the hotels and anything with a code.</p>';
+  }).join("") : '<p class="empty">None yet.</p>';
 }
 document.getElementById("tixNames").innerHTML = CHECK.map(function(c){ return '<option value="'+esc(c[1].split(",")[0])+'">'; }).join("");
 document.getElementById("tixForm").addEventListener("submit", function(e){
@@ -525,7 +522,7 @@ function shareLink(){ return location.origin+location.pathname+"#sync="+b64e(JSO
 document.getElementById("shareBtn").addEventListener("click", function(){
   var url=shareLink(), msg=document.getElementById("shareMsg");
   if(navigator.share){ navigator.share({title:TRIP.name, text:"Trip plan: my ticks, picks and tickets", url:url}).catch(function(){}); return; }
-  (navigator.clipboard?navigator.clipboard.writeText(url):Promise.reject()).then(function(){ msg.textContent="Link copied. Send it to the other phone in a private message."; },function(){ msg.textContent=url; });
+  (navigator.clipboard?navigator.clipboard.writeText(url):Promise.reject()).then(function(){ msg.textContent="Link copied."; },function(){ msg.textContent=url; });
 });
 function applySync(str){
   var o=null; try{ o=JSON.parse(b64d(str)); }catch(e){}
@@ -774,16 +771,15 @@ function drawPostcard(){
   el.hidden=false;
   var list=P.cache[d.iso]||[], sel=pcPick(list), names=M.names||TRIP.people;
   var h='<div class="pc-head"><h3>Postcard of the day</h3>'+(list.length?'<span>'+list.length+' photo'+(list.length===1?'':'s')+'</span>':'')+'</div>';
-  if(!M.code){ el.innerHTML=h+'<p class="sub">Open Expenses and enter the trip code once: photos are shared through it, so the page stays private.</p>'; return; }
+  if(!M.code){ el.innerHTML=""; el.hidden=true; return; }
   if(list.length){
     h+='<div class="pc-card">'+pcGrid(sel)+'<div class="pc-foot"><div><b>'+esc(d.title)+'</b><span>'+esc(d.date)+' · '+esc(names.join(" & "))+'</span></div>'+postmark(d).replace('class="postmark thump"','class="postmark pc-pm"')+'</div></div>';
     if(list.length>sel.length || list.length>1) h+='<div class="pc-strip">'+list.map(function(p){ return '<button type="button" data-ph="'+p.id+'" class="'+(p.star?"star":"")+(sel.indexOf(p)>=0?"":" out")+'"><img src="'+p.thumb+'" alt="" loading="lazy">'+(p.star?'<i>★</i>':'')+'</button>'; }).join("")+'</div>';
   } else {
-    h+='<p class="sub">'+(d.iso===n.iso?'Add your photos from today as you go; ':'Add your photos from this day; ')+'both phones add to the same postcard, and each photo lands on the stop it was taken at.</p>';
   }
   if(P.ask) h+='<div class="pc-ask"><span>Who\'s adding photos on this phone?</span><div class="pick"><button type="button" data-me="0">'+esc(names[0])+'</button><button type="button" data-me="1">'+esc(names[1])+'</button></div></div>';
   h+='<div class="pc-act"><button type="button" class="btn" data-addph'+(P.busy?' disabled':'')+'>'+(P.busy?esc(P.busy):'Add photos')+'</button>'+(list.length?'<button type="button" class="chipbtn" data-savepc>Save postcard</button>':'')+'</div>'+
-    (P.err?'<p class="err">'+esc(P.err)+'</p>':'')+(list.length>1?'<p class="sub pc-hint">Tap a photo to make it the big one or remove it.</p>':'');
+    (P.err?'<p class="err">'+esc(P.err)+'</p>':'');
   el.innerHTML=h;
 }
 function refreshPostcard(force){ var iso=DAYS[cur].iso; if(iso>nowTrip().iso) { drawPostcard(); return; } loadPhotos(iso,force).then(drawPostcard); drawPostcard(); }
@@ -930,13 +926,12 @@ function syncErr(e){
 }
 function drawSync(){
   var on = syncOn(), n = Object.keys(S.pending||{}).length, t;
-  if(!on) t = SYNC.err==="code" ? 'The trip code didn\'t work. <a href="#money" data-goto="money">Enter it again</a> to share with the other phone.'
-                                 : 'Only on this phone. <a href="#money" data-goto="money">Enter the trip code</a> to share ticks, picks and tickets with the other phone.';
-  else if(SYNC.err==="offline") t = "No connection. "+(n?n+(n===1?" change":" changes")+" will be shared when you're back online.":"Showing the last shared copy.");
-  else if(n) t = "Sharing "+n+(n===1?" change":" changes")+"…";
-  else t = "Shared with the other phone"+(SYNC.last?" · updated "+SYNC.last.toLocaleTimeString("en-GB",{hour:"2-digit",minute:"2-digit"}):"")+".";
+  if(!on) t = SYNC.err==="code" ? 'Wrong trip code. <a href="#money" data-goto="money">Re-enter</a>'
+                                 : 'This phone only. <a href="#money" data-goto="money">Add trip code</a>';
+  else if(SYNC.err==="offline") t = "Offline"+(n?" · "+n+" to sync":"");
+  else if(n) t = "Syncing…";
+  else t = "Synced"+(SYNC.last?" "+SYNC.last.toLocaleTimeString("en-GB",{hour:"2-digit",minute:"2-digit"}):"");
   document.querySelectorAll(".syncline").forEach(function(el){ el.innerHTML = t; el.classList.toggle("on", on && !SYNC.err); });
-  document.getElementById("tixPrivacy").textContent = on ? "Shared between both phones through the trip code. They never appear on the public page." : "Saved on this phone. They never appear on the public page.";
   document.getElementById("shareBox").hidden = on;
 }
 document.addEventListener("click", function(e){ var a = e.target.closest(".syncline [data-goto]"); if(a){ e.preventDefault(); go(a.dataset.goto); window.scrollTo(0,0); } });
@@ -992,5 +987,5 @@ pull();
 
 /* ---------- works without signal once it has been opened ---------- */
 if("serviceWorker" in navigator && (location.protocol==="https:" || location.hostname==="localhost")){
-  navigator.serviceWorker.register("sw.js").then(function(){ var o=document.getElementById("offline"); if(o) o.textContent="Saved on this phone: the plan opens without signal."; }).catch(function(){});
+  navigator.serviceWorker.register("sw.js").then(function(){ var o=document.getElementById("offline"); if(o) o.textContent="Works offline."; }).catch(function(){});
 }

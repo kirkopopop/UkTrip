@@ -11,7 +11,7 @@ Live: https://kirkopopop.github.io/UkTrip/
 | File | What it is | Changes per trip? |
 |---|---|---|
 | `src/trip-data.js` | The trip: days, stops, bookings, spare-time ideas, budget | Yes, all of it |
-| `src/page.html` | Page shell plus the "Before you go" text (getting around, apps, prices, good to know, sources) | Title and the text sections |
+| `src/page.html` | Page shell plus the Info tab text (collapsed sections: getting around, apps, prices, good to know, sources) | Title and the text sections |
 | `src/map-base.js` | Street geometry for each city, drawn as an offline SVG map | Yes, one block per city |
 | `src/style.css` | Look and layout | Colours only, if you want a new theme |
 | `src/engine.js` | All behaviour | No |
@@ -92,3 +92,10 @@ destination), `utcOffsetMin` (its offset from UTC on the trip dates), `people`.
    in kilometres from the city centre in `CENTERS`, multiplied by 100, y pointing south.
 4. Update names and colours in `manifest.webmanifest`, the `<title>` and the theme colour.
 5. `python3 build.py`, open `index.html`, check each day at phone width, then push.
+
+## Design rules (v12, minimal)
+
+- Neutral chrome; red only for fixed times, leave-by and things still to book.
+- A stop row is time, name and at most one status (✓ booked, To book, Pick one). Fixed = red time, optional = grey name.
+- Info tab: only what still needs action is open; everything else is a collapsed section with a one-line summary.
+- No instruction copy on screen. If a control needs explaining, rename the control.

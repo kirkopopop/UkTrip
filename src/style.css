@@ -563,3 +563,123 @@ details.spare[open] > summary::after{transform:rotate(-135deg)}
 .pv .chipbtn{background:rgba(255,255,255,.12);color:#fff;border-color:rgba(255,255,255,.25)}
 .pv .chipbtn:disabled{opacity:.35}
 .pv .del-ph.armed{background:var(--red);border-color:var(--red)}
+
+/* ================= v12: minimal. Neutral chrome, one accent, detail behind a tap ================= */
+/* masthead: quiet, no stripes */
+.mast{background:var(--paper);color:var(--ink);border-bottom:1px solid var(--line)}
+.mast h1{font-stretch:85%;font-size:clamp(20px,2.4vw,28px);text-transform:none;letter-spacing:0;line-height:1.1}
+.mast h1 span{font-size:14px;color:var(--muted);opacity:1;margin-top:4px}
+.count{color:var(--muted)}
+.nowcard::after,.bal::after{display:none}
+/* view switch: neutral segmented control */
+.seg{background:var(--soft)}
+.seg button,:root .seg button{color:var(--muted);opacity:1}
+.seg button[aria-pressed="true"],:root[data-theme="dark"] .seg button[aria-pressed="true"]{background:var(--surface);color:var(--ink);box-shadow:0 1px 2px rgba(10,20,40,.12)}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]) .seg button[aria-pressed="true"]{color:var(--ink)} }
+.seg button:focus-visible{outline-color:var(--red)}
+
+/* day tabs: plain segmented, all four visible */
+.stamps{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:4px;background:var(--soft);border-radius:12px;padding:4px}
+.stamp,.stamp:hover{--perf:none;-webkit-mask:none;mask:none;transform:none;background:transparent;color:var(--muted);border:0;border-radius:9px;padding:7px 4px;display:flex;flex-direction:column;align-items:center;gap:1px;cursor:pointer;font:inherit;flex:none;min-width:0}
+.stamp b{font-weight:700;font-stretch:90%;font-size:15px;line-height:1.1;letter-spacing:0;grid-row:auto}
+.stamp span{font-size:11.5px;font-weight:500;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+.stamp[aria-selected="true"]{background:var(--surface);color:var(--ink);box-shadow:0 1px 2px rgba(10,20,40,.12)}
+.stamp[aria-selected="true"] span{color:var(--muted)}
+.stamp:focus-visible{outline:2.5px solid var(--red);outline-offset:1px}
+
+/* now card: light, three short lines */
+.nowcard{background:var(--surface);color:var(--ink);padding:6px 6px 6px 14px;gap:0;border:1px solid var(--line);box-shadow:none}
+.nowcard .now-row{background:none;border-radius:8px;padding:7px 0;flex-direction:row;align-items:baseline;gap:10px}
+.nowcard small{flex:none;width:42px;font-size:11px;letter-spacing:.06em;opacity:1;color:var(--muted)}
+.nowcard b{font-size:15px;font-weight:600;font-stretch:100%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+.nowcard span{opacity:1}
+.now-cur b,.now-fix b{color:var(--muted);font-weight:500}
+.now-next{display:flex;align-items:center;gap:8px;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.now-next .now-row.next{flex-direction:column;align-items:flex-start;gap:1px;padding:9px 0;min-width:0;flex:1}
+.now-next .now-row.next small{width:auto;color:var(--red-ink)}
+.now-row.next b,.nowcard .now-row.next b{font-size:18px;font-weight:700;font-stretch:90%;max-width:100%}
+.now-next .lv{font-size:13px;color:var(--red-ink);font-weight:600}
+.now-cur:only-child,.now-next:last-child{border-bottom:0}
+.now-cur + .now-next:last-child{border-bottom:0}
+.now-go{flex:none;width:44px;height:44px;border-radius:50%;display:grid;place-items:center;color:var(--blue);background:var(--blue-soft)}
+.now-go svg{width:20px;height:20px}
+.nowcard.slim{border:1px solid var(--line);padding:0}
+@media (max-width:620px){
+  .nowcard{padding:4px 4px 4px 12px;gap:0}
+  .now-row:not(.next){padding:6px 0}
+  .now-row:not(.next) b{font-size:14.5px;font-weight:500}
+  .nowcard b{font-size:14.5px}
+  .now-row.next b,.nowcard .now-row.next b{font-size:17px}
+}
+@media (min-width:961px){ .nowcard{flex-direction:column} }
+
+/* day head + tools: text buttons, no pills */
+.daytools{justify-content:flex-start;gap:4px 16px}
+.daytools .chipbtn,.daytools .chipbtn:hover{background:none;box-shadow:none;color:var(--blue);padding:6px 0;min-height:36px;font-size:14px}
+details.rain summary{font-size:14px}
+#maprow .dir{font-size:14px}
+
+/* stops: no badges, quieter pins, now row marked by a bar */
+.pin{width:22px;height:22px;border:0;background:var(--soft);color:var(--muted);font-size:11.5px;font-weight:700}
+.stop.solo .pin{background:var(--blue-soft);color:var(--blue)}
+.stop.k-opt .pin:not(.off){background:transparent;color:var(--muted);border:1.5px dashed var(--line)}
+.stop.k-opt.solo .pin:not(.off){color:var(--blue);border-color:var(--blue)}
+.stop .pin.off.tr{background:transparent;font-size:15px}
+.ok{color:var(--free);font-weight:700;margin-left:6px;font-size:14px}
+.compact .stop.is-now,.compact .stop.is-next{background:none;box-shadow:none}
+.compact .stop.is-now::before,.compact .stop.is-next::before{content:"";position:absolute;left:-10px;top:10px;bottom:10px;width:3px;border-radius:2px;background:var(--red)}
+.compact .stop.is-next::before{background:var(--line)}
+.compact .legtx{opacity:.75}
+
+/* bottom bar on phones: flat, neutral */
+@media (max-width:620px){
+  .mast h1{font-size:17px}
+  .seg{left:0;right:0;bottom:0;border-radius:0;padding:4px 8px calc(4px + env(safe-area-inset-bottom,0px));background:color-mix(in srgb,var(--surface) 92%,transparent);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);border-top:1px solid var(--line);box-shadow:none;gap:4px}
+  .seg button{padding:12px 6px;font-size:14px;border-radius:10px}
+  .seg button[aria-pressed="true"]{background:var(--soft);box-shadow:none;color:var(--ink);font-weight:700}
+  .wrap{padding-bottom:calc(80px + env(safe-area-inset-bottom,0px))}
+  .toast{bottom:calc(72px + env(safe-area-inset-bottom,0px))}
+  .stamps{margin:0;padding:4px;top:6px}
+  .stamp{flex:none;padding:6px 2px}
+}
+
+/* spare + postcard: plain cards */
+.spare{box-shadow:none;border:1px solid var(--line);margin-top:16px}
+.spare h3{font-size:16px;font-weight:700;font-stretch:100%}
+.pc{border:1px solid var(--line)}
+
+/* info tab: everything collapsible */
+.tips{gap:10px}
+.tips section{box-shadow:none;border:1px solid var(--line);padding:16px 18px;gap:8px}
+.tips h2,.mcard h2{font-size:19px;font-weight:700;font-stretch:90%}
+.bookings .checks{grid-template-columns:minmax(0,1fr)}
+.chk{padding:9px 0}
+.chk.done{font-size:14px}
+.donechk > summary,.addtix > summary{cursor:pointer;color:var(--blue);font-weight:600;font-size:14px;padding:8px 0;list-style:none}
+.donechk > summary::-webkit-details-marker,.addtix > summary::-webkit-details-marker{display:none}
+.donechk[open] > summary,.addtix[open] > summary{color:var(--muted)}
+.addtix .tixform{margin-top:4px}
+.addtix .sub{font-size:13px;color:var(--muted);margin-top:6px}
+.toolrow{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:4px 14px;border-top:1px solid var(--line);padding-top:8px}
+.toolrow .sub{font-size:13px;color:var(--muted)}
+.tix-tx .ref{font-size:17px}
+details.info{grid-column:1/-1;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:0 18px}
+details.info > summary{list-style:none;cursor:pointer;display:flex;align-items:baseline;gap:10px;padding:14px 0;min-height:48px}
+details.info > summary::-webkit-details-marker{display:none}
+details.info > summary h2{margin:0;font-size:16px;font-weight:700;font-stretch:100%;flex:none}
+details.info > summary span{flex:1;min-width:0;font-size:13.5px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+details.info > summary::after{content:"";flex:none;align-self:center;width:7px;height:7px;border-right:2px solid var(--muted);border-bottom:2px solid var(--muted);transform:rotate(45deg);transition:transform .2s}
+details.info[open] > summary::after{transform:rotate(-135deg)}
+details.info > :not(summary){margin-bottom:16px}
+details.info ul{margin:0 0 16px;padding-left:18px;display:flex;flex-direction:column;gap:6px;font-size:14.5px}
+details.info li::marker{color:var(--muted)}
+details.info td{padding:7px 8px 7px 0;border-top:1px solid var(--line);font-size:14px}
+details.info tr:first-child td{border-top:0}
+details.info h3{margin:6px 0 2px;font-size:14px}
+.tips .src{line-height:1.8}
+.foot{font-size:12px}
+#tixList .empty,.bookings .empty{text-align:left;font-size:14px;color:var(--muted);margin:2px 0;padding:0}
+details.spare{padding:10px 16px;gap:8px}
+details.spare:not([open]){gap:0}
+.dayhead .postmark{display:none}
+.dayhead .date{color:var(--muted);font-size:12px}
