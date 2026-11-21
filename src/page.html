@@ -71,7 +71,7 @@
       <div style="display:flex;flex-direction:column;gap:18px;min-width:0">
         <div class="bal" id="mBal" aria-live="polite"></div>
         <form class="mcard" id="mForm" autocomplete="off">
-          <h2>Add an expense</h2>
+          <h2 id="mFormH">Add an expense</h2>
           <div class="row2">
             <input class="fld" id="mDesc" placeholder="What was it?" maxlength="120" aria-label="Description" required>
             <div class="amtf"><span>£</span><input class="fld" id="mAmt" inputmode="decimal" placeholder="0.00" aria-label="Amount in pounds" required></div>
@@ -81,7 +81,7 @@
           <div class="lbl">Category</div><div class="pick" id="mCat"></div>
           <div class="lbl">Day</div><div class="pick" id="mDay"></div>
           <p class="err" id="mErr" hidden></p>
-          <button class="btn" type="submit" id="mAdd">Add expense</button>
+          <div class="mbtns"><button class="btn" type="submit" id="mAdd">Add expense</button><button class="btn ghost" type="button" id="mCancel" hidden>Cancel</button></div>
         </form>
         <div class="mcard" id="mSum"></div>
       </div>

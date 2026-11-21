@@ -552,7 +552,7 @@ function applySync(str){
 var SB = "https://iggxntoqfywensvwulod.supabase.co/rest/v1/rpc/", SBK = "sb_publishable_1RdETP5Xyo5HaVqGJAwidw_5jjMPuYO";
 var CATS = [["food","🍔","Food"],["drinks","🍺","Drinks"],["transport","🚆","Transport"],["tickets","🎟️","Tickets"],["stay","🛏️","Stay"],["shopping","🛍️","Shopping"],["other","•","Other"]];
 var TRIPDAYS = DAYS.map(function(d){ return [d.iso, d.tab]; });
-var M = {code:store(TRIP.key+"-code")||"", names:TRIP.people.slice(), items:[], payer:0, split:0.5, cat:"food", day:null, timer:null, busy:false, sum:store(TRIP.key+"-sum")||"all"};
+var M = {code:store(TRIP.key+"-code")||"", names:TRIP.people.slice(), items:[], payer:0, split:0.5, cat:"food", day:null, timer:null, busy:false, edit:null, sum:store(TRIP.key+"-sum")||"all"};
 function rpc(fn, body){
   return fetch(SB+fn,{method:"POST",headers:{"apikey":SBK,"Content-Type":"application/json"},body:JSON.stringify(body)}).then(function(r){
     return r.text().then(function(tx){ var j=null; try{ j=tx?JSON.parse(tx):null; }catch(e){} if(!r.ok){ var m=(j&&j.message)||("Error "+r.status); throw new Error(m); } return j; });
@@ -584,10 +584,11 @@ function drawMoney(){
     if(e.spent_on!==lastDay){ lastDay=e.spent_on; html += '<div class="xday"><span>'+esc(dayLabel(e.spent_on))+'</span><span>'+gbp(byDay[e.spent_on])+'</span></div>'; }
     var c=CATS.find(function(x){return x[0]===e.category;})||CATS[6], sh=+e.other_share, p=e.paid_by;
     var how = sh===0.5 ? "split 50/50" : sh===1 ? n[1-p]+" owes it all" : sh===0 ? "not split" : Math.round(sh*100)+"% for "+n[1-p];
-    html += '<div class="xrow"><span class="ic" aria-hidden="true">'+c[1]+'</span><div class="d"><b>'+esc(e.description)+'</b><span>'+esc(n[p])+' paid · '+esc(how)+'</span></div><div class="r"><b>'+gbp(+e.amount)+'</b><button type="button" class="del" data-id="'+e.id+'">Delete</button></div></div>';
+    html += '<div class="xrow"><span class="ic" aria-hidden="true">'+c[1]+'</span><div class="d"><b>'+esc(e.description)+'</b><span>'+esc(n[p])+' paid · '+esc(how)+'</span></div><div class="r"><b>'+gbp(+e.amount)+'</b><span class="acts"><button type="button" class="edit" data-id="'+e.id+'">Edit</button><button type="button" class="del" data-id="'+e.id+'">Delete</button></span></div></div>';
   });
   var list=document.getElementById("mList");
   list.innerHTML = html || '<p class="empty">Nothing yet. The first round is on whoever adds it.</p>';
+  list.querySelectorAll(".edit").forEach(function(b){ b.addEventListener("click",function(){ startEdit(+b.dataset.id); }); });
   list.querySelectorAll(".del").forEach(function(b){ b.addEventListener("click",function(){
     if(!b.classList.contains("armed")){ b.classList.add("armed"); b.textContent="Tap to confirm"; setTimeout(function(){ b.classList.remove("armed"); b.textContent="Delete"; },3500); return; }
     b.disabled=true; rpc("uktrip_delete",{p_code:M.code,p_id:+b.dataset.id}).then(load).catch(showErr);
@@ -625,6 +626,21 @@ function drawSummary(){
     '<h3 class="sh3">By category</h3>'+rows+'<h3 class="sh3">By day</h3><div class="sdays">'+days+'</div>';
   filt();
 }
+/* editing reuses the add form: fill it, switch the button to Save, Cancel goes back to adding */
+function startEdit(id){
+  var e=M.items.find(function(x){return x.id===id;}); if(!e) return;
+  M.edit=id; M.payer=e.paid_by; M.split=+e.other_share; M.cat=e.category||"other"; M.day=e.spent_on;
+  document.getElementById("mDesc").value=e.description; document.getElementById("mAmt").value=(+e.amount).toFixed(2);
+  document.getElementById("mFormH").textContent="Edit expense"; document.getElementById("mAdd").textContent="Save changes"; document.getElementById("mCancel").hidden=false;
+  document.getElementById("mErr").hidden=true; drawPickers();
+  document.getElementById("mForm").scrollIntoView({behavior:"smooth",block:"start"});
+}
+function endEdit(){
+  M.edit=null; document.getElementById("mDesc").value=""; document.getElementById("mAmt").value="";
+  document.getElementById("mFormH").textContent="Add an expense"; document.getElementById("mAdd").textContent="Add expense"; document.getElementById("mCancel").hidden=true;
+  M.split=0.5; M.day=defaultDay(); drawPickers();
+}
+document.getElementById("mCancel").addEventListener("click",endEdit);
 function showErr(e){ var el=document.getElementById("mErr"); el.textContent=e.message||String(e); el.hidden=false; }
 function stamp(){ var d=new Date(); document.getElementById("mSync").textContent="Synced "+d.toLocaleTimeString("en-GB",{hour:"2-digit",minute:"2-digit"}); }
 function load(){
@@ -649,8 +665,10 @@ document.getElementById("mForm").addEventListener("submit",function(e){
   if(!desc){ showErr(new Error("Add a short description.")); return; }
   if(!(amt>0)){ showErr(new Error("Enter an amount in pounds.")); return; }
   document.getElementById("mErr").hidden=true; M.busy=true; document.getElementById("mAdd").disabled=true;
-  rpc("uktrip_add",{p_code:M.code,p_description:desc,p_amount:amt,p_currency:"GBP",p_paid_by:M.payer,p_other_share:M.split,p_category:M.cat,p_spent_on:M.day}).then(function(){
-    document.getElementById("mDesc").value=""; document.getElementById("mAmt").value=""; return load();
+  var call = M.edit ? rpc("uktrip_update",{p_code:M.code,p_id:M.edit,p_description:desc,p_amount:amt,p_paid_by:M.payer,p_other_share:M.split,p_category:M.cat,p_spent_on:M.day})
+                    : rpc("uktrip_add",{p_code:M.code,p_description:desc,p_amount:amt,p_currency:"GBP",p_paid_by:M.payer,p_other_share:M.split,p_category:M.cat,p_spent_on:M.day});
+  call.then(function(){
+    if(M.edit) endEdit(); else { document.getElementById("mDesc").value=""; document.getElementById("mAmt").value=""; } return load();
   }).catch(showErr).then(function(){ M.busy=false; document.getElementById("mAdd").disabled=false; });
 });
 document.getElementById("mRename").addEventListener("click",function(){
