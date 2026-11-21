@@ -1544,7 +1544,7 @@ function drawSummary(){
   var days=dl.map(function(d){ var t=day[d[0]]||0;
     return '<div class="sday"><b>'+(t?gbp(Math.round(t)):'–')+'</b><span class="scol" style="height:'+Math.round(100*t/dmax)+'%"></span><small>'+esc(d[1])+'</small></div>'; }).join("");
   var who = f<0 ? 'Spent by the group' : esc(n[f])+'\'s share';
-  el.innerHTML=head+'<div class="sstat"><small>'+who+'</small><b>'+gbp(tot)+'</b><span>Planned '+gbp(lo)+'–'+gbp(hi).slice(1)+(f<0?' for two':'')+', flights excluded</span></div>'+
+  el.innerHTML=head+'<div class="sstat"><small>'+who+'</small><b>'+gbp(tot)+'</b><span>Planned £'+lo.toLocaleString('en-GB')+'–'+hi.toLocaleString('en-GB')+(f<0?' for two':'')+', flights excluded</span></div>'+
     '<h3 class="sh3">By category</h3>'+rows+'<h3 class="sh3">By day</h3><div class="sdays">'+days+'</div>';
   filt();
 }
