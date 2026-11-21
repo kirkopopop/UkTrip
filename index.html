@@ -540,6 +540,46 @@ details.spare[open] > summary::after{transform:rotate(-135deg)}
 .syncline::before{content:"";flex:none;width:8px;height:8px;border-radius:50%;background:var(--line);align-self:center}
 .syncline.on::before{background:var(--free)}
 
+/* ---------- postcard of the day ---------- */
+.pc{margin:18px 0 6px;padding:16px;background:var(--surface);border:1px solid var(--line);border-radius:var(--r)}
+.pc-head{display:flex;justify-content:space-between;align-items:baseline;gap:10px}
+.pc-head h3{margin:0;font-size:20px;font-weight:800;font-stretch:85%}
+.pc-head span{font-size:13px;color:var(--muted)}
+.pc .sub{margin:6px 0 0}
+.pc-card{margin-top:12px;background:#fbf8f1;border-radius:10px;padding:10px;position:relative;
+  box-shadow:0 10px 24px -14px rgba(10,20,40,.45);
+  border:6px solid transparent;border-image:repeating-linear-gradient(-45deg,var(--red) 0 12px,#fbf8f1 12px 18px,var(--blue) 18px 30px,#fbf8f1 30px 36px) 6}
+.pc-grid{display:grid;gap:4px;aspect-ratio:4/3;border-radius:6px;overflow:hidden}
+.pc-cell{padding:0;border:0;background:#ddd;cursor:pointer;min-width:0;min-height:0;overflow:hidden}
+.pc-cell img{width:100%;height:100%;object-fit:cover;display:block}
+.pc-foot{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 2px 2px;color:#14213d}
+.pc-foot b{display:block;font-size:17px;font-weight:800;font-stretch:85%;line-height:1.15}
+.pc-foot span{font-size:12.5px;color:#56627a}
+.pc-pm{width:64px;height:64px;flex:0 0 auto;color:#c8102e;opacity:.85;transform:rotate(-8deg)}
+.pc-strip{display:flex;gap:6px;overflow-x:auto;margin-top:10px;padding-bottom:4px}
+.pc-strip button{position:relative;flex:0 0 auto;width:58px;height:58px;padding:0;border:2px solid transparent;border-radius:8px;overflow:hidden;cursor:pointer;background:var(--soft)}
+.pc-strip button.star{border-color:var(--red)}
+.pc-strip button.out img{opacity:.55}
+.pc-strip img{width:100%;height:100%;object-fit:cover;display:block}
+.pc-strip i{position:absolute;right:3px;top:1px;color:#fff;font-style:normal;font-size:13px;text-shadow:0 1px 2px #000}
+.pc-act{display:flex;gap:10px;align-items:center;margin-top:12px;flex-wrap:wrap}
+.pc-act .btn{flex:1 1 auto}
+.pc-ask{margin-top:12px;display:flex;flex-direction:column;gap:8px;font-size:14px}
+.pc-hint{font-size:13px}
+.pv{position:fixed;inset:0;z-index:60;background:rgba(6,10,20,.94);display:flex;flex-direction:column;padding:calc(10px + env(safe-area-inset-top,0px)) 12px calc(14px + env(safe-area-inset-bottom,0px));color:#fff}
+.pv[hidden]{display:none}
+.pv-top{display:flex;justify-content:space-between;align-items:center;font-size:14px;opacity:.85}
+.pv-top .sh-x{color:#fff}
+.pv-img{flex:1;display:flex;align-items:center;justify-content:center;min-height:0;padding:8px 0}
+.pv-img img{max-width:100%;max-height:100%;object-fit:contain;border-radius:6px}
+.pv-cap b{display:block;font-size:17px}
+.pv-cap span{font-size:13.5px;opacity:.75}
+.pv-act{display:flex;gap:8px;align-items:center;margin-top:12px}
+.pv-act .btn{flex:1;white-space:nowrap;font-size:13.5px;padding-left:8px;padding-right:8px}
+.pv .chipbtn{background:rgba(255,255,255,.12);color:#fff;border-color:rgba(255,255,255,.25)}
+.pv .chipbtn:disabled{opacity:.35}
+.pv .del-ph.armed{background:var(--red);border-color:var(--red)}
+
 </style>
 </head>
 <body>
@@ -1176,7 +1216,7 @@ function renderDay(){
     var part = legHtml(d,i) + stopHtml(d,s,i,autoOpen);
     h += i<pastN ? part.replace(/<li class="/g,'<li class="past ') : part;
   });
-  h += '</ol><p class="legend">'+(compact?"Tap a stop for the details. ":"")+'<span class="tag fixed">Fixed</span> times can\'t move. <span class="tag opt">Optional</span> stops go first if you are running late.</p>' + spareHtml(d);
+  h += '</ol><p class="legend">'+(compact?"Tap a stop for the details. ":"")+'<span class="tag fixed">Fixed</span> times can\'t move. <span class="tag opt">Optional</span> stops go first if you are running late.</p>' + '<section class="pc" id="pcard" hidden></section>' + spareHtml(d);
   var list = document.getElementById("list"); list.innerHTML = h; list.classList.toggle("compact", compact); list.classList.toggle("hide-past", !!pastN && !pastOpen);
   var pts = d.stops.filter(function(s){ return s.ll && !s.off; });
   var row = document.getElementById("maprow");
@@ -1186,6 +1226,7 @@ function renderDay(){
     row.innerHTML = '<a class="routebtn" href="'+url+'" target="_blank" rel="noopener">'+ICON_ROUTE+'Open the route in Google Maps</a>';
   } else row.innerHTML = "";
   drawMapToggle();
+  if(typeof refreshPostcard==="function") refreshPostcard(false);
 }
 document.getElementById("list").addEventListener("click", function(e){
   var b = e.target.closest(".pin[data-i]"); if(b){ focusStop(+b.dataset.i, true); return; }
@@ -1622,6 +1663,188 @@ document.getElementById("mShare").addEventListener("click",function(){
 });
 (function(){ var q=new URLSearchParams(location.search).get("code"); if(q){ M.code=q.trim().toUpperCase(); store(TRIP.key+"-code",M.code); history.replaceState(null,"",location.pathname+location.hash); } })();
 document.addEventListener("visibilitychange",function(){ if(!document.hidden && view==="money") load(); });
+
+/* ---------- photos: a postcard for each day, shared through the trip code ----------
+   Photos are shrunk on the phone (1600 px JPEG + 480 px thumb) and stored in uktrip.photos via RPC.
+   The collage picks up to 6: the starred one is the big one, the rest spread across the day. */
+var P = {who: store(TRIP.key+"-me"), cache:{}, at:{}, busy:"", ask:false, err:""};
+var PC_AREAS = {1:["a"], 2:["a b"], 3:["a b","a c"], 4:["a a b","a a c","a a d"], 5:["a a b","a a c","d e e"], 6:["a a b","a a c","d e f"]};
+function pcPick(list){
+  if(!list.length) return [];
+  var main = list.filter(function(p){return p.star;})[0] || list[0], rest = list.filter(function(p){return p!==main;});
+  var k = Math.min(5, rest.length), out = [];
+  for(var i=0;i<k;i++) out.push(rest[Math.floor(i*rest.length/k)]);
+  return [main].concat(out);
+}
+function tzParts(date){
+  var p={}; new Intl.DateTimeFormat("en-GB",{timeZone:TRIP.tz,year:"numeric",month:"2-digit",day:"2-digit",hour:"2-digit",minute:"2-digit",second:"2-digit",hour12:false}).formatToParts(date).forEach(function(x){ p[x.type]=x.value; });
+  return p;
+}
+/* EXIF "2026:11:20 17:42:10" is local wall time: read it as the trip's time zone */
+function exifToDate(s){
+  var m=/^(\d{4}):(\d{2}):(\d{2}) (\d{2}):(\d{2}):(\d{2})/.exec(s||""); if(!m) return null;
+  var guess = Date.UTC(+m[1],m[2]-1,+m[3],+m[4],+m[5],+m[6]), p=tzParts(new Date(guess));
+  var shown = Date.UTC(+p.year,p.month-1,+p.day,(+p.hour)%24,+p.minute,+p.second);
+  return new Date(guess - (shown-guess));
+}
+function exifDate(buf){
+  try{
+    var v=new DataView(buf); if(v.getUint16(0)!==0xFFD8) return null;
+    var o=2;
+    while(o<v.byteLength-4){
+      var mk=v.getUint16(o), len=v.getUint16(o+2);
+      if(mk===0xFFE1 && v.getUint32(o+4)===0x45786966){
+        var t=o+10, le=v.getUint16(t)===0x4949, g16=function(x){return v.getUint16(x,le);}, g32=function(x){return v.getUint32(x,le);};
+        var str=function(off,n){ var s=""; for(var i=0;i<n-1;i++) s+=String.fromCharCode(v.getUint8(t+off+i)); return s; };
+        var ifd=function(off,want){ var n=g16(t+off); for(var i=0;i<n;i++){ var e=t+off+2+i*12; if(want[g16(e)]) want[g16(e)](e); } };
+        var found=null, exifOff=null;
+        ifd(g32(t+4), {0x8769:function(e){ exifOff=g32(e+8); }, 0x0132:function(e){ found=found||str(g32(e+8),20); }});
+        if(exifOff) ifd(exifOff, {0x9003:function(e){ found=str(g32(e+8),20); }});
+        return found;
+      }
+      if((mk&0xFF00)!==0xFF00) break; o+=2+len;
+    }
+  }catch(e){}
+  return null;
+}
+function shrink(img, max, q){
+  var s=Math.min(1, max/Math.max(img.naturalWidth,img.naturalHeight)), c=document.createElement("canvas");
+  c.width=Math.round(img.naturalWidth*s); c.height=Math.round(img.naturalHeight*s);
+  c.getContext("2d").drawImage(img,0,0,c.width,c.height);
+  return c.toDataURL("image/jpeg", q);
+}
+function loadImg(src){ return new Promise(function(ok,no){ var i=new Image(); i.onload=function(){ok(i);}; i.onerror=function(){no(new Error("Couldn't read that photo"));}; i.src=src; }); }
+function prepPhoto(file){
+  return file.slice(0,262144).arrayBuffer().then(function(buf){
+    var taken = exifToDate(exifDate(buf)), url=URL.createObjectURL(file);
+    return loadImg(url).then(function(img){
+      var full=shrink(img,1600,0.82); if(full.length>880000) full=shrink(img,1280,0.72);
+      var r={taken:taken, w:img.naturalWidth, h:img.naturalHeight, thumb:shrink(img,480,0.72), full:full}; URL.revokeObjectURL(url); return r;
+    });
+  });
+}
+function photoDay(taken, fallback){
+  if(!taken) return fallback; var p=tzParts(taken), iso=p.year+"-"+p.month+"-"+p.day;
+  return DAYS.some(function(d){return d.iso===iso;}) ? iso : fallback;
+}
+function photoStop(p){
+  if(!p.taken) return null; var t=tzParts(new Date(p.taken)), iso=t.year+"-"+t.month+"-"+t.day, d=DAYS.find(function(x){return x.iso===iso;}); if(!d) return null;
+  var min=((+t.hour)%24)*60+(+t.minute), best=null;
+  d.stops.forEach(function(s){ var m=tmin(s.t); if(m!=null && m<=min+10) best=s; });
+  return {time:t.hour+":"+t.minute, stop:best};
+}
+function loadPhotos(iso, force){
+  if(!M.code) return Promise.resolve();
+  if(!force && P.cache[iso] && Date.now()-(P.at[iso]||0)<60000) return Promise.resolve();
+  return rpc("uktrip_photo_list",{p_code:M.code,p_day:iso}).then(function(j){ P.cache[iso]=j||[]; P.at[iso]=Date.now(); }).catch(function(e){ if(!P.cache[iso]) P.err="Couldn't load photos: "+e.message; });
+}
+function pcGrid(sel, big){
+  var n=sel.length, areas=PC_AREAS[n], letters="abcdef";
+  return '<div class="pc-grid" style="grid-template-areas:'+areas.map(function(r){return "'"+r+"'";}).join(" ")+';grid-template-columns:repeat('+areas[0].split(" ").length+',1fr);grid-template-rows:repeat('+areas.length+',1fr)">'+
+    sel.map(function(p,i){ return '<button type="button" class="pc-cell" style="grid-area:'+letters[i]+'" data-ph="'+p.id+'" aria-label="Photo '+(i+1)+'"><img src="'+p.thumb+'" alt="" loading="lazy"></button>'; }).join("")+'</div>';
+}
+function drawPostcard(){
+  var el=document.getElementById("pcard"); if(!el) return;
+  var d=DAYS[cur], n=nowTrip();
+  if(d.iso>n.iso){ el.innerHTML=""; el.hidden=true; return; }
+  el.hidden=false;
+  var list=P.cache[d.iso]||[], sel=pcPick(list), names=M.names||TRIP.people;
+  var h='<div class="pc-head"><h3>Postcard of the day</h3>'+(list.length?'<span>'+list.length+' photo'+(list.length===1?'':'s')+'</span>':'')+'</div>';
+  if(!M.code){ el.innerHTML=h+'<p class="sub">Open Expenses and enter the trip code once: photos are shared through it, so the page stays private.</p>'; return; }
+  if(list.length){
+    h+='<div class="pc-card">'+pcGrid(sel)+'<div class="pc-foot"><div><b>'+esc(d.title)+'</b><span>'+esc(d.date)+' · '+esc(names.join(" & "))+'</span></div>'+postmark(d).replace('class="postmark thump"','class="postmark pc-pm"')+'</div></div>';
+    if(list.length>sel.length || list.length>1) h+='<div class="pc-strip">'+list.map(function(p){ return '<button type="button" data-ph="'+p.id+'" class="'+(p.star?"star":"")+(sel.indexOf(p)>=0?"":" out")+'"><img src="'+p.thumb+'" alt="" loading="lazy">'+(p.star?'<i>★</i>':'')+'</button>'; }).join("")+'</div>';
+  } else {
+    h+='<p class="sub">'+(d.iso===n.iso?'Add your photos from today as you go; ':'Add your photos from this day; ')+'both phones add to the same postcard, and each photo lands on the stop it was taken at.</p>';
+  }
+  if(P.ask) h+='<div class="pc-ask"><span>Who\'s adding photos on this phone?</span><div class="pick"><button type="button" data-me="0">'+esc(names[0])+'</button><button type="button" data-me="1">'+esc(names[1])+'</button></div></div>';
+  h+='<div class="pc-act"><button type="button" class="btn" data-addph'+(P.busy?' disabled':'')+'>'+(P.busy?esc(P.busy):'Add photos')+'</button>'+(list.length?'<button type="button" class="chipbtn" data-savepc>Save postcard</button>':'')+'</div>'+
+    (P.err?'<p class="err">'+esc(P.err)+'</p>':'')+(list.length>1?'<p class="sub pc-hint">Tap a photo to make it the big one or remove it.</p>':'');
+  el.innerHTML=h;
+}
+function refreshPostcard(force){ var iso=DAYS[cur].iso; if(iso>nowTrip().iso) { drawPostcard(); return; } loadPhotos(iso,force).then(drawPostcard); drawPostcard(); }
+var phInput=document.createElement("input"); phInput.type="file"; phInput.accept="image/*"; phInput.multiple=true; phInput.hidden=true; document.body.appendChild(phInput);
+phInput.addEventListener("change",function(){
+  var files=[].slice.call(phInput.files||[]).slice(0,12); phInput.value=""; if(!files.length) return;
+  var day=DAYS[cur].iso, done=0, touched={}; touched[day]=1; P.err="";
+  var step=function(i){
+    if(i>=files.length) return Promise.resolve();
+    P.busy="Adding "+(i+1)+" of "+files.length+"…"; drawPostcard();
+    return prepPhoto(files[i]).then(function(r){
+      var dd=photoDay(r.taken, day); touched[dd]=1;
+      return rpc("uktrip_photo_add",{p_code:M.code,p_day:dd,p_by:+P.who,p_taken:r.taken?r.taken.toISOString():null,p_w:r.w,p_h:r.h,p_thumb:r.thumb,p_full:r.full}).then(function(){ done++; });
+    }).catch(function(e){ P.err="One photo didn't upload: "+e.message; }).then(function(){ return step(i+1); });
+  };
+  step(0).then(function(){
+    P.busy=""; var other=Object.keys(touched).filter(function(x){return x!==day;});
+    if(other.length) toast("Some photos were taken on "+other.map(function(x){return DAYS.find(function(d){return d.iso===x;}).tab;}).join(", ")+" and went to that postcard.");
+    return Promise.all(Object.keys(touched).map(function(x){ return loadPhotos(x,true); }));
+  }).then(drawPostcard);
+});
+/* the viewer: full photo, where and when, star or remove */
+var pvEl=document.createElement("div"); pvEl.className="pv"; pvEl.hidden=true; pvEl.setAttribute("role","dialog"); pvEl.setAttribute("aria-modal","true"); document.body.appendChild(pvEl);
+var PV={id:null, full:{}};
+function pvList(){ return P.cache[DAYS[cur].iso]||[]; }
+function drawPv(){
+  var list=pvList(), i=list.findIndex(function(p){return p.id===PV.id;}), p=list[i]; if(!p){ closePv(); return; }
+  var w=photoStop(p), names=M.names||TRIP.people;
+  pvEl.innerHTML='<div class="pv-top"><span>'+(i+1)+' of '+list.length+'</span><button type="button" class="sh-x" data-pvx aria-label="Close">✕</button></div>'+
+    '<div class="pv-img"><img src="'+(PV.full[p.id]||p.thumb)+'" alt=""></div>'+
+    '<div class="pv-cap"><b>'+(w&&w.stop?esc(w.stop.n):'Photo')+'</b><span>'+(w?'Taken '+w.time+' · ':'')+'added by '+esc(names[p.by]||"")+'</span></div>'+
+    '<div class="pv-act"><button type="button" class="chipbtn" data-pvn="-1"'+(i===0?' disabled':'')+'>←</button>'+
+    '<button type="button" class="btn'+(p.star?' ghost':'')+'" data-pvstar>'+(p.star?'★ Big photo (tap to unset)':'☆ Make it the big photo')+'</button>'+
+    '<button type="button" class="chipbtn del-ph" data-pvdel>Remove</button>'+
+    '<button type="button" class="chipbtn" data-pvn="1"'+(i===list.length-1?' disabled':'')+'>→</button></div>';
+  if(!PV.full[p.id]) rpc("uktrip_photo_get",{p_code:M.code,p_id:p.id}).then(function(src){ if(src){ PV.full[p.id]=src; if(PV.id===p.id){ var im=pvEl.querySelector(".pv-img img"); if(im) im.src=src; } } }).catch(function(){});
+}
+function openPv(id){ PV.id=id; pvEl.hidden=false; document.documentElement.classList.add("sheet-open"); drawPv(); }
+function closePv(){ pvEl.hidden=true; PV.id=null; document.documentElement.classList.remove("sheet-open"); }
+pvEl.addEventListener("click",function(e){
+  var b=e.target.closest("[data-pvx]"); if(b||e.target===pvEl){ closePv(); return; }
+  b=e.target.closest("[data-pvn]"); if(b){ var l=pvList(), i=l.findIndex(function(p){return p.id===PV.id;})+(+b.dataset.pvn); if(l[i]){ PV.id=l[i].id; drawPv(); } return; }
+  b=e.target.closest("[data-pvstar]"); if(b){ var p=pvList().find(function(x){return x.id===PV.id;}), on=!p.star; b.disabled=true;
+    rpc("uktrip_photo_star",{p_code:M.code,p_id:p.id,p_star:on}).then(function(){ pvList().forEach(function(x){ if(on) x.star=false; }); p.star=on; drawPv(); drawPostcard(); }).catch(function(er){ toast(er.message); b.disabled=false; }); return; }
+  b=e.target.closest("[data-pvdel]"); if(b){
+    if(!b.classList.contains("armed")){ b.classList.add("armed"); b.textContent="Tap again to remove"; return; }
+    var id=PV.id, l=pvList(), i=l.findIndex(function(p){return p.id===id;});
+    rpc("uktrip_photo_delete",{p_code:M.code,p_id:id}).then(function(){ l.splice(i,1); drawPostcard(); if(l.length){ PV.id=(l[i]||l[i-1]).id; drawPv(); } else closePv(); }).catch(function(er){ toast(er.message); });
+  }
+});
+document.addEventListener("keydown",function(e){ if(!pvEl.hidden && e.key==="Escape") closePv(); });
+/* save the postcard as one image (share sheet on phones, download elsewhere) */
+function savePostcard(btn){
+  var d=DAYS[cur], sel=pcPick(pvList()), names=M.names||TRIP.people; if(!sel.length) return;
+  btn.disabled=true; btn.textContent="Making the postcard…";
+  Promise.all(sel.map(function(p){ return (PV.full[p.id]?Promise.resolve(PV.full[p.id]):rpc("uktrip_photo_get",{p_code:M.code,p_id:p.id}).then(function(s){ PV.full[p.id]=s; return s; })).then(loadImg); })).then(function(imgs){
+    var W=1800, pad=60, gap=12, GH=1260, FH=270, H=pad+GH+FH+pad, c=document.createElement("canvas"), x=c.getContext("2d"); c.width=W; c.height=H;
+    x.fillStyle="#fbf8f1"; x.fillRect(0,0,W,H);
+    for(var s=-H; s<W+H; s+=90){ x.fillStyle=(Math.floor((s+H)/90)%2)?"#1f4e9e":"#c8102e"; x.beginPath(); x.moveTo(s,0); x.lineTo(s+45,0); x.lineTo(s+45-24,24); x.lineTo(s-24,24); x.fill(); x.beginPath(); x.moveTo(s,H-24); x.lineTo(s+45,H-24); x.lineTo(s+45-24,H); x.lineTo(s-24,H); x.fill(); }
+    var areas=PC_AREAS[sel.length], rows=areas.length, cols=areas[0].split(" ").length, cw=(W-2*pad-(cols-1)*gap)/cols, ch=(GH-(rows-1)*gap)/rows;
+    "abcdef".slice(0,sel.length).split("").forEach(function(L,i){
+      var r0=1e9,r1=-1,c0=1e9,c1=-1; areas.forEach(function(r,ri){ r.split(" ").forEach(function(a,ci){ if(a===L){ r0=Math.min(r0,ri); r1=Math.max(r1,ri); c0=Math.min(c0,ci); c1=Math.max(c1,ci); } }); });
+      var bx=pad+c0*(cw+gap), by=pad+r0*(ch+gap), bw=(c1-c0+1)*cw+(c1-c0)*gap, bh=(r1-r0+1)*ch+(r1-r0)*gap, im=imgs[i];
+      var sc=Math.max(bw/im.naturalWidth, bh/im.naturalHeight), sw=bw/sc, shh=bh/sc;
+      x.drawImage(im,(im.naturalWidth-sw)/2,(im.naturalHeight-shh)/2,sw,shh,bx,by,bw,bh);
+    });
+    var fy=pad+GH+40, font="Archivo, system-ui, sans-serif";
+    x.fillStyle="#14213d"; x.font="800 64px "+font; x.fillText(d.title, pad, fy+60, W-2*pad-300);
+    x.fillStyle="#56627a"; x.font="500 38px "+font; x.fillText(d.date+" · "+d.place+" · "+names.join(" & "), pad, fy+120, W-2*pad-300);
+    var cx=W-pad-120, cy=fy+90; x.strokeStyle="#c8102e"; x.lineWidth=5; x.beginPath(); x.arc(cx,cy,110,0,2*Math.PI); x.stroke();
+    x.fillStyle="#c8102e"; x.textAlign="center"; x.font="800 72px "+font; x.fillText(d.date.match(/\d+/)[0], cx, cy+10); x.font="700 26px "+font; x.fillText("NOV · "+d.tab.split(" ")[0].toUpperCase(), cx, cy+50); x.font="700 24px "+font; x.fillText(String(d.city).toUpperCase(), cx, cy-52); x.textAlign="left";
+    return new Promise(function(ok){ c.toBlob(ok,"image/jpeg",0.9); });
+  }).then(function(blob){
+    var name="postcard-"+d.iso+".jpg", f=new File([blob],name,{type:"image/jpeg"});
+    if(navigator.canShare && navigator.canShare({files:[f]})) return navigator.share({files:[f], title:"Postcard: "+d.title}).catch(function(){});
+    var a=document.createElement("a"); a.href=URL.createObjectURL(blob); a.download=name; document.body.appendChild(a); a.click(); setTimeout(function(){ URL.revokeObjectURL(a.href); a.remove(); },2000);
+  }).catch(function(e){ toast("Couldn't make the postcard: "+e.message); }).then(function(){ btn.disabled=false; btn.textContent="Save postcard"; });
+}
+document.getElementById("list").addEventListener("click",function(e){
+  var b=e.target.closest("[data-ph]"); if(b){ openPv(+b.dataset.ph); return; }
+  b=e.target.closest("[data-me]"); if(b){ P.who=b.dataset.me; store(TRIP.key+"-me",P.who); P.ask=false; drawPostcard(); phInput.click(); return; }
+  b=e.target.closest("[data-addph]"); if(b){ if(P.who==null||P.who===""){ P.ask=true; drawPostcard(); return; } phInput.click(); return; }
+  b=e.target.closest("[data-savepc]"); if(b){ savePostcard(b); }
+});
+document.addEventListener("visibilitychange",function(){ if(!document.hidden && view==="plan") refreshPostcard(true); });
 
 /* ---------- live sync: ticks, picks and tickets shared through the trip code ----------
    Each change is one key: "t:<check id>" tick, "p:<pick id>" pick, "x:<ticket id>" ticket (null = removed).

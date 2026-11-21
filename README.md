@@ -78,6 +78,10 @@ destination), `utcOffsetMin` (its offset from UTC on the trip dates), `people`.
   `uktrip.check_code`, which compares a SHA-256 hash, so the code itself is never stored. A new trip needs its own code.
 - Spending card (Expenses tab): totals per category and per day for the group, or one person's share via the
   Group / name filter, against the planned total from `BUDGET`. Built in `drawSummary()` in `src/engine.js`; no extra backend.
+- Postcard of the day (bottom of each day, from the day it starts): both phones add photos, shrunk on the phone to a
+  1600 px JPEG plus a 480 px thumb, stored in `uktrip.photos` behind the trip code (`uktrip_photo_add/list/get/star/delete`).
+  Up to 6 go in the collage (the starred one is big, the rest spread across the day); each is matched to a stop by its
+  EXIF time. "Save postcard" draws one JPEG on a canvas and opens the share sheet.
 - Add `?now=2026-11-20T13:10` to the address to preview the page at that moment of the trip.
 
 ## Starting a new trip
