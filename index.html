@@ -437,7 +437,13 @@ details.spare[open] > summary::after{transform:rotate(-135deg)}
 .srow-h{display:flex;justify-content:space-between;gap:10px;font-size:14.5px}
 .srow-h b{font-variant-numeric:tabular-nums}
 .sbar{display:block;height:8px;border-radius:99px;margin-top:6px;background:var(--soft);overflow:hidden}
-.sbar i{display:block;height:100%;background:var(--red);border-radius:99px}
+.sfill{display:flex;height:100%;border-radius:99px;overflow:hidden;gap:2px}
+.sbar i{display:block;height:100%}
+.ssh{background:var(--red)}
+.sin{background:var(--blue)}
+.dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:5px}
+.srow-p{display:flex;gap:14px;font-size:12.5px;color:var(--muted);font-variant-numeric:tabular-nums;margin-top:4px}
+.ssplit{display:flex;gap:16px;font-size:13.5px;margin-top:8px;padding-top:8px;border-top:1px solid color-mix(in srgb,var(--muted) 25%,transparent);font-variant-numeric:tabular-nums}
 .sdays{display:flex;gap:8px;align-items:flex-end;height:150px;padding-top:4px}
 .sday{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;min-width:0;gap:4px}
 .sday b{font-size:12px;font-variant-numeric:tabular-nums}
@@ -1522,10 +1528,10 @@ function drawMoney(){
 }
 /* spending: per category and per day, for the group or one person's share; planned range from BUDGET */
 function drawSummary(){
-  var n=M.names, f=(M.sum==="0"||M.sum==="1")?+M.sum:-1, cat={}, day={}, tot=0;
+  var n=M.names, f=(M.sum==="0"||M.sum==="1")?+M.sum:-1, cat={}, day={}, tot=0, sh=[0,0];
   M.items.forEach(function(e){
     var a=+e.amount, o=a*(+e.other_share), p=e.paid_by, v = f<0 ? a : (f===p ? a-o : o);
-    var c=e.category||"other"; cat[c]=(cat[c]||0)+v;
+    var k=(+e.other_share>0 && +e.other_share<1)?0:1, c=e.category||"other"; cat[c]=cat[c]||[0,0]; cat[c][k]+=v; sh[k]+=v;
     var d=TRIPDAYS.some(function(x){return x[0]===e.spent_on;})?e.spent_on:"other"; day[d]=(day[d]||0)+v;
     tot+=v;
   });
@@ -1534,17 +1540,19 @@ function drawSummary(){
   var filt=function(){ pick(document.getElementById("mSumMode"), [["all","Group"],["0",esc(n[0])],["1",esc(n[1])]], f<0?"all":String(f), function(v){ M.sum=v; store(TRIP.key+"-sum",v); drawSummary(); }); };
   if(!M.items.length){ el.innerHTML=head+'<p class="sub">Appears once there are expenses.</p>'; filt(); return; }
   var lo=0, hi=0; BUDGET.forEach(function(b){ lo+=b[2]; hi+=b[3]; }); if(f<0){ lo*=2; hi*=2; }
-  var cats=CATS.filter(function(c){return cat[c[0]]>0.004;}).map(function(c){ return [c,cat[c[0]]]; }).sort(function(a,b){return b[1]-a[1];});
+  var cats=CATS.filter(function(c){return cat[c[0]] && cat[c[0]][0]+cat[c[0]][1]>0.004;}).map(function(c){ var v=cat[c[0]]; return [c,v[0]+v[1],v]; }).sort(function(a,b){return b[1]-a[1];});
   var max=cats.length?cats[0][1]:1;
   var rows=cats.map(function(r){
-    return '<div class="srow"><div class="srow-h"><span>'+r[0][1]+' '+esc(r[0][2])+'</span><b>'+gbp(r[1])+'</b></div><span class="sbar"><i style="width:'+Math.max(2,Math.round(100*r[1]/max))+'%"></i></span></div>';
+    var v=r[2], w=Math.max(2,Math.round(100*r[1]/max));
+    return '<div class="srow"><div class="srow-h"><span>'+r[0][1]+' '+esc(r[0][2])+'</span><b>'+gbp(r[1])+'</b></div><span class="sbar"><span class="sfill" style="width:'+w+'%">'+(v[0]>0.004?'<i class="ssh" style="flex:'+v[0]+'"></i>':'')+(v[1]>0.004?'<i class="sin" style="flex:'+v[1]+'"></i>':'')+'</span></span>'+
+      '<div class="srow-p">'+(v[0]>0.004?'<span><i class="dot ssh"></i>Shared '+gbp(v[0])+'</span>':'')+(v[1]>0.004?'<span><i class="dot sin"></i>Individual '+gbp(v[1])+'</span>':'')+'</div></div>';
   }).join("");
   var dl=TRIPDAYS.map(function(d){return [d[0],d[1]];}); if(day.other) dl.unshift(["other","Other"]);
   var dmax=Math.max.apply(null,dl.map(function(d){ return day[d[0]]||0; }).concat([1]));
   var days=dl.map(function(d){ var t=day[d[0]]||0;
     return '<div class="sday"><b>'+(t?gbp(Math.round(t)):'–')+'</b><span class="scol" style="height:'+Math.round(100*t/dmax)+'%"></span><small>'+esc(d[1])+'</small></div>'; }).join("");
   var who = f<0 ? 'Spent by the group' : esc(n[f])+'\'s share';
-  el.innerHTML=head+'<div class="sstat"><small>'+who+'</small><b>'+gbp(tot)+'</b><span>Planned £'+lo.toLocaleString('en-GB')+'–'+hi.toLocaleString('en-GB')+(f<0?' for two':'')+', flights excluded</span></div>'+
+  el.innerHTML=head+'<div class="sstat"><small>'+who+'</small><b>'+gbp(tot)+'</b><span>Planned £'+lo.toLocaleString('en-GB')+'–'+hi.toLocaleString('en-GB')+(f<0?' for two':'')+', flights excluded</span><div class="ssplit"><span><i class="dot ssh"></i>Shared '+gbp(sh[0])+'</span><span><i class="dot sin"></i>Individual '+gbp(sh[1])+'</span></div></div>'+
     '<h3 class="sh3">By category</h3>'+rows+'<h3 class="sh3">By day</h3><div class="sdays">'+days+'</div>';
   filt();
 }
