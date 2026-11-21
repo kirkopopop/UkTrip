@@ -75,6 +75,8 @@ destination), `utcOffsetMin` (its offset from UTC on the trip dates), `people`.
   Without the trip code they stay on the phone, and "Send to the other phone" packs them into a link instead.
 - Compact/full view and map open/closed: on each phone only.
 - Expenses: the same Supabase backend behind the trip code (`uktrip_*` functions). The code is checked by
+- Trip summary (Expenses tab): totals per category and per day, split by person, with a Spent/Paid switch
+  (each person's share vs whose card paid). Built from the expense list in `drawSummary()` in `src/engine.js`; no extra backend.
   `uktrip.check_code`, which compares a SHA-256 hash, so the code itself is never stored. A new trip needs its own code.
 - Add `?now=2026-11-20T13:10` to the address to preview the page at that moment of the trip.
 
