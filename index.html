@@ -839,12 +839,13 @@ details.spare:not([open]){gap:0}
           <tr><td>Kings Cross Inn, 1 night</td><td><a href="#fri" data-goto="fri">Fri</a></td><td class="num">tbc</td></tr>
           <tr><td>LNER (on the refunded sleeper ticket)</td><td><a href="#sat" data-goto="sat">Sat</a></td><td class="num">£0</td></tr>
           <tr><td>ScotRail Glasgow ⇄ Edinburgh return</td><td><a href="#sat" data-goto="sat">Sat</a></td><td class="num">~£17–20</td></tr>
-          <tr><td>Edinburgh Castle, online</td><td><a href="#sat" data-goto="sat">Sat</a></td><td class="num">~£23.50</td></tr>
+          <tr><td>Harry Potter audio walk (VoiceMap)</td><td><a href="#sat" data-goto="sat">Sat</a></td><td class="num">~£9</td></tr>
+          <tr><td>Greyfriars Bobby's lunch</td><td><a href="#sat" data-goto="sat">Sat</a></td><td class="num">~£15–20</td></tr>
           <tr><td>Johnnie Walker, 3 cocktails</td><td><a href="#sat" data-goto="sat">Sat</a></td><td class="num">£30</td></tr>
-          <tr><td>Calton Hill, Royal Mile, market</td><td><a href="#sat" data-goto="sat">Sat</a></td><td class="num">Free</td></tr>
+          <tr><td>Royal Mile, Christmas market</td><td><a href="#sat" data-goto="sat">Sat</a></td><td class="num">Free</td></tr>
           <tr><td>Glasgow dinner</td><td><a href="#sat" data-goto="sat">Sat</a></td><td class="num">~£15–35</td></tr>
           <tr><td>Maldron Glasgow, room split</td><td><a href="#sat" data-goto="sat">Sat</a></td><td class="num">~£85</td></tr>
-          <tr><td>Tennent's tour, pint included</td><td><a href="#sun" data-goto="sun">Sun</a></td><td class="num">£17–21</td></tr>
+          <tr><td>Tennent's tour 11:00, pint included</td><td><a href="#sun" data-goto="sun">Sun</a></td><td class="num">£17–21</td></tr>
           <tr><td>Cathedral, Necropolis</td><td><a href="#sun" data-goto="sun">Sun</a></td><td class="num">Free</td></tr>
           <tr><td>Citylink Air</td><td><a href="#sun" data-goto="sun">Sun</a></td><td class="num">~£15</td></tr>
         </table>
@@ -966,19 +967,20 @@ var DAYS = [
     {t:"23:45", n:"Kings Cross Inn: bed", chk:"kxinn", go:{m:"tube",min:15,txt:"Holborn station is next to the club: Piccadilly line to King's Cross St Pancras (2 stops), then 3 minutes to the hotel"}, p:"Pack tonight and set an alarm for 05:40. Leave the room by 06:05; King's Cross is across the road.", ll:[51.5303,-0.1232], q:"Kings Cross Inn Hotel, 9-11 Euston Road, London"}
    ]},
  { id:"sat", iso:"2026-11-21", cities:["edinburgh","glasgow"], tab:"Sat 21", place:"London → Edinburgh → Glasgow", date:"Saturday 21 November", city:"edinburgh",
-   title:"Early train, Edinburgh by day, Glasgow by night",
-   rain:["The castle is mostly outdoors between buildings and runs rain or shine: jacket on.","Swap Calton Hill for the National Museum of Scotland on Chambers Street: free, open daily 10:00–17:00, about 5 minutes from the Grassmarket.","Johnnie Walker is indoors. If the market is a washout, take an earlier train back: they run every 15 minutes."],
-   intro:"The 06:30 LNER from King's Cross on the cancelled sleeper ticket, breakfast on board, and Edinburgh by 10:40. Bags into left luggage at Waverley; daylight goes to the castle, the Old Town and Calton Hill; after dark, Johnnie Walker and the Christmas market lights. Then the train to Glasgow with the bags, a casual local dinner and the city's best cocktail bar. We sleep in Glasgow.",
+   title:"Early train, Harry Potter Old Town, Glasgow by night",
+   rain:["The Harry Potter walk is all outdoors: jacket on. The app pauses wherever you stop, so duck into a café and resume.","Swap the rest of the walk for the National Museum of Scotland on Chambers Street: free, open 10:00–17:00, 2 minutes from Greyfriars Bobby's.","Johnnie Walker is indoors. If the market is a washout, take an earlier train back: they run every 15 minutes."],
+   intro:"The 06:30 LNER from King's Cross on the cancelled sleeper ticket, breakfast on board, and Edinburgh by 10:40. Bags into left luggage at Waverley, brunch at Whiski on the Royal Mile, then a Harry Potter audio walk through the Old Town from Castlehill to Greyfriars, a pub lunch at Greyfriars Bobby's, and after dark Johnnie Walker and the Christmas market lights. Then the train to Glasgow with the bags, a casual local dinner and the city's best cocktail bar. We sleep in Glasgow.",
    off:"<b>06:30</b> LNER King's Cross → Edinburgh Waverley, arrive <b>~10:40</b>.<br><b>~18:00</b> ScotRail Edinburgh Waverley → Glasgow Queen Street, ~50 min; dinner and drinks below, not on this map.",
    stops:[
     {t:"06:30", n:"LNER King's Cross → Edinburgh Waverley", k:"fixed", chk:"lner", tr:"train", go:{m:"walk",min:5,leave:"06:05",txt:"Kings Cross Inn across Euston Road to the King's Cross concourse"}, p:"Free on the cancelled Caledonian Sleeper ticket: show it and the cancellation email to the guard. No seat reservations, and other sleeper passengers will be on it, so be at the platform by 06:10 and look for unreserved seats. Breakfast from the café bar on board. Backups: 07:03 or 07:30.", fee:["£0 (sleeper refunded)","free"], off:true},
     {t:"10:40", n:"Waverley: bags into left luggage", go:{m:"train",min:250,txt:"~4 h 10 min"}, p:"Staffed left-luggage office on platform 2, by the Calton Road entrance. Open 07:00–23:00, ~£12.50 a bag for the day; walk-ins fine.", fee:["~£12.50 a bag","paid"], ll:[55.9520,-3.1880], q:"Left Luggage, Edinburgh Waverley station"},
-    {t:"11:15", n:"Edinburgh Castle", k:"fixed", chk:"castle", go:{m:"walk",min:15,txt:"Up Cockburn Street and the Royal Mile from Waverley"}, p:"Book a timed slot for 11:15 or later. Crown Jewels, the One O'Clock Gun battery, views over the New Town. Allow 1.5 h.", fee:["~£23.50","paid"], book:true, ll:[55.9486,-3.1999], q:"Edinburgh Castle"},
-    {t:"12:45", n:"Royal Mile → Victoria Street", k:"opt", p:"Downhill along the curved, colourful street to the Grassmarket.", fee:["Free","free"], ll:[55.9488,-3.1935], q:"Victoria Street, Edinburgh"},
-    {t:"13:15", n:"Pub lunch in the Grassmarket", p:"Old market square under the castle rock, lined with pubs. No rush: Johnnie Walker isn't until 15:20.", ll:[55.9474,-3.1962], q:"Grassmarket, Edinburgh"},
-    {t:"14:30", n:"Calton Hill while it's light", k:"opt", go:{m:"walk",min:20,leave:"14:10",txt:"from the Grassmarket"}, p:"The castle, Old Town and Arthur's Seat from the monuments; the light goes golden ahead of sunset ~15:50. 20 min walk from the Grassmarket. Leave by 14:55.", fee:["Free","free"], ll:[55.9553,-3.1827], q:"Calton Hill, Edinburgh"},
-    {t:"15:20", n:"Johnnie Walker Princes Street: Journey of Flavour", k:"fixed", chk:"jw", go:{m:"walk",min:20,leave:"14:55",txt:"along Princes Street"}, p:"90 minutes, three cocktails made to match a flavour quiz, then the rooftop bar with the castle lit up after dark.", fee:["£30","paid"], booked:true, ll:[55.9502,-3.2068], q:"Johnnie Walker Princes Street, 145 Princes Street, Edinburgh",
-      more:"<p>Use the entrance on Hope Street and show the ticket in the lobby. 20 min walk along Princes Street from Calton Hill.</p>"},
+    {t:"11:00", n:"Brunch at Whiski, Royal Mile", go:{m:"walk",min:7,txt:"up Cockburn Street from Waverley"}, p:"Whiski Bar & Restaurant, 119 High Street: Scottish food all day and 300+ malts. Replaced the castle.", ll:[55.9503,-3.1866], q:"Whiski Bar & Restaurant, 119 High Street, Edinburgh"},
+    {t:"12:15", n:"Harry Potter audio walk, Castlehill → Greyfriars", go:{m:"walk",min:10,est:true,txt:"up the Royal Mile to Castlehill, outside the castle"}, p:"VoiceMap self-guided tour \"Harry Potter's Edinburgh\": 1.1 miles, ~90 min, 30 audio points with turn-by-turn directions. Starts on Castlehill and winds down the Royal Mile, past the Writers' Museum, Victoria Street (Diagon Alley) and the Grassmarket to Greyfriars Kirkyard (the Tom Riddle grave) and the Elephant House. Works offline once downloaded in the VoiceMap app.", fee:["~£9 in the app","paid"], ll:[55.9488,-3.1963], q:"Castlehill, Edinburgh",
+      more:"<p>Pause any time: it resumes where you stopped. Running late for lunch? Skip ahead to Greyfriars Kirkyard; the pub is at its gate.</p>"},
+    {t:"13:45", n:"Lunch at Greyfriars Bobby's Bar", go:{m:"walk",min:2,est:true,txt:"from the Kirkyard gate to Candlemaker Row"}, p:"30–34 Candlemaker Row, by the Bobby statue. Nicholson's pub: pies, fish and chips, cask ales; food from 12:00. Popular with tourists, so expect a short wait at peak.", fee:["~£15–20","paid"], ll:[55.9469,-3.1918], q:"Greyfriars Bobby's Bar, 30-34 Candlemaker Row, Edinburgh",
+      more:"<p>Full? The Grassmarket pubs are 3 min downhill along Candlemaker Row.</p>"},
+    {t:"15:20", n:"Johnnie Walker Princes Street: Journey of Flavour", k:"fixed", chk:"jw", go:{m:"walk",min:20,leave:"14:50",txt:"George IV Bridge, The Mound, then west along Princes Street"}, p:"90 minutes, three cocktails made to match a flavour quiz, then the rooftop bar with the castle lit up after dark.", fee:["£30","paid"], booked:true, ll:[55.9502,-3.2068], q:"Johnnie Walker Princes Street, 145 Princes Street, Edinburgh",
+      more:"<p>Use the entrance on Hope Street and show the ticket in the lobby. 20 min walk from Greyfriars Bobby's.</p>"},
     {t:"17:10", n:"Christmas market, East Princes Street Gardens", k:"opt", p:"Mulled wine among the lit-up stalls under the Scott Monument; open 10:00–22:00. Waverley is right below.", fee:["Free","free"], ll:[55.9519,-3.1925], q:"Edinburgh Christmas Market, East Princes Street Gardens"},
     {t:"17:40", n:"Waverley: collect the bags", go:{m:"walk",min:5,txt:"down the steps from the gardens"}, p:"Left luggage closes at 23:00, so there's slack if the market is fun.", ll:[55.9520,-3.1880], q:"Left Luggage, Edinburgh Waverley station"},
     {t:"18:00", n:"Train back to Glasgow Queen Street", tr:"train", p:"~50 min; trains every 15 min, take whichever comes after the bags. The Maldron is ~8 min walk from Queen Street.", off:true},
@@ -995,17 +997,17 @@ var DAYS = [
    ]},
  { id:"sun", iso:"2026-11-22", cities:["glasgow"], tab:"Sun 22", place:"Glasgow → home", date:"Sunday 22 November", city:"glasgow",
    title:"Glasgow: necropolis, brewery, home",
-   rain:["Wet morning: linger over breakfast, skip the Necropolis hill (slippery when wet) and take a taxi straight to Tennent's for 12:00.","The brewery tour and lunch at Drygate are both indoors."],
-   intro:"A slow Glasgow morning in the East End: the Necropolis and the cathedral, a pint from the Tennent's tanks, lunch next door at Drygate, then the coach straight to Edinburgh Airport.",
+   rain:["Wet morning: linger over breakfast, skip the Necropolis hill (slippery when wet) and take a taxi straight to Tennent's for 11:00.","The brewery tour, lunch at Drygate and the cathedral are all indoors."],
+   intro:"A Glasgow morning in the East End: the Necropolis, the 11:00 Tennent's tour with a pint from the tanks, lunch next door at Drygate, the cathedral once it opens at 13:00, then the coach straight to Edinburgh Airport.",
    off:"<b>15:30</b> Citylink Air, Buchanan Bus Station → Edinburgh Airport, ~1 h. Flight <b>19:00</b>.",
    stops:[
-    {t:"09:30", n:"Breakfast and check-out at the Maldron", chk:"hotel", p:"Buffet breakfast at the hotel; check-out by 11:00. Leave the bags at the desk until ~15:00.", booked:true, ll:[55.8661,-4.2553], q:"Maldron Hotel Glasgow City, 50 Renfrew Street, Glasgow"},
-    {t:"10:30", n:"The Necropolis", k:"opt", p:"Victorian hilltop cemetery with the best view over the city. Always open.", fee:["Free","free"], ll:[55.8622,-4.2312], q:"Glasgow Necropolis"},
-    {t:"11:15", n:"Glasgow Cathedral", k:"opt", p:"Medieval cathedral that survived the Reformation almost intact. Sunday hours are short and may be afternoon only, so this may be from outside.", fee:["Free","free"], ll:[55.8630,-4.2346], q:"Glasgow Cathedral"},
-    {t:"12:00", n:"Tennent's Wellpark Brewery tour, 161 Duke St", k:"fixed", chk:"tennents", p:"Behind the scenes at Scotland's oldest brewery, ~1.5 h, ending with a pint of unpasteurised tank lager straight from the copper tanks.", fee:["£17–21","paid"], book:true, ll:[55.8598,-4.2298], q:"Tennent's Wellpark Brewery, 161 Duke Street, Glasgow",
-      more:"<p>Sunday tours appear to start at noon; confirm the slot when booking. Ages 18+. Enter at the Tennent's Visitor Centre.</p>"},
-    {t:"13:45", n:"Lunch at Drygate, next door", p:"Craft brewery with a bar and restaurant beside Wellpark: the easiest lunch after the tour.", ll:[55.8616,-4.2318], q:"Drygate Brewing Co, 85 Drygate, Glasgow"},
-    {t:"15:00", n:"Collect bags, walk to Buchanan Bus Station", k:"fixed", go:{m:"taxi",min:8,txt:"Drygate to the Maldron; the bus station is then a 5-min walk"}, p:"Taxi from Drygate to the Maldron ~8 min; the bus station is ~5 min walk from the hotel.", ll:[55.8660,-4.2508], q:"Buchanan Bus Station, Glasgow"},
+    {t:"09:00", n:"Breakfast and check-out at the Maldron", chk:"hotel", p:"Buffet breakfast at the hotel; check out before leaving (deadline 11:00) and leave the bags at the desk until ~15:00.", booked:true, ll:[55.8661,-4.2553], q:"Maldron Hotel Glasgow City, 50 Renfrew Street, Glasgow"},
+    {t:"10:05", n:"The Necropolis", k:"opt", go:{m:"walk",min:25,leave:"09:40",txt:"or a taxi, ~8 min"}, p:"Victorian hilltop cemetery with the best view over the city. Always open. Tennent's is a 5-min walk from the gate.", fee:["Free","free"], ll:[55.8622,-4.2312], q:"Glasgow Necropolis"},
+    {t:"11:00", n:"Tennent's Wellpark Brewery tour, 161 Duke St", k:"fixed", chk:"tennents", go:{m:"walk",min:5,leave:"10:50",txt:"Necropolis gate to Duke Street"}, p:"Behind the scenes at Scotland's oldest brewery, ~1.5 h, ending with a pint of unpasteurised tank lager straight from the copper tanks.", fee:["£17–21","paid"], booked:true, ll:[55.8598,-4.2298], q:"Tennent's Wellpark Brewery, 161 Duke Street, Glasgow",
+      more:"<p>Booked for 11:00. Ages 18+. Enter at the Tennent's Visitor Centre.</p>"},
+    {t:"12:45", n:"Lunch at Drygate, next door", p:"Craft brewery with a bar and restaurant beside Wellpark: the easiest lunch after the tour.", ll:[55.8616,-4.2318], q:"Drygate Brewing Co, 85 Drygate, Glasgow"},
+    {t:"14:00", n:"Glasgow Cathedral", k:"opt", go:{m:"walk",min:5,txt:"from Drygate"}, p:"Medieval cathedral that survived the Reformation almost intact. Sundays open 13:00–16:00, last entry 15:00. Free.", fee:["Free","free"], ll:[55.8630,-4.2346], q:"Glasgow Cathedral"},
+    {t:"15:00", n:"Collect bags, walk to Buchanan Bus Station", k:"fixed", go:{m:"taxi",min:8,leave:"14:45",txt:"Cathedral to the Maldron; the bus station is then a 5-min walk"}, p:"Taxi from the cathedral to the Maldron ~8 min; the bus station is ~5 min walk from the hotel.", ll:[55.8660,-4.2508], q:"Buchanan Bus Station, Glasgow"},
     {t:"15:30", n:"Citylink Air to Edinburgh Airport", k:"fixed", chk:"citylink", tr:"bus", p:"Direct, non-stop, about an hour; bags go in the hold. Book on citylink.co.uk. Backup: train to Edinburgh Gateway, then the tram.", fee:["~£15","paid"], book:true, off:true},
     {t:"16:30", n:"At the airport", k:"fixed", p:"Two and a half hours before the 19:00 flight; there's room for a later coach if lunch runs long.", off:true}
    ]}
@@ -1027,9 +1029,11 @@ var SPARE = [
   ["Constantinople to Istanbul","london","V&A South Kensington","Exhibition, from 7 Nov, £25–27.",true,90,[51.4966,-0.1722],"Victoria and Albert Museum, London"],
   ["Beyond the Streets","london","Saatchi Gallery","Graffiti and street art, from 11 Nov, £25.",true,75,[51.4907,-0.1589],"Saatchi Gallery, London"],
   ["Other workouts","london","various","Kobox (boxing HIIT), 1Rebel (Reshape, Ride), Psycle or SoulCycle (cycling).",true,60,null,"1Rebel London"],
-  ["National Museum of Scotland","edinburgh","Chambers Street","Free, open daily 10:00–17:00. The rain plan for Calton Hill.",true,75,[55.9470,-3.1892],"National Museum of Scotland, Chambers Street, Edinburgh"],
+  ["National Museum of Scotland","edinburgh","Chambers Street","Free, open daily 10:00–17:00. 2 min from Greyfriars Bobby's.",true,75,[55.9470,-3.1892],"National Museum of Scotland, Chambers Street, Edinburgh"],
+  ["Edinburgh Castle","edinburgh","Castlehill","Skipped on Saturday. Timed entry online, ~£23.50, allow 1.5 h.",false,90,[55.9486,-3.1999],"Edinburgh Castle"],
+  ["Calton Hill","edinburgh","east end of Princes Street","Monuments and the best view of the Old Town; go before sunset ~15:50. Free.",false,30,[55.9553,-3.1827],"Calton Hill, Edinburgh"],
   ["Holyrood Distillery","edinburgh","foot of Arthur's Seat","~90 min tour, £20–25.",true,90,[55.9432,-3.1773],"Holyrood Distillery, Edinburgh"],
-  ["Arthur's Seat","edinburgh","Holyrood Park","The hike up from Holyrood is ~1.5 h return; swap it for the Grassmarket lunch and Victoria Street if you'd rather climb.",false,90,[55.9441,-3.1618],"Arthur's Seat, Edinburgh"],
+  ["Arthur's Seat","edinburgh","Holyrood Park","~1.5 h return from Holyrood.",false,90,[55.9441,-3.1618],"Arthur's Seat, Edinburgh"],
   ["Port of Leith Distillery","edinburgh","Leith","Nine-storey vertical distillery with a bar on top.",true,90,[55.9790,-3.1690],"Port of Leith Distillery, Edinburgh"],
   ["Barnton nuclear bunker tours","edinburgh","Barnton","Saturdays and Sundays.",true,90,[55.9590,-3.2890],"Barnton Quarry nuclear bunker, Edinburgh"],
   ["Kelvingrove Art Gallery and the West End","glasgow","West End","Kelvingrove opens 11:00 on Sundays if you swap it for Tennent's.",true,90,[55.8686,-4.2906],"Kelvingrove Art Gallery and Museum, Glasgow"],
@@ -1039,7 +1043,7 @@ var SPARE = [
 /* Planned spend per person in GBP, mapped to the expense categories: [label, [expense categories], low, high] */
 var BUDGET = [
   ["Transport",["transport"],60,90],
-  ["Activities",["tickets"],100,155],
+  ["Activities",["tickets"],85,140],
   ["Food & drink",["food","drinks"],260,315],
   ["Stay",["stay"],85,85]
 ];
@@ -1052,9 +1056,8 @@ var CHECK = [
   ["heard","Heard Covent Garden, Fri 17:15 for 2","Booked; ask for the Soda Room on arrival","Done",true],
   ["tatar","Tatar Bunar, Thu 19:30 for 2","Booked; 07771 013190 if running late","Done",true],
   ["comedy","Top Secret Comedy Club, Fri 22:00","Booked; check the ticket for the venue (Kingsway or Drury Lane)","Done",true],
-  ["castle","Edinburgh Castle, Sat 11:15 or later","Timed entry, online","Now"],
   ["jw","Johnnie Walker Journey of Flavour, Sat 15:20 for 2","Booked; Hope Street entrance","Done",true],
-  ["tennents","Tennent's brewery tour, Sun 12:00 for 2","tennents.com; check Sunday slots","Now"],
+  ["tennents","Tennent's brewery tour, Sun 11:00 for 2","Booked","Done",true],
   ["citylink","Citylink Air, Sun 15:30 Glasgow → Edinburgh Airport","citylink.co.uk","This week"],
   ["mail","Postal Museum + Mail Rail, Thu 15:00–15:30","Done on Thursday","Done",true],
   ["barrys","Barry's St Paul's, Fri 08:00","Booked; Kirill only","Done",true]
