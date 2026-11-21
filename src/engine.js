@@ -552,7 +552,7 @@ function applySync(str){
 var SB = "https://iggxntoqfywensvwulod.supabase.co/rest/v1/rpc/", SBK = "sb_publishable_1RdETP5Xyo5HaVqGJAwidw_5jjMPuYO";
 var CATS = [["food","🍔","Food"],["drinks","🍺","Drinks"],["transport","🚆","Transport"],["tickets","🎟️","Tickets"],["stay","🛏️","Stay"],["shopping","🛍️","Shopping"],["other","•","Other"]];
 var TRIPDAYS = DAYS.map(function(d){ return [d.iso, d.tab]; });
-var M = {code:store(TRIP.key+"-code")||"", names:TRIP.people.slice(), items:[], payer:0, split:0.5, cat:"food", day:null, timer:null, busy:false, sum:store(TRIP.key+"-sum")||"share"};
+var M = {code:store(TRIP.key+"-code")||"", names:TRIP.people.slice(), items:[], payer:0, split:0.5, cat:"food", day:null, timer:null, busy:false, sum:store(TRIP.key+"-sum")||"all"};
 function rpc(fn, body){
   return fetch(SB+fn,{method:"POST",headers:{"apikey":SBK,"Content-Type":"application/json"},body:JSON.stringify(body)}).then(function(r){
     return r.text().then(function(tx){ var j=null; try{ j=tx?JSON.parse(tx):null; }catch(e){} if(!r.ok){ var m=(j&&j.message)||("Error "+r.status); throw new Error(m); } return j; });
@@ -593,54 +593,35 @@ function drawMoney(){
     b.disabled=true; rpc("uktrip_delete",{p_code:M.code,p_id:+b.dataset.id}).then(load).catch(showErr);
   }); });
   drawSummary();
-  drawBudget();
   drawPickers();
 }
-/* trip summary: per category and per day, split by person; "share" = what each person spent, "paid" = whose card */
+/* spending: per category and per day, for the group or one person's share; planned range from BUDGET */
 function drawSummary(){
-  var n=M.names, mode=M.sum, cat={}, day={}, per=[0,0], tot=0;
+  var n=M.names, f=(M.sum==="0"||M.sum==="1")?+M.sum:-1, cat={}, day={}, tot=0;
   M.items.forEach(function(e){
-    var a=+e.amount, o=a*(+e.other_share), p=e.paid_by, v=[0,0];
-    if(mode==="paid"){ v[p]=a; } else { v[1-p]+=o; v[p]+=a-o; }
-    var c=e.category||"other"; cat[c]=cat[c]||[0,0]; cat[c][0]+=v[0]; cat[c][1]+=v[1];
-    var d=TRIPDAYS.some(function(x){return x[0]===e.spent_on;})?e.spent_on:"other"; day[d]=day[d]||[0,0]; day[d][0]+=v[0]; day[d][1]+=v[1];
-    per[0]+=v[0]; per[1]+=v[1]; tot+=a;
+    var a=+e.amount, o=a*(+e.other_share), p=e.paid_by, v = f<0 ? a : (f===p ? a-o : o);
+    var c=e.category||"other"; cat[c]=(cat[c]||0)+v;
+    var d=TRIPDAYS.some(function(x){return x[0]===e.spent_on;})?e.spent_on:"other"; day[d]=(day[d]||0)+v;
+    tot+=v;
   });
   var el=document.getElementById("mSum");
-  if(!M.items.length){ el.innerHTML='<h2>Trip summary</h2><p class="sub">Appears once there are expenses.</p>'; return; }
-  var cats=CATS.filter(function(c){return cat[c[0]];}).map(function(c){ var v=cat[c[0]]; return [c,v,v[0]+v[1]]; }).sort(function(a,b){return b[2]-a[2];});
-  var max=cats.length?cats[0][2]:1;
-  function seg(v,t,w){ return '<span class="sbar" style="width:'+Math.max(2,Math.round(100*t/w))+'%">'+(v[0]>0?'<i class="k0" style="flex:'+v[0]+'"></i>':'')+(v[1]>0?'<i class="k1" style="flex:'+v[1]+'"></i>':'')+'</span>'; }
+  var head='<div class="sum-top"><h2>Spending</h2><div class="pick" id="mSumMode"></div></div>';
+  var filt=function(){ pick(document.getElementById("mSumMode"), [["all","Group"],["0",esc(n[0])],["1",esc(n[1])]], f<0?"all":String(f), function(v){ M.sum=v; store(TRIP.key+"-sum",v); drawSummary(); }); };
+  if(!M.items.length){ el.innerHTML=head+'<p class="sub">Appears once there are expenses.</p>'; filt(); return; }
+  var lo=0, hi=0; BUDGET.forEach(function(b){ lo+=b[2]; hi+=b[3]; }); if(f<0){ lo*=2; hi*=2; }
+  var cats=CATS.filter(function(c){return cat[c[0]]>0.004;}).map(function(c){ return [c,cat[c[0]]]; }).sort(function(a,b){return b[1]-a[1];});
+  var max=cats.length?cats[0][1]:1;
   var rows=cats.map(function(r){
-    return '<div class="srow"><div class="srow-h"><span>'+r[0][1]+' '+esc(r[0][2])+'</span><b>'+gbp(r[2])+'</b></div>'+seg(r[1],r[2],max)+
-      '<div class="srow-p"><span><i class="dot k0"></i>'+esc(n[0])+' '+gbp(r[1][0])+'</span><span><i class="dot k1"></i>'+esc(n[1])+' '+gbp(r[1][1])+'</span></div></div>';
+    return '<div class="srow"><div class="srow-h"><span>'+r[0][1]+' '+esc(r[0][2])+'</span><b>'+gbp(r[1])+'</b></div><span class="sbar"><i style="width:'+Math.max(2,Math.round(100*r[1]/max))+'%"></i></span></div>';
   }).join("");
-  var dl=TRIPDAYS.map(function(d){return [d[0],d[1]];}); if(day.other) dl.unshift(["other","Other dates"]);
-  var dmax=Math.max.apply(null,dl.map(function(d){ var v=day[d[0]]||[0,0]; return v[0]+v[1]; }).concat([1]));
-  var days=dl.map(function(d){ var v=day[d[0]]||[0,0], t=v[0]+v[1];
-    return '<div class="sday"><b>'+(t?gbp(Math.round(t)):'–')+'</b><span class="scol" style="height:'+Math.round(100*t/dmax)+'%">'+(v[1]>0?'<i class="k1" style="flex:'+v[1]+'"></i>':'')+(v[0]>0?'<i class="k0" style="flex:'+v[0]+'"></i>':'')+'</span><small>'+esc(d[1].replace(/^(\w{3}) (\d+)$/,"$1 $2"))+'</small></div>'; }).join("");
-  var top=cats[0];
-  el.innerHTML='<div class="sum-top"><h2>Trip summary</h2><div class="pick" id="mSumMode"></div></div>'+
-    '<div class="sstats"><div><small>Group total</small><b>'+gbp(tot)+'</b></div><div><small><i class="dot k0"></i>'+esc(n[0])+(mode==="paid"?' paid':' spent')+'</small><b>'+gbp(per[0])+'</b></div><div><small><i class="dot k1"></i>'+esc(n[1])+(mode==="paid"?' paid':' spent')+'</small><b>'+gbp(per[1])+'</b></div></div>'+
-    '<p class="sub">'+(mode==="paid"?'Whose card paid, before settling up.':'Each person\'s share of every expense.')+' Biggest: '+esc(top[0][2].toLowerCase())+', '+Math.round(100*top[2]/tot)+'% of the trip.</p>'+
+  var dl=TRIPDAYS.map(function(d){return [d[0],d[1]];}); if(day.other) dl.unshift(["other","Other"]);
+  var dmax=Math.max.apply(null,dl.map(function(d){ return day[d[0]]||0; }).concat([1]));
+  var days=dl.map(function(d){ var t=day[d[0]]||0;
+    return '<div class="sday"><b>'+(t?gbp(Math.round(t)):'–')+'</b><span class="scol" style="height:'+Math.round(100*t/dmax)+'%"></span><small>'+esc(d[1])+'</small></div>'; }).join("");
+  var who = f<0 ? 'Spent by the group' : esc(n[f])+'\'s share';
+  el.innerHTML=head+'<div class="sstat"><small>'+who+'</small><b>'+gbp(tot)+'</b><span>Planned '+gbp(lo)+'–'+gbp(hi).slice(1)+(f<0?' for two':'')+', flights excluded</span></div>'+
     '<h3 class="sh3">By category</h3>'+rows+'<h3 class="sh3">By day</h3><div class="sdays">'+days+'</div>';
-  pick(document.getElementById("mSumMode"), [["share","Spent"],["paid","Paid"]], mode, function(v){ M.sum=v; store(TRIP.key+"-sum",v); drawSummary(); });
-}
-/* planned against spent, per person, from the shares in the expense list */
-function drawBudget(){
-  var n=M.names, by={}, known={};
-  M.items.forEach(function(e){ var a=+e.amount, o=a*(+e.other_share), p=e.paid_by, c=e.category; by[c]=by[c]||[0,0]; by[c][1-p]+=o; by[c][p]+=a-o; });
-  var rows = BUDGET.map(function(b){
-    var v=[0,0]; b[1].forEach(function(c){ known[c]=1; if(by[c]){ v[0]+=by[c][0]; v[1]+=by[c][1]; } });
-    var plan = b[2]===b[3] ? "~"+gbp(b[3]) : gbp(b[2])+"–"+b[3];
-    return '<div class="bud"><div class="bud-h"><b>'+esc(b[0])+'</b><span>planned '+plan+' each</span></div>'+[0,1].map(function(i){
-      var pct=Math.min(100,Math.round(100*v[i]/b[3])), over=v[i]>b[3];
-      return '<div class="bud-r'+(over?" over":"")+'"><span>'+esc(n[i])+'</span><i><u style="width:'+pct+'%"></u></i><b>'+gbp(v[i])+'</b></div>';
-    }).join("")+'</div>';
-  }).join("");
-  var extra=[0,0]; Object.keys(by).forEach(function(c){ if(!known[c]){ extra[0]+=by[c][0]; extra[1]+=by[c][1]; } });
-  document.getElementById("mBudget").innerHTML = '<h2>Plan against spent</h2><p class="sub">Each person\'s share so far. Add pre-paid bookings (sleeper, hotels) as expenses to see the full picture.</p>'+rows+
-    (extra[0]+extra[1]>0?'<p class="sub">Outside the plan (shopping, other): '+esc(n[0])+' '+gbp(extra[0])+' · '+esc(n[1])+' '+gbp(extra[1])+'</p>':'');
+  filt();
 }
 function showErr(e){ var el=document.getElementById("mErr"); el.textContent=e.message||String(e); el.hidden=false; }
 function stamp(){ var d=new Date(); document.getElementById("mSync").textContent="Synced "+d.toLocaleTimeString("en-GB",{hour:"2-digit",minute:"2-digit"}); }
