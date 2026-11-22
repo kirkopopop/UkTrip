@@ -73,7 +73,7 @@ function postmark(d){
 /* ---------- stops: type, booking state, travel legs ---------- */
 var narrowMQ = window.matchMedia("(max-width:960px)");
 var compact = S.compact!=null ? !!S.compact : narrowMQ.matches;
-var MODES = {walk:["🚶","walk"], tube:["🚇","by Tube"], train:["🚆","by train"], bus:["🚌","by coach"], taxi:["🚕","by taxi"]};
+var MODES = {walk:["🚶","walk"], tube:["🚇","by Tube"], train:["🚆","by train"], bus:["🚌","by coach"], taxi:["🚕","by taxi"], bike:["🚲","by e-bike"]};
 var TRICON = {train:"🚆", bus:"🚌", plane:"✈️"};
 function kindOf(s){ return s.k||"core"; }
 function stopBooked(s){ return s.chk ? isDone(s.chk) : !!s.booked; }
