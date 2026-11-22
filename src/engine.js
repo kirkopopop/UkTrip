@@ -939,13 +939,180 @@ setInterval(pull, 20000);
 document.addEventListener("visibilitychange", function(){ if(!document.hidden){ pull(); flush(); } });
 window.addEventListener("online", function(){ pull(); flush(); });
 
+/* ---------- trip journal: the memory of the trip, first screen once it's over ----------
+   Places come from the plan (as updated), photos from the postcards, money from Expenses.
+   New data lives in uktrip.journal as (k, who, v): rate:<place>, award:<id>, next:<id>, day:<iso>, skip:<place>. */
+var J = {rows:[], loaded:false, photos:null, rate:null, awardOpen:null, ask:false, err:""};
+var J_END = {iso:DAYS[DAYS.length-1].iso, min:19*60};
+function tripOver(){ var n=nowTrip(); return n.iso>J_END.iso || (n.iso===J_END.iso && n.min>=J_END.min); }
+var J_CATS = [["eat","🍽","Eat"],["drink","🍺","Drink"],["do","🎟","See & do"],["stay","🛏","Stay"]];
+var J_AWARDS = [["meal","Best meal","eat"],["drink","Best drink","drink"],["moment","Best moment",""],["surprise","Biggest surprise",""],["never","Never again",""]];
+function jSlug(s){ return s.toLowerCase().replace(/&/g,"and").replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"").slice(0,50); }
+function jPlaceOf(s){
+  if(s.jc==="skip" || s.tr || s.pick) return null;
+  var n=s.n, q=s.q||"";
+  if(/DoubleTree|Kings Cross Inn|Maldron/.test(q+" "+n)){
+    var h=/DoubleTree/.test(q+n)?"DoubleTree by Hilton Tower of London":/Kings Cross Inn/.test(q+n)?"Kings Cross Inn":"Maldron Hotel Glasgow City";
+    return {key:"stay-"+jSlug(h), name:h, cat:"stay"};
+  }
+  if(/^(Land at|Pick up the key|Back to|Waverley:|Taxi to|At .*Airport)/.test(n) || /collect the T-shirts/.test(n)) return null;
+  var cat = s.jc || (/^(Lunch|Dinner|Brunch|Breakfast|Fish and chips|Noodles)\b|Black Sheep/i.test(n)?"eat": /Guinness|Swift|Nightcap|Clutha|cocktail|Drygate|\bpub\b/i.test(n)?"drink":"do");
+  var name = s.jn || n.replace(/^(Dinner|Lunch|Brunch|Breakfast|Fish and chips|Noodles|Nightcap|One cocktail|£4 Guinness) at (the )?/i,"").replace(/ on the way back$/,"").replace(/: (T-shirts|a bite).*$/,"").replace(/, (\d|next door|Stockwell|West George|Royal Mile|Clerkenwell|Castlehill).*$/,"").replace(/^(The )?Clutha$/,"The Clutha");
+  return {key:jSlug(name), name:name, cat:cat};
+}
+function jPlaces(){
+  var out=[], seen={};
+  DAYS.forEach(function(d){ d.stops.forEach(function(s){
+    var p=jPlaceOf(s); if(!p) return;
+    if(seen[p.key]){ seen[p.key].stops.push(s); return; }
+    p.day=d; p.stop=s; p.stops=[s]; seen[p.key]=p; out.push(p);
+  }); });
+  return out;
+}
+function jGet(k,who){ var r=J.rows.find(function(x){return x.k===k && (who==null||x.who===who);}); return r?r.v:null; }
+function jAll(prefix){ return J.rows.filter(function(x){return x.k.indexOf(prefix)===0;}); }
+function jSet(k,who,v){
+  J.rows=J.rows.filter(function(x){return !(x.k===k && x.who===who);}); if(v!=null) J.rows.push({k:k,who:who,v:v,t:new Date().toISOString()});
+  return rpc("uktrip_journal_set",{p_code:M.code,p_k:k,p_who:who,p_v:v}).catch(function(e){ toast("Not saved: "+e.message); });
+}
+function jMe(){ return (P.who==null||P.who==="")?null:+P.who; }
+function jAvg(key){ var r=[0,1].map(function(w){ var v=jGet("rate:"+key,w); return v&&v.r?v.r:0; }).filter(Boolean); return r.length?{avg:r.reduce(function(a,b){return a+b;},0)/r.length,n:r.length}:null; }
+function jStars(v,big){ var s=""; for(var i=1;i<=5;i++) s+='<i class="'+(v>=i-0.25?"on":v>=i-0.75?"half":"")+'">★</i>'; return '<span class="jstars'+(big?" big":"")+'">'+s+'</span>'; }
+function jPhotosFor(pl){ return (J.photos||[]).filter(function(p){ var w=photoStop(p); return w&&w.stop&&pl.stops.indexOf(w.stop)>=0; }); }
+function jLoad(){
+  if(!M.code){ drawJournal(); return; }
+  Promise.all([
+    rpc("uktrip_journal_get",{p_code:M.code}).then(function(r){ J.rows=r||[]; }),
+    rpc("uktrip_photo_list",{p_code:M.code,p_day:null}).then(function(r){ J.photos=r||[]; (r||[]).forEach(function(p){ var c=P.cache[p.day]=P.cache[p.day]||[]; if(!c.some(function(x){return x.id===p.id;})) c.push(p); }); }).catch(function(){ J.photos=J.photos||[]; }),
+    rpc("uktrip_list",{p_code:M.code}).then(function(r){ if(r&&r.expenses){ M.items=r.expenses; if(r.names) M.names=r.names; } }).catch(function(){})
+  ]).then(function(){ J.loaded=true; J.err=""; drawJournal(); }).catch(function(e){ J.err="Couldn't load the journal: "+e.message; drawJournal(); });
+}
+function jMoney(){
+  if(!M.items||!M.items.length) return null;
+  var tot=0, byDay={}; M.items.forEach(function(e){ tot+=+e.amount; byDay[e.spent_on]=(byDay[e.spent_on]||0)+(+e.amount); });
+  var top=Object.keys(byDay).filter(function(k){return DAYS.some(function(d){return d.iso===k;});}).sort(function(a,b){return byDay[b]-byDay[a];})[0];
+  return {tot:tot, pp:tot/2, ppd:tot/2/DAYS.length, top:top?{d:DAYS.find(function(d){return d.iso===top;}),v:byDay[top]}:null};
+}
+function jCover(){
+  var tiles=DAYS.map(function(d){ var l=(J.photos||[]).filter(function(p){return p.day===d.iso;}); return l.filter(function(p){return p.star;})[0]||l[0]||null; });
+  var have=tiles.filter(Boolean);
+  if(!have.length) return '<div class="jcover-empty">'+DAYS.map(function(d){ return postmark(d).replace('class="postmark thump"','class="postmark jpm"'); }).join("")+'</div>';
+  return '<div class="jcover-grid n'+Math.min(4,have.length)+'">'+have.slice(0,4).map(function(p){ return '<img src="'+p.thumb+'" alt="">'; }).join("")+'</div>';
+}
+function drawJournal(){
+  var el=document.getElementById("journalView"); if(!el) return;
+  var names=M.names||TRIP.people, me=jMe(), places=jPlaces().filter(function(p){ return !jGet("skip:"+p.key); });
+  var cities={}; DAYS.forEach(function(d){ (d.cities||[d.city]).forEach(function(c){ cities[c]=1; }); });
+  var mon=jMoney(), rated=places.filter(function(p){ return me!=null && jGet("rate:"+p.key,me); }).length;
+  var h='<section class="jcard jhero">'+jCover()+'<div class="jhero-t"><h2>'+esc(TRIP.name)+'</h2><p>19–22 November · '+esc(names.join(" & "))+'</p>'+
+    '<div class="jnums"><span><b>'+DAYS.length+'</b>days</span><span><b>'+Object.keys(cities).length+'</b>cities</span><span><b>'+places.length+'</b>places</span>'+(J.photos?'<span><b>'+J.photos.length+'</b>photos</span>':'')+(mon?'<span><b>'+gbp(Math.round(mon.tot))+'</b>spent</span>':'')+'</div></div></section>';
+  if(!M.code){ el.innerHTML=h+'<section class="jcard"><p class="sub">Open Expenses and enter the trip code once: ratings, comments and photos are shared through it.</p></section>'; return; }
+  if(J.err) h+='<p class="err">'+esc(J.err)+'</p>';
+  /* call to action */
+  h+='<section class="jcard jcta"><div><b>'+(me==null?'Rate the places you went':rated>=places.length?'All rated, thank you':'Rate the trip: '+rated+' of '+places.length+' done')+'</b><span>'+(me==null?'Stars and a line for each place; takes about five minutes.':'Stars and a line for each place. You can change them any time.')+'</span></div><button type="button" class="btn" data-jrate>'+(rated?'Continue':'Start')+'</button></section>';
+  if(J.ask) h+='<section class="jcard pc-ask"><span>Who\'s on this phone?</span><div class="pick"><button type="button" data-jme="0">'+esc(names[0])+'</button><button type="button" data-jme="1">'+esc(names[1])+'</button></div></section>';
+  /* days */
+  h+='<h3 class="jh">The trip, day by day</h3>'+DAYS.map(function(d){
+    var l=(J.photos||[]).filter(function(p){return p.day===d.iso;}), sel=pcPick(l), line=jGet("day:"+d.iso,0);
+    var auto=jPlaces().filter(function(p){return p.day===d && p.cat!=="stay";}).map(function(p){return p.name;}).slice(0,6).join(" · ");
+    return '<section class="jcard jday" data-jday="'+d.iso+'">'+(sel.length?pcGrid(sel):'')+'<div class="jday-t"><small>'+esc(d.date)+' · '+esc(d.place)+'</small><b>'+esc(d.title)+'</b>'+
+      '<p class="jline" data-jline="'+d.iso+'">'+esc(line&&line.t?line.t:auto)+' <button type="button" class="jedit" data-jline-edit="'+d.iso+'">Edit</button></p></div></section>';
+  }).join("");
+  /* places */
+  h+='<h3 class="jh">Places</h3><div class="jsort pick" id="jSort"></div>';
+  var sort=J.sort||"fav";
+  J_CATS.forEach(function(c){
+    var l=places.filter(function(p){return p.cat===c[0];}); if(!l.length) return;
+    if(sort==="fav") l.sort(function(a,b){ var x=jAvg(a.key), y=jAvg(b.key); return (y?y.avg:-1)-(x?x.avg:-1); });
+    h+='<section class="jcard"><h4 class="jcat">'+c[1]+' '+c[2]+'</h4>'+l.map(function(p){
+      var a=jAvg(p.key), ph=jPhotosFor(p), cm=[0,1].map(function(w){ var v=jGet("rate:"+p.key,w); return v&&v.c?'<p class="jcom"><b>'+esc(names[w])+'</b> '+esc(v.c)+'</p>':''; }).join("");
+      return '<div class="jplace"><button type="button" class="jplace-h" data-jopen="'+p.key+'"><span class="jpn">'+esc(p.name)+'<small>'+esc(p.day.tab)+(p.cat!=="stay"?' · '+esc(p.stop.t):'')+'</small></span>'+
+        (a?'<span class="jr">'+jStars(a.avg)+'<small>'+a.avg.toFixed(1)+'</small></span>':'<span class="jr none">Not rated</span>')+'</button>'+
+        (ph.length?'<div class="jthumbs">'+ph.slice(0,6).map(function(x){ return '<button type="button" data-ph="'+x.id+'" data-jday-ph="'+x.day+'"><img src="'+x.thumb+'" alt="" loading="lazy"></button>'; }).join("")+'</div>':'')+cm+'</div>';
+    }).join("")+'</section>';
+  });
+  /* awards */
+  h+='<h3 class="jh">Awards</h3><section class="jcard">'+J_AWARDS.map(function(aw){
+    var v=[0,1].map(function(w){ return jGet("award:"+aw[0],w); }), gold=v[0]&&v[1]&&v[0].key===v[1].key;
+    var nm=function(x){ var p=x&&places.find(function(q){return q.key===x.key;}); return p?p.name:(x&&x.text)||""; };
+    return '<div class="jaward'+(gold?' gold':'')+'"><div class="jaw-h"><b>'+(gold?'🏅 ':'')+esc(aw[1])+'</b>'+(me!=null?'<button type="button" class="jedit" data-jaward="'+aw[0]+'">'+(v[me]?'Change':'Vote')+'</button>':'')+'</div>'+
+      '<div class="jaw-v">'+[0,1].map(function(w){ return '<span>'+esc(names[w])+': '+(v[w]?'<b>'+esc(nm(v[w]))+'</b>':'<i>not yet</i>')+'</span>'; }).join("")+'</div>'+
+      (J.awardOpen===aw[0]?'<div class="jaw-pick">'+places.filter(function(p){return !aw[2]||p.cat===aw[2];}).map(function(p){ return '<button type="button" class="chipbtn'+(v[me]&&v[me].key===p.key?' on':'')+'" data-jvote="'+aw[0]+'|'+p.key+'">'+esc(p.name)+'</button>'; }).join("")+'</div>':'')+'</div>';
+  }).join("")+'</section>';
+  /* next time */
+  var notes=jAll("next:").sort(function(a,b){return a.t<b.t?-1:1;});
+  h+='<h3 class="jh">Next time</h3><section class="jcard">'+(notes.length?'<ul class="jnext">'+notes.map(function(n){ return '<li><span class="jtag">'+(n.v.kind==="try"?"Still to try":"Do differently")+'</span>'+esc(n.v.t)+' <small>'+esc(names[n.who])+'</small>'+(n.who===me?' <button type="button" class="jedit" data-jdel="'+esc(n.k)+'">Remove</button>':'')+'</li>'; }).join("")+'</ul>':'<p class="sub">What would you do differently, and what\'s still on the list? The Lamb & Flag and Rules, for a start.</p>')+
+    '<form class="jnext-f" id="jNextF"><input id="jNextT" maxlength="160" placeholder="Add a note" autocomplete="off"><div class="pick" id="jNextK"><button type="button" data-k="try" aria-pressed="'+((J.nk||"try")==="try")+'">Still to try</button><button type="button" data-k="diff" aria-pressed="'+(J.nk==="diff")+'">Do differently</button></div><button class="btn" type="submit">Add</button></form></section>';
+  /* money */
+  if(mon) h+='<h3 class="jh">Money</h3><section class="jcard jmoney"><div><small>Total</small><b>'+gbp(Math.round(mon.tot))+'</b></div><div><small>Per person</small><b>'+gbp(Math.round(mon.pp))+'</b></div><div><small>Per person per day</small><b>'+gbp(Math.round(mon.ppd))+'</b></div>'+(mon.top?'<div><small>Priciest day</small><b>'+esc(mon.top.d.tab)+'</b></div>':'')+'<a href="#money" class="jedit">Details in Expenses</a></section>';
+  h+='<p class="jfoot"><a href="#'+DAYS[0].id+'">See the full plan</a></p>';
+  el.innerHTML=h;
+  var srt=document.getElementById("jSort"); if(srt) pick(srt,[["fav","Our favourites"],["time","In order"]],sort,function(v){ J.sort=v; drawJournal(); });
+}
+/* the rating flow: one place per screen */
+var jrEl=document.createElement("div"); jrEl.className="pv jrate"; jrEl.hidden=true; jrEl.setAttribute("role","dialog"); jrEl.setAttribute("aria-modal","true"); document.body.appendChild(jrEl);
+function jRateOpen(start){
+  var me=jMe(); if(me==null){ J.ask=true; J.after=start||"rate"; drawJournal(); return; }
+  var l=jPlaces().filter(function(p){ return !jGet("skip:"+p.key); });
+  var i=start?l.findIndex(function(p){return p.key===start;}):l.findIndex(function(p){ return !jGet("rate:"+p.key,me); });
+  J.rate={list:l, i:i<0?0:i}; jrEl.hidden=false; document.documentElement.classList.add("sheet-open"); jRateDraw();
+}
+function jRateClose(){ jrEl.hidden=true; J.rate=null; document.documentElement.classList.remove("sheet-open"); drawJournal(); }
+function jRateDraw(){
+  var R=J.rate, p=R.list[R.i], me=jMe(), v=jGet("rate:"+p.key,me)||{}, ph=jPhotosFor(p)[0];
+  jrEl.innerHTML='<div class="pv-top"><span>'+(R.i+1)+' of '+R.list.length+'</span><button type="button" class="sh-x" data-jrx aria-label="Close">✕</button></div>'+
+    '<div class="jr-body">'+(ph?'<div class="jr-img"><img src="'+ph.thumb+'" alt=""></div>':'<div class="jr-img none">'+(J_CATS.find(function(c){return c[0]===p.cat;})||["","📍"])[1]+'</div>')+
+    '<small>'+esc(p.day.date)+(p.cat!=="stay"?' · '+esc(p.stop.t):'')+'</small><h3>'+esc(p.name)+'</h3>'+
+    '<div class="jr-stars">'+[1,2,3,4,5].map(function(n){ return '<button type="button" data-jr="'+n+'" class="'+(v.r>=n?"on":"")+'" aria-label="'+n+' stars">★</button>'; }).join("")+'</div>'+
+    '<textarea id="jrC" maxlength="280" rows="2" placeholder="One line to remember it by (optional)">'+esc(v.c||"")+'</textarea></div>'+
+    '<div class="pv-act"><button type="button" class="chipbtn" data-jrn="-1"'+(R.i===0?' disabled':'')+'>←</button><button type="button" class="chipbtn" data-jrskip>We didn\'t go</button><button type="button" class="btn" data-jrn="1">'+(R.i===R.list.length-1?'Done':'Next')+'</button></div>';
+}
+function jRateSave(){
+  var R=J.rate; if(!R) return; var p=R.list[R.i], me=jMe(), old=jGet("rate:"+p.key,me)||{}, c=(document.getElementById("jrC")||{}).value||"";
+  c=c.trim(); if((old.c||"")===c && !J.pendingR) return; var r=J.pendingR||old.r||0; J.pendingR=null;
+  if(!r && !c){ if(old.r||old.c) jSet("rate:"+p.key,me,null); return; }
+  jSet("rate:"+p.key,me,{r:r,c:c});
+}
+jrEl.addEventListener("click",function(e){
+  var R=J.rate; if(!R) return; var b;
+  if((b=e.target.closest("[data-jrx]"))){ jRateSave(); jRateClose(); return; }
+  if((b=e.target.closest("[data-jr]"))){ J.pendingR=+b.dataset.jr; jrEl.querySelectorAll("[data-jr]").forEach(function(x){ x.classList.toggle("on", +x.dataset.jr<=J.pendingR); }); jRateSave(); return; }
+  if((b=e.target.closest("[data-jrskip]"))){ var p=R.list[R.i]; jSet("skip:"+p.key,jMe(),{s:1}); R.list.splice(R.i,1); if(R.i>=R.list.length){ jRateClose(); return; } jRateDraw(); return; }
+  if((b=e.target.closest("[data-jrn]"))){ jRateSave(); var n=R.i+(+b.dataset.jrn); if(n>=R.list.length){ jRateClose(); return; } if(n>=0){ R.i=n; jRateDraw(); } }
+});
+var JV=document.getElementById("journalView");
+JV.addEventListener("click",function(e){
+  var b, me=jMe();
+  if((b=e.target.closest("[data-ph]"))){ var day=b.dataset.jdayPh, i=DAYS.findIndex(function(d){return d.iso===day;}); if(i>=0){ cur=i; openPv(+b.dataset.ph); } return; }
+  if((b=e.target.closest("[data-jme]"))){ P.who=b.dataset.jme; store(TRIP.key+"-me",P.who); J.ask=false; var a=J.after; J.after=null; drawJournal(); if(a==="rate") jRateOpen(); else if(a&&a.indexOf("award:")===0){ J.awardOpen=a.slice(6); drawJournal(); } else if(a) jRateOpen(a); return; }
+  if((b=e.target.closest("[data-jrate]"))){ jRateOpen(); return; }
+  if((b=e.target.closest("[data-jopen]"))){ jRateOpen(b.dataset.jopen); return; }
+  if((b=e.target.closest("[data-jaward]"))){ if(me==null){ J.ask=true; J.after="award:"+b.dataset.jaward; drawJournal(); return; } J.awardOpen=J.awardOpen===b.dataset.jaward?null:b.dataset.jaward; drawJournal(); return; }
+  if((b=e.target.closest("[data-jvote]"))){ var x=b.dataset.jvote.split("|"); jSet("award:"+x[0],me,{key:x[1]}); J.awardOpen=null; drawJournal(); return; }
+  if((b=e.target.closest("[data-jdel]"))){ jSet(b.dataset.jdel,me,null); drawJournal(); return; }
+  if((b=e.target.closest("#jNextK button"))){ J.nk=b.dataset.k; JV.querySelectorAll("#jNextK button").forEach(function(y){ y.setAttribute("aria-pressed", y===b); }); return; }
+  if((b=e.target.closest("[data-jline-edit]"))){
+    var iso=b.dataset.jlineEdit, pEl=JV.querySelector('[data-jline="'+iso+'"]'), cur0=(jGet("day:"+iso,0)||{}).t||pEl.firstChild.textContent.trim();
+    pEl.outerHTML='<form class="jline-f" data-jline-f="'+iso+'"><textarea maxlength="300" rows="3">'+esc(cur0)+'</textarea><div class="mbtns"><button class="btn" type="submit">Save</button><button class="btn ghost" type="button" data-jline-x>Cancel</button></div></form>'; return;
+  }
+  if((b=e.target.closest("[data-jline-x]"))){ drawJournal(); return; }
+});
+JV.addEventListener("submit",function(e){
+  e.preventDefault(); var f=e.target, me=jMe();
+  if(f.id==="jNextF"){ var t=document.getElementById("jNextT").value.trim(); if(!t) return; if(me==null){ J.ask=true; drawJournal(); return; }
+    jSet("next:"+Date.now().toString(36)+me, me, {t:t, kind:J.nk||"try"}).then(drawJournal); drawJournal(); return; }
+  if(f.dataset.jlineF){ var v=f.querySelector("textarea").value.trim(); jSet("day:"+f.dataset.jlineF,0,v?{t:v}:null); drawJournal(); }
+});
+document.addEventListener("visibilitychange",function(){ if(!document.hidden && view==="journal" && !J.rate) jLoad(); });
+
 /* ---------- routing ---------- */
 function go(id){ if(location.hash!=="#"+id) location.hash = id; else route(); }
 var lastCity = null;
 function route(){
   var h = (location.hash||"").slice(1);
   if(h.indexOf("sync=")===0){ applySync(h.slice(5)); history.replaceState(null,"",location.pathname+location.search+"#tips"); h="tips"; }
-  if(h==="tips"){ view="tips"; drawChecks(); drawTix(); }
+  if(h==="journal" || (!h && tripOver())){ view="journal"; }
+  else if(h==="tips"){ view="tips"; drawChecks(); drawTix(); }
   else if(h==="money"){ view="money"; }
   else {
     view="plan"; var i = DAYS.findIndex(function(d){return d.id===h;});
@@ -955,6 +1122,10 @@ function route(){
   document.getElementById("planView").style.display = view==="plan"?"flex":"none";
   document.getElementById("tipsView").hidden = view!=="tips";
   document.getElementById("moneyView").hidden = view!=="money";
+  document.getElementById("journalView").hidden = view!=="journal";
+  document.getElementById("vJournal").hidden = !tripOver();
+  document.getElementById("vJournal").setAttribute("aria-pressed", view==="journal");
+  if(view==="journal"){ drawJournal(); jLoad(); }
   document.getElementById("vMoney").setAttribute("aria-pressed", view==="money");
   if(view==="money") openMoney(); else clearInterval(M.timer);
   document.getElementById("vPlan").setAttribute("aria-pressed", view==="plan");
@@ -976,6 +1147,7 @@ tabs.addEventListener("keydown",function(e){
   var n = (cur + (e.key==="ArrowRight"?1:DAYS.length-1))%DAYS.length; go(DAYS[n].id); document.getElementById("tab-"+DAYS[n].id).focus();
 });
 document.getElementById("vPlan").addEventListener("click",function(){ go(DAYS[cur].id); });
+document.getElementById("vJournal").addEventListener("click",function(){ go("journal"); window.scrollTo(0,0); });
 document.getElementById("vTips").addEventListener("click",function(){ go("tips"); });
 document.getElementById("vMoney").addEventListener("click",function(){ go("money"); });
 document.querySelectorAll("#tipsView [data-goto]").forEach(function(a){ a.addEventListener("click",function(e){ e.preventDefault(); go(a.dataset.goto); window.scrollTo(0,0); }); });

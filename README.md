@@ -82,6 +82,12 @@ destination), `utcOffsetMin` (its offset from UTC on the trip dates), `people`.
   1600 px JPEG plus a 480 px thumb, stored in `uktrip.photos` behind the trip code (`uktrip_photo_add/list/get/star/delete`).
   Up to 6 go in the collage (the starred one is big, the rest spread across the day); each is matched to a stop by its
   EXIF time. "Save postcard" draws one JPEG on a canvas and opens the share sheet.
+- Trip journal (`#journal`): the first screen once the trip is over (after 19:00 on the last day); the plan stays
+  one tap away. Cover from the postcards, a line per day (editable), every place from the plan grouped Eat / Drink /
+  See & do / Stay with the average of both people's stars, their comments and the photos taken there, five award votes
+  (gold when both agree), a shared "Next time" list and a money recap. Stored in `uktrip.journal` as (k, who, v) via
+  `uktrip_journal_get/set`. Places are derived from stops in `jPlaceOf()`; set `jc` (eat|drink|do|stay|skip) or `jn`
+  (display name) on a stop to override.
 - Add `?now=2026-11-20T13:10` to the address to preview the page at that moment of the trip.
 
 ## Starting a new trip

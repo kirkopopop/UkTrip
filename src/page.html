@@ -24,6 +24,7 @@
     <div class="mast-side">
       <div class="count" id="count"></div>
       <div class="seg" role="group" aria-label="View">
+        <button type="button" id="vJournal" aria-pressed="false" hidden>Journal</button>
         <button type="button" id="vPlan" aria-pressed="true">Plan</button>
         <button type="button" id="vTips" aria-pressed="false">Info</button>
         <button type="button" id="vMoney" aria-pressed="false">Expenses</button>
@@ -33,6 +34,7 @@
 </header>
 
 <main class="wrap">
+  <div id="journalView" class="journal" hidden></div>
   <div id="planView" style="display:flex;flex-direction:column;gap:24px">
     <section class="nowcard" id="nowcard" aria-live="polite" aria-label="Now and next"></section>
     <nav class="stamps" id="tabs" role="tablist" aria-label="Days"></nav>

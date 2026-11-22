@@ -1,6 +1,6 @@
 /* Offline copy of the trip page. Online: always fetch the newest page and refresh the copy.
    No signal: serve the saved copy. Fonts are cached the first time they load. */
-var CACHE = "trip-202611221605";
+var CACHE = "trip-202611221712";
 var SHELL = ["./", "index.html", "manifest.webmanifest", "icon-180.png", "icon-512.png"];
 self.addEventListener("install", function(e){
   e.waitUntil(caches.open(CACHE).then(function(c){ return c.addAll(SHELL); }).then(function(){ return self.skipWaiting(); }));
